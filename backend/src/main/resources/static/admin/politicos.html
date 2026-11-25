@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Políticos | Painel MinhaVidaPolítica</title>
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar"></aside>
+    <div class="main">
+      <header class="topbar" id="topbar"></header>
+      <main class="content" id="content">
+        <div class="cabecalho">
+          <h1>Políticos</h1>
+          <p>Controle dos dados de quem está em exercício no mandato atual. Cada registro precisa de uma fonte; só aparece ao cidadão se a fonte estiver aprovada.</p>
+        </div>
+        <section class="toolbar" aria-label="Filtros">
+          <label class="field grow"><span>Buscar por nome</span><input type="search" id="f-nome" placeholder="Digite parte do nome"></label>
+          <label class="field"><span>Estado</span><select id="f-uf"></select></label>
+          <label class="field"><span>Cargo</span><select id="f-cargo"></select></label>
+          <button class="btn btn-primario" id="btn-novo" type="button">Novo político</button>
+        </section>
+        <div class="tabela-wrap" id="tabela-wrap">
+          <table class="tabela">
+            <thead><tr><th>Nome</th><th>Cargo</th><th>Estado</th><th>Partido</th><th>Fonte e situação</th><th>Atualizado</th><th><span class="sr">Ações</span></th></tr></thead>
+            <tbody id="corpo"></tbody>
+          </table>
+        </div>
+        <p class="vazio" id="vazio" hidden></p>
+        <dialog id="dlg">
+          <form id="form">
+            <div class="dlg-topo"><h2 id="dlg-titulo">Novo político</h2><p>Cadastre apenas quem está no mandato atual e informe a fonte do dado.</p></div>
+            <div class="dlg-corpo">
+              <div class="grid-2">
+                <label class="field cheio"><span>Nome *</span><input type="text" name="nome" maxlength="150" required></label>
+                <label class="field"><span>Cargo *</span><select name="cargoId" required></select></label>
+                <label class="field"><span>Estado</span><select name="ufId"></select><small id="dica-uf"></small></label>
+                <label class="field"><span>Partido</span><input type="text" name="partido" maxlength="30"></label>
+                <label class="field"><span>Endereço da foto</span><input type="url" name="fotoUrl" maxlength="500" placeholder="https://"></label>
+                <label class="field cheio"><span>Resumo</span><textarea name="resumo" maxlength="1000"></textarea><small>Somente fatos. Sem adjetivos, nota ou opinião.</small></label>
+                <label class="field"><span>Início do mandato</span><input type="date" name="inicioMandato"></label>
+                <label class="field"><span>Fim do mandato</span><input type="date" name="fimMandato"></label>
+                <label class="field cheio"><span>Fonte *</span><select name="fonteId" required></select></label>
+                <label class="field cheio"><span>Link do registro na fonte</span><input type="url" name="linkFonte" maxlength="500" placeholder="https://"><small>Se ficar vazio, o cidadão vê o link geral da fonte.</small></label>
+                <label class="check cheio"><input type="checkbox" name="emExercicio" checked> Em exercício no mandato atual</label>
+              </div>
+            </div>
+      <div class="aviso aviso-erro erro-form" id="erro-form" hidden></div>
+      <div class="dlg-rodape">
+        <button type="button" class="btn" id="btn-cancelar">Cancelar</button>
+        <button type="submit" class="btn btn-primario">Salvar político</button>
+      </div>
+          </form>
+        </dialog>
+      </main>
+    </div>
+  </div>
+  <script type="module" src="js/politicos.js"></script>
+</body>
+</html>

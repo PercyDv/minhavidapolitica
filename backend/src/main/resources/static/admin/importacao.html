@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Importação de dados | Painel MinhaVidaPolítica</title>
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar"></aside>
+    <div class="main">
+      <header class="topbar" id="topbar"></header>
+      <main class="content" id="content">
+        <div class="cabecalho">
+          <h1>Importação de dados</h1>
+          <p>Carregue dados de uma fonte a partir de um arquivo JSON. Registros inválidos são recusados sem derrubar a carga, e reimportar atualiza em vez de duplicar.</p>
+        </div>
+        <div class="colunas">
+          <section class="painel">
+            <h2>Nova importação</h2>
+            <form id="form" style="display: flex; flex-direction: column; gap: 14px;">
+              <label class="field"><span>Fonte *</span><select name="fonteId" id="sel-fonte" required></select><small id="dica-fonte"></small></label>
+              <label class="field"><span>Arquivo JSON</span><input type="file" id="arquivo" accept=".json,application/json"></label>
+              <label class="field"><span>Ou cole o conteúdo</span><textarea id="conteudo-json" spellcheck="false" style="min-height: 190px; font-family: ui-monospace, Consolas, monospace; font-size: .85rem;"></textarea></label>
+              <p class="destaque-sub" id="resumo-arquivo" style="margin: 0;"></p>
+              <div class="aviso aviso-erro" id="erro-form" hidden></div>
+              <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button type="submit" class="btn btn-primario" id="btn-importar">Importar dados</button>
+                <button type="button" class="btn" id="btn-modelo">Baixar arquivo modelo</button>
+              </div>
+            </form>
+            <div id="resultado" style="margin-top: 18px;" hidden></div>
+          </section>
+          <section class="painel">
+            <h2>Histórico de importações</h2>
+            <div id="historico"></div>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+  <script type="module" src="js/importacao.js"></script>
+</body>
+</html>

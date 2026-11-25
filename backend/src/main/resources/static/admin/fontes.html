@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fontes de dados | Painel MinhaVidaPolítica</title>
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar"></aside>
+    <div class="main">
+      <header class="topbar" id="topbar"></header>
+      <main class="content" id="content">
+        <div class="cabecalho">
+          <h1>Fontes de dados</h1>
+          <p>Só dados de fontes aprovadas pelo cliente aparecem ao cidadão. Registre aqui a aprovação e a periodicidade de atualização de cada fonte.</p>
+        </div>
+        <section class="toolbar">
+          <span class="grow"></span>
+          <button class="btn btn-primario" id="btn-novo" type="button">Nova fonte</button>
+        </section>
+        <div class="tabela-wrap" id="tabela-wrap">
+          <table class="tabela">
+            <thead><tr><th>Fonte</th><th>Aprovação do cliente</th><th>Atualização</th><th><span class="sr">Ações</span></th></tr></thead>
+            <tbody id="corpo"></tbody>
+          </table>
+        </div>
+        <p class="vazio" id="vazio" hidden><strong>Nenhuma fonte cadastrada</strong>Cadastre a primeira fonte para poder importar dados.</p>
+        <dialog id="dlg">
+          <form id="form">
+            <div class="dlg-topo"><h2 id="dlg-titulo">Nova fonte</h2><p>A fonte nasce sem aprovação. Os dados ligados a ela ficam retidos até o cliente aprovar.</p></div>
+            <div class="dlg-corpo">
+              <div class="grid-2">
+                <label class="field cheio"><span>Nome *</span><input type="text" name="nome" maxlength="150" required></label>
+                <label class="field cheio"><span>Endereço *</span><input type="url" name="url" maxlength="500" required placeholder="https://"></label>
+                <label class="field"><span>Tipo *</span>
+                  <select name="tipo" required><option value="API">API oficial</option><option value="SITE_OFICIAL">Site oficial</option><option value="ARQUIVO">Arquivo de dados</option></select>
+                </label>
+                <label class="field"><span>Periodicidade de atualização</span><input type="text" name="periodicidade" maxlength="60" list="sugestoes-periodo" placeholder="Ex.: Mensal"><datalist id="sugestoes-periodo"><option value="Diária"><option value="Semanal"><option value="Mensal"><option value="Trimestral"></datalist></label>
+                <label class="field cheio"><span>Observação</span><textarea name="observacao" maxlength="500"></textarea></label>
+                <label class="check cheio"><input type="checkbox" name="ativa" checked> Fonte ativa</label>
+              </div>
+            </div>
+      <div class="aviso aviso-erro erro-form" id="erro-form" hidden></div>
+      <div class="dlg-rodape">
+        <button type="button" class="btn" id="btn-cancelar">Cancelar</button>
+        <button type="submit" class="btn btn-primario">Salvar fonte</button>
+      </div>
+          </form>
+        </dialog>
+        <dialog id="dlg-aprovacao">
+          <form id="form-aprovacao">
+            <div class="dlg-topo"><h2>Registrar aprovação do cliente</h2><p id="aprov-sub"></p></div>
+            <div class="dlg-corpo">
+              <div class="grid-2">
+                <label class="field cheio"><span>Aprovada por *</span><input type="text" name="aprovadaPor" maxlength="120" required><small>Quem do lado do cliente aprovou e como foi registrado (ex.: Samuel, por e-mail).</small></label>
+                <label class="field"><span>Data da aprovação</span><input type="date" name="dataAprovacao"></label>
+                <label class="field cheio"><span>Observação</span><textarea name="observacao" maxlength="500"></textarea></label>
+              </div>
+            </div>
+            <div class="aviso aviso-erro erro-form" id="erro-aprovacao" hidden></div>
+            <div class="dlg-rodape">
+              <button type="button" class="btn" id="btn-cancelar-aprov">Cancelar</button>
+              <button type="submit" class="btn btn-primario">Registrar aprovação</button>
+            </div>
+          </form>
+        </dialog>
+      </main>
+    </div>
+  </div>
+  <script type="module" src="js/fontes.js"></script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Entrar | Painel MinhaVidaPolítica</title>
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <main class="login-pagina">
+    <div class="login-caixa">
+      <a class="marca" href="login.html"><mark>Minha</mark>VidaPolítica<small>Painel da equipe mantenedora</small></a>
+      <h1 style="font-size: 1.3rem; margin-bottom: 18px;">Entrar no painel</h1>
+      <form id="form">
+        <label class="field"><span>Login</span><input type="text" name="username" autocomplete="username" required autofocus></label>
+        <label class="field"><span>Senha</span><input type="password" name="password" autocomplete="current-password" required></label>
+        <div class="aviso aviso-erro" id="erro-form" hidden style="margin: 0;"></div>
+        <button type="submit" class="btn btn-primario" id="btn-entrar">Entrar</button>
+      </form>
+    </div>
+  </main>
+  <script type="module" src="js/login.js"></script>
+</body>
+</html>

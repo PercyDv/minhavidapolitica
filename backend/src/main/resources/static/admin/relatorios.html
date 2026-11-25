@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Relatórios | Painel MinhaVidaPolítica</title>
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar"></aside>
+    <div class="main">
+      <header class="topbar" id="topbar"></header>
+      <main class="content" id="content">
+        <div class="cabecalho">
+          <h1>Relatórios</h1>
+          <p>Cobertura de dados por estado e registros que estão retidos por falta de aprovação da fonte.</p>
+        </div>
+        <section class="painel">
+          <h2>Cobertura por estado</h2>
+          <p class="destaque-sub" id="resumo-cobertura"></p>
+          <div class="legenda">
+            <span class="l-completo">Completo: governador com proposta e ação</span>
+            <span class="l-parcial">Parcial: há algum dado visível</span>
+            <span class="l-sem">Sem dados visíveis</span>
+          </div>
+          <div class="grade-uf" id="grade"></div>
+          <div class="detalhe-uf" id="detalhe" hidden></div>
+          <p style="margin-top: 18px;"><a class="btn" href="/api/admin/relatorios/cobertura.csv">Baixar cobertura em CSV</a></p>
+        </section>
+        <section class="painel" style="margin-top: 20px;">
+          <h2>Registros por fonte</h2>
+          <p class="destaque-sub" id="resumo-fontes"></p>
+          <div class="tabela-wrap">
+            <table class="tabela">
+              <thead><tr><th>Fonte</th><th>Situação</th><th class="num">Políticos</th><th class="num">Propostas</th><th class="num">Ações</th></tr></thead>
+              <tbody id="corpo-fontes"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+  <script type="module" src="js/relatorios.js"></script>
+</body>
+</html>

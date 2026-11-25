@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: minhavidapolitica-api
+  config:
+    # Lê o .env da raiz do repositório (a aplicação deve rodar a partir de backend/)
+      import: optional:file:./.env[.properties],optional:file:../.env[.properties]
+  datasource:
+    url: jdbc:mysql://localhost:${MYSQL_PORT:3307}/${MYSQL_DATABASE:minhavidapolitica}?serverTimezone=America/Bahia&allowPublicKeyRetrieval=true&useSSL=false&characterEncoding=UTF-8
+    username: ${MYSQL_USER:mvp_user}
+    password: ${MYSQL_PASSWORD:}
+  jpa:
+    open-in-view: false
+    hibernate:
+      # O schema é criado SÓ pelo Flyway. Use JPA_DDL_AUTO=validate para checagem estrita
+      # (recomendado depois da primeira execução bem-sucedida).
+      ddl-auto: ${JPA_DDL_AUTO:none}
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    session:
+      timeout: 60m
+      cookie:
+        http-only: true
+        same-site: strict
+
+app:
+  admin:
+    # Usuário inicial do painel (criado apenas se a tabela usuario_painel estiver vazia)
+    username: ${ADMIN_USERNAME:admin}
+    nome: ${ADMIN_NOME:Administrador}
+    password: ${ADMIN_PASSWORD:}
+  cors:
+    # Origens do front público (pasta frontend/) autorizadas a consultar a API pública
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5500,http://127.0.0.1:5500,http://localhost:3000}
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: ${SWAGGER_ENABLED:true}

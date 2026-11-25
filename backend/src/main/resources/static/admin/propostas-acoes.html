@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Propostas e ações | Painel MinhaVidaPolítica</title>
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar"></aside>
+    <div class="main">
+      <header class="topbar" id="topbar"></header>
+      <main class="content" id="content">
+        <div class="cabecalho">
+          <h1>Propostas e ações</h1>
+          <p>Registre o que cada político propôs e o que já realizou no mandato atual. Toda ação precisa de fonte e data.</p>
+        </div>
+        <div class="toolbar">
+          <label class="field grow"><span>Político</span><select id="sel-politico"></select></label>
+        </div>
+        <p class="vazio" id="sem-selecao"><strong>Nenhum político selecionado</strong>Escolha um político acima para ver ou cadastrar propostas e ações.</p>
+        <div id="area" hidden>
+          <div class="abas" role="tablist" aria-label="Tipo de registro">
+            <button type="button" role="tab" id="aba-propostas" aria-selected="true">Propostas</button>
+            <button type="button" role="tab" id="aba-acoes" aria-selected="false">Ações concretizadas</button>
+          </div>
+          <div class="toolbar" style="justify-content: space-between;">
+            <p class="destaque-sub" id="dica" style="margin: 0;"></p>
+            <button class="btn btn-primario" id="btn-novo" type="button">Nova proposta</button>
+          </div>
+          <div class="tabela-wrap" id="tabela-wrap">
+            <table class="tabela">
+              <thead><tr><th>Título</th><th id="th-data">Data</th><th>Fonte e situação</th><th>Atualizado</th><th><span class="sr">Ações</span></th></tr></thead>
+              <tbody id="corpo"></tbody>
+            </table>
+          </div>
+          <p class="vazio" id="vazio" hidden></p>
+        </div>
+        <dialog id="dlg">
+          <form id="form">
+            <div class="dlg-topo"><h2 id="dlg-titulo">Nova proposta</h2><p id="dlg-sub"></p></div>
+            <div class="dlg-corpo">
+              <div class="grid-2">
+                <label class="field cheio"><span>Título *</span><input type="text" name="titulo" maxlength="200" required></label>
+                <label class="field cheio"><span>Descrição</span><textarea name="descricao" maxlength="2000"></textarea><small>Descreva o fato, sem adjetivos ou opinião.</small></label>
+                <label class="field"><span id="rotulo-data">Data</span><input type="date" name="data"></label>
+                <label class="field"><span>Fonte *</span><select name="fonteId" required></select></label>
+                <label class="field cheio"><span>Link do registro na fonte</span><input type="url" name="linkFonte" maxlength="500" placeholder="https://"></label>
+              </div>
+            </div>
+      <div class="aviso aviso-erro erro-form" id="erro-form" hidden></div>
+      <div class="dlg-rodape">
+        <button type="button" class="btn" id="btn-cancelar">Cancelar</button>
+        <button type="submit" class="btn btn-primario">Salvar</button>
+      </div>
+          </form>
+        </dialog>
+      </main>
+    </div>
+  </div>
+  <script type="module" src="js/propostas-acoes.js"></script>
+</body>
+</html>

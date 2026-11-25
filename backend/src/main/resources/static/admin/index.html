@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Visão geral | Painel MinhaVidaPolítica</title>
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar"></aside>
+    <div class="main">
+      <header class="topbar" id="topbar"></header>
+      <main class="content" id="content">
+        <div class="cabecalho">
+          <h1>Visão geral</h1>
+          <p>Um retrato do que o cidadão vê hoje e do que ainda depende de aprovação ou de dados.</p>
+        </div>
+        <div class="aviso" id="aviso-fontes" hidden></div>
+        <p class="destaque" id="destaque">Carregando…</p>
+        <p class="destaque-sub" id="destaque-sub"></p>
+        <dl class="numeros" id="numeros"></dl>
+        <div class="colunas">
+          <section class="painel">
+            <h2>Últimas importações</h2>
+            <ul class="lista-simples" id="lista-importacoes"></ul>
+          </section>
+          <section class="painel">
+            <h2>Atalhos</h2>
+            <ul class="lista-simples">
+              <li><a href="politicos.html">Cadastrar ou editar políticos</a></li>
+              <li><a href="propostas-acoes.html">Registrar propostas e ações</a></li>
+              <li><a href="fontes.html">Conferir a aprovação das fontes</a></li>
+              <li><a href="importacao.html">Importar dados de uma fonte</a></li>
+              <li><a href="relatorios.html">Ver a cobertura por estado</a></li>
+            </ul>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+  <script type="module" src="js/index.js"></script>
+</body>
+</html>
