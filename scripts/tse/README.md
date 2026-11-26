@@ -88,10 +88,10 @@ As posses de presidente (5 de janeiro) e governadores (6 de janeiro) de 2027 e o
 - Vem: nome, nome de urna, número, partido, cargo, UF e a situação final (`ELEITO`, `NAO_ELEITO`, `SEGUNDO_TURNO` ou `SEM_RESULTADO`).
 - Não vem, por escolha: votos e qualquer ordenação por resultado (RN04). A lista é sempre alfabética.
 - **Dados pessoais:** o CSV do TSE tem CPF, e-mail e outros campos. O conversor só lê as colunas necessárias e nunca grava esses dados.
-- Entram só candidaturas **deferidas**. As demais aparecem contadas no terminal, e `--todas-situacoes` as inclui.
+- Entram só candidaturas com **resultado apurado**. Quem ficou sem resultado (candidatura indeferida, substituída, cancelada ou desistente) é listado no terminal e fica de fora; `--todas-situacoes` inclui essas candidaturas como `SEM_RESULTADO`. O arquivo publicado depois da eleição traz a situação da candidatura como `#NE` (não divulgado), então ela não serve de filtro.
 - Quem foi ao segundo turno fica com o resultado do **maior turno** disponível no arquivo.
 - A eleição já terminou (1º turno em 4/10 e 2º em 25/10 de 2026): são candidatos que **concorreram**.
-- **Não foi testado com o arquivo real do TSE.** Os nomes das colunas (`DS_CARGO`, `SG_UF`, `SQ_CANDIDATO`, `NM_CANDIDATO`, `NR_CANDIDATO`, `DS_SIT_TOT_TURNO` etc.) seguem o layout usual do TSE, e o teste usou um ZIP sintético (`exemplo/consulta_cand_2026_exemplo.zip`). Se alguma coluna obrigatória faltar, o conversor para e lista as colunas que encontrou.
+- **Testado com o arquivo real** `consulta_cand_2026.zip` de 26/11/2026: 204 candidaturas (13 a presidente e 191 a governador), 28 eleitos (27 governadores e o presidente) e 11 sem resultado apurado. Se o TSE mudar o layout e faltar uma coluna obrigatória, o conversor para e lista as colunas que encontrou. `exemplo/consulta_cand_2026_exemplo.zip` é um arquivo sintético para testes.
 
 ## Passo a passo
 
@@ -109,7 +109,7 @@ As posses de presidente (5 de janeiro) e governadores (6 de janeiro) de 2027 e o
    ```powershell
    $base = "http://localhost:8080"
    Invoke-RestMethod -Uri "$base/api/auth/login" -Method Post -SessionVariable sessao -Body @{ username = "admin"; password = "SUA_SENHA" }
-   $corpo = [System.IO.File]::ReadAllBytes("candidaturas-tse.json")
+   $corpo = Get-Content .\candidaturas-tse.json -Raw -Encoding UTF8
    Invoke-RestMethod -Uri "$base/api/admin/importacoes/candidaturas" -Method Post -WebSession $sessao -ContentType "application/json; charset=utf-8" -Body $corpo
    ```
 

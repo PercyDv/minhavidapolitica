@@ -106,9 +106,11 @@ public class ConversorCandidatos {
                         continue;
                     }
                     String sit = norm(primeiroNaoVazio(valor(l, idx, "detalheSituacao"), valor(l, idx, "situacaoCand")));
-                    situacoesVistas.merge(sit.isEmpty() ? "(vazia)" : sit, 1, Integer::sum);
-                    if (!cfg.todasSituacoes && !(sit.startsWith("DEFERIDO") || sit.equals("APTO"))) {
-                        excluidas.merge(sit.isEmpty() ? "(vazia)" : sit, 1, Integer::sum);
+                    // Depois da eleição o TSE costuma preencher "#NE" (não divulgado): isso não informa nada.
+                    boolean informativa = !(sit.isEmpty() || sit.equals("NE") || sit.equals("NULO"));
+                    situacoesVistas.merge(informativa ? sit : "(não informada)", 1, Integer::sum);
+                    if (informativa && !cfg.todasSituacoes && !(sit.startsWith("DEFERIDO") || sit.equals("APTO"))) {
+                        excluidas.merge(sit, 1, Integer::sum);
                         continue;
                     }
                     String sq = valor(l, idx, "sq").trim();
@@ -134,13 +136,34 @@ public class ConversorCandidatos {
             throw new Erro("Não foi possível descobrir o ano da eleição. Informe --ano.");
         }
         System.out.println("Linhas lidas: " + linhasLidas);
-        System.out.println("Situações das candidaturas a presidente e governador: " + situacoesVistas);
+        System.out.println("Situação da candidatura nas linhas de presidente e governador: " + situacoesVistas);
         if (!excluidas.isEmpty()) {
-            System.out.println("Fora do arquivo por não serem candidaturas deferidas: " + excluidas
+            System.out.println("Fora do arquivo por situação não deferida: " + excluidas
                     + " (use --todas-situacoes para incluí-las)");
         }
         if (finais.isEmpty()) {
             throw new Erro("Nenhuma candidatura de presidente ou governador foi encontrada. Confira o arquivo e a situação das candidaturas acima.");
+        }
+
+        boolean temResultado = finais.values().stream()
+                .anyMatch(r -> !situacao(r.get("situacaoTotal")).equals("SEM_RESULTADO"));
+        List<String> semResultado = new ArrayList<>();
+        if (temResultado && !cfg.todasSituacoes) {
+            java.util.Iterator<Map<String, String>> it = finais.values().iterator();
+            while (it.hasNext()) {
+                Map<String, String> r = it.next();
+                if (situacao(r.get("situacaoTotal")).equals("SEM_RESULTADO")) {
+                    boolean pres = norm(r.get("cargo")).equals("PRESIDENTE");
+                    semResultado.add((pres ? "PRESIDENTE" : "GOVERNADOR " + r.get("uf").toUpperCase(Locale.ROOT))
+                            + ": " + tituloCase(r.get("nome")));
+                    it.remove();
+                }
+            }
+            if (!semResultado.isEmpty()) {
+                System.out.println("Sem resultado apurado (candidatura indeferida, substituída, cancelada ou desistente), fora do arquivo: "
+                        + semResultado.size() + " (use --todas-situacoes para incluí-las)");
+                semResultado.stream().sorted().forEach(n -> System.out.println("  - " + n));
+            }
         }
 
         List<Map<String, Object>> lista = new ArrayList<>();
@@ -188,8 +211,8 @@ public class ConversorCandidatos {
         }
         System.out.println("Candidaturas geradas: " + lista.size() + " " + porCargo + " | situação final: " + porSituacao);
         System.out.println("Arquivo de saída: " + cfg.saida.toAbsolutePath());
-        if (porSituacao.containsKey("SEM_RESULTADO") && porSituacao.size() == 1) {
-            System.out.println("Aviso: nenhuma candidatura trouxe resultado final. O arquivo do TSE pode não ter sido atualizado depois da eleição.");
+        if (!temResultado) {
+            System.out.println("Aviso: nenhuma candidatura trouxe resultado final. O arquivo do TSE pode não ter sido atualizado depois da eleição, e todas ficaram como SEM_RESULTADO.");
         }
         if (cfg.fonteId == null) {
             System.out.println("Aviso: sem --fonte-id, o arquivo ainda precisa do campo \"fonteId\" antes de ser enviado à API.");
@@ -265,6 +288,17 @@ public class ConversorCandidatos {
         return sem.toUpperCase(Locale.ROOT).replaceAll("[^A-Z0-9 ]", " ").replaceAll("\\s+", " ").trim();
     }
 
+    /** Primeira letra em maiúscula, e também depois de '.', '-' e apóstrofo (ex.: "d'ávila" vira "D'Ávila"). */
+    private static String maiusculaNoInicio(String palavra) {
+        StringBuilder sb = new StringBuilder();
+        boolean maiuscula = true;
+        for (char c : palavra.toCharArray()) {
+            sb.append(maiuscula && Character.isLetter(c) ? Character.toUpperCase(c) : c);
+            maiuscula = c == '.' || c == '-' || c == '\'' || (maiuscula && !Character.isLetter(c));
+        }
+        return sb.toString();
+    }
+
     static String tituloCase(String texto) {
         String[] partes = texto.trim().toLowerCase(Locale.forLanguageTag("pt-BR")).split("\\s+");
         StringBuilder sb = new StringBuilder();
@@ -276,12 +310,22 @@ public class ConversorCandidatos {
             if (sb.length() > 0) {
                 sb.append(' ');
             }
+            String sigla = p.replaceAll("[^\\p{L}]", "");
+            boolean titulo = p.contains(".") || sigla.equals("jr") || sigla.equals("sr") || sigla.equals("sra")
+                    || sigla.equals("dr") || sigla.equals("dra");
+            boolean semVogal = !titulo && !sigla.isEmpty() && sigla.length() <= 4
+                    && !sigla.matches(".*[aeiouáéíóúâêôãõà].*");
+            boolean romano = sigla.matches("(?i)ii|iii|iv|vi|vii|viii|ix");
+            if (semVogal || romano) {
+                sb.append(p.toUpperCase(Locale.forLanguageTag("pt-BR")));
+                continue;
+            }
             boolean particula = p.equals("da") || p.equals("de") || p.equals("do") || p.equals("das")
                     || p.equals("dos") || p.equals("e");
             if (i > 0 && particula) {
                 sb.append(p);
             } else {
-                sb.append(Character.toUpperCase(p.charAt(0))).append(p.substring(1));
+                sb.append(maiusculaNoInicio(p));
             }
         }
         return sb.toString();
