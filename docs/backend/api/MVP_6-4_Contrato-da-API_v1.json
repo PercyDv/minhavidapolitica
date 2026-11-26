@@ -1,0 +1,2833 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "MinhaVidaPolitica API",
+    "version": "1.0.0-v1",
+    "description": "Contrato da API do back-end (cartão 6.4). Gerado a partir da definição em docs/backend; o Swagger UI do projeto (/swagger-ui.html) gera a versão em tempo de execução.\n\nAPI pública: aberta, somente leitura, sem cadastro de cidadão. API do painel (/api/admin/**): exige login (sessão por cookie)."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Desenvolvimento local"
+    }
+  ],
+  "tags": [
+    {
+      "name": "API pública (cidadão)"
+    },
+    {
+      "name": "Sessão do painel"
+    },
+    {
+      "name": "Painel: apoio"
+    },
+    {
+      "name": "ADS: usuários"
+    },
+    {
+      "name": "ADS: políticos"
+    },
+    {
+      "name": "ADS: propostas"
+    },
+    {
+      "name": "ADS: ações"
+    },
+    {
+      "name": "ADS: relatórios"
+    },
+    {
+      "name": "BES: fontes de dados"
+    },
+    {
+      "name": "BES: importação de dados"
+    }
+  ],
+  "paths": {
+    "/api/presidente": {
+      "get": {
+        "tags": [
+          "API pública (cidadão)"
+        ],
+        "summary": "Presidente em exercício",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultadoPolitico"
+                }
+              }
+            }
+          }
+        },
+        "description": "Atende: RF01, RF08, RF12."
+      }
+    },
+    "/api/ufs": {
+      "get": {
+        "tags": [
+          "API pública (cidadão)"
+        ],
+        "summary": "Lista das 27 UFs (seletor de estado)",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UfResumo"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Atende: RF02."
+      }
+    },
+    "/api/ufs/{sigla}": {
+      "get": {
+        "tags": [
+          "API pública (cidadão)"
+        ],
+        "summary": "Página estadual com o governador",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UfPublica"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "description": "Atende: RF03, RF08, RF12.",
+        "parameters": [
+          {
+            "name": "sigla",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "BA"
+          }
+        ]
+      }
+    },
+    "/api/ufs/{sigla}/representantes": {
+      "get": {
+        "tags": [
+          "API pública (cidadão)"
+        ],
+        "summary": "Demais representantes da UF (exceto governador)",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultadoListaPoliticos"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "description": "Atende: RF04, RF08, RF12.",
+        "parameters": [
+          {
+            "name": "sigla",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/politicos/{id}": {
+      "get": {
+        "tags": [
+          "API pública (cidadão)"
+        ],
+        "summary": "Perfil resumido do político",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PoliticoPublico"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "description": "Atende: RF07, RF08. Político sem fonte aprovada é tratado como inexistente (404).",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Identificador",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ]
+      }
+    },
+    "/api/politicos/{id}/propostas": {
+      "get": {
+        "tags": [
+          "API pública (cidadão)"
+        ],
+        "summary": "Propostas do mandato atual",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultadoListaItens"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "description": "Atende: RF05, RF08, RF12.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Identificador",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ]
+      }
+    },
+    "/api/politicos/{id}/acoes": {
+      "get": {
+        "tags": [
+          "API pública (cidadão)"
+        ],
+        "summary": "Ações concretizadas no mandato atual",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultadoListaItens"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "description": "Atende: RF06, RF08, RF12.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Identificador",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ]
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": [
+          "Sessão do painel"
+        ],
+        "summary": "Login do painel",
+        "description": "Formulário (application/x-www-form-urlencoded) com username e password. Responde 200 e define o cookie de sessão, ou 401.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "username",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Autenticado"
+          },
+          "401": {
+            "description": "Login ou senha incorretos, ou usuário desativado"
+          }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "tags": [
+          "Sessão do painel"
+        ],
+        "summary": "Encerra a sessão",
+        "responses": {
+          "200": {
+            "description": "Sessão encerrada"
+          }
+        }
+      }
+    },
+    "/api/auth/me": {
+      "get": {
+        "tags": [
+          "Sessão do painel"
+        ],
+        "summary": "Usuário logado",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Sessao"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "sessaoPainel": []
+          }
+        ]
+      }
+    },
+    "/api/admin/catalogos": {
+      "get": {
+        "tags": [
+          "Painel: apoio"
+        ],
+        "summary": "UFs, cargos e fontes para os formulários",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Catalogo"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "sessaoPainel": []
+          }
+        ]
+      }
+    },
+    "/api/admin/usuarios": {
+      "get": {
+        "tags": [
+          "ADS: usuários"
+        ],
+        "summary": "Lista usuários do painel (somente ADMIN)",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UsuarioResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Atende: Módulo ADS.",
+        "security": [
+          {
+            "sessaoPainel": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "ADS: usuários"
+        ],
+        "summary": "Cria usuário (somente ADMIN)",
+        "responses": {
+          "201": {
+            "description": "Criado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsuarioResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "description": "Atende: Módulo ADS.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UsuarioRequest"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "sessaoPainel": []
+          }
+        ]
+      }
+    },
+    "/api/admin/usuarios/{id}": {
+      "put": {
+        "tags": [
+          "ADS: usuários"
+        ],
+        "summary": "Atualiza usuário (somente ADMIN)",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsuarioResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "description": "Atende: Módulo ADS. O login não muda. Não permite desativar a si mesmo nem remover o último administrador ativo.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Identificador",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UsuarioRequest"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "sessaoPainel": []
+          }
+        ]
+      }
+    },
+    "/api/admin/politicos": {
+      "get": {
+        "tags": [
+          "ADS: políticos"
+        ],
+        "summary": "Lista políticos com filtros",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PoliticoAdminResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Atende: Módulo ADS.",
+        "parameters": [
+          {
+            "name": "nome",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ufId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "0 ou ausente = todos"
+          },
+          {
+            "name": "cargoId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "0 ou ausente = todos"
+          }
+        ],
+        "security": [
+          {
+            "sessaoPainel": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "ADS: políticos"
+        ],
+        "summary": "Cadastra político",
+        "responses": {
+          "201": {
+            "description": "Criado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PoliticoAdminResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "description": "Atende: Módulo ADS.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PoliticoRequest"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "sessaoPainel": []
+          }
+        ]
+      }
+    },
+    "/api/admin/politicos/{id}": {
+      "get": {
+        "tags": [
+          "ADS: políticos"
+        ],
+        "summary": "Busca político",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PoliticoAdminResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "description": "Atende: Módulo ADS.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Identificador",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "security": [
+          {
+            "sessaoPainel": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "ADS: políticos"
+        ],
+        "summary": "Atualiza político",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PoliticoAdminResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "description": "Atende: Módulo ADS.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Identificador",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PoliticoRequest"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "sessaoPainel": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "ADS: políticos"
+        ],
+        "summary": "Exclui político e suas propostas e ações",
+        "responses": {
+          "204": {
+            "description": "Excluído"
+          },
+          "404": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "description": "Atende: Módulo ADS.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Identificador",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "security": [
+          {
+            "sessaoPainel": []
+          }
+        ]
+      }
+    },
+    "/api/admin/politicos/{politicoId}/propostas": {
+      "get": {
+        "tags": [
+          "ADS: propostas"
+        ],
+        "summary": "Lista propostas do político",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ItemAdminResponse"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "description": "Atende: Módulo ADS.",
+        "parameters": [
+          {
+            "name": "politicoId",
+            "in": "path",
+            "required": true,
+            "description": "Id do político",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "security": [
+          {
+            "sessaoPainel": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "ADS: propostas"
+        ],
+        "summary": "Cadastra em propostas",
+        "responses": {
+          "201": {
+            "description": "Criado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ItemAdminResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "description": "Atende: Módulo ADS.",
+        "parameters": [
+          {
+            "name": "politicoId",
+            "in": "path",
+            "required": true,
+            "description": "Id do político",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ItemRequest"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "sessaoPainel": []
+          }
+        ]
+      }
+    },
+    "/api/admin/propostas/{id}": {
+      "put": {
+        "tags": [
+          "ADS: propostas"
+        ],
+        "summary": "Atualiza registro de propostas",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ItemAdminResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "description": "Atende: Módulo ADS.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Identificador",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ItemRequest"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "sessaoPainel": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "ADS: propostas"
+        ],
+        "summary": "Exclui registro de propostas",
+        "responses": {
+          "204": {
+            "description": "Excluído"
+          },
+          "404": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "description": "Atende: Módulo ADS.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Identificador",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "security": [
+          {
+            "sessaoPainel": []
+          }
+        ]
+      }
+    },
+    "/api/admin/politicos/{politicoId}/acoes": {
+      "get": {
+        "tags": [
+          "ADS: ações"
+        ],
+        "summary": "Lista ações do político",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ItemAdminResponse"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "description": "Atende: Módulo ADS.",
+        "parameters": [
+          {
+            "name": "politicoId",
+            "in": "path",
+            "required": true,
+            "description": "Id do político",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "security": [
+          {
+            "sessaoPainel": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "ADS: ações"
+        ],
+        "summary": "Cadastra em ações",
+        "responses": {
+          "201": {
+            "description": "Criado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ItemAdminResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "description": "Atende: Módulo ADS.",
+        "parameters": [
+          {
+            "name": "politicoId",
+            "in": "path",
+            "required": true,
+            "description": "Id do político",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ItemRequest"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "sessaoPainel": []
+          }
+        ]
+      }
+    },
+    "/api/admin/acoes/{id}": {
+      "put": {
+        "tags": [
+          "ADS: ações"
+        ],
+        "summary": "Atualiza registro de ações",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ItemAdminResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "description": "Atende: Módulo ADS.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Identificador",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ItemRequest"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "sessaoPainel": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "ADS: ações"
+        ],
+        "summary": "Exclui registro de ações",
+        "responses": {
+          "204": {
+            "description": "Excluído"
+          },
+          "404": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "description": "Atende: Módulo ADS.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Identificador",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "security": [
+          {
+            "sessaoPainel": []
+          }
+        ]
+      }
+    },
+    "/api/admin/relatorios/cobertura": {
+      "get": {
+        "tags": [
+          "ADS: relatórios"
+        ],
+        "summary": "Cobertura de dados visíveis por UF",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CoberturaUf"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Atende: Módulo ADS. COMPLETO = governador visível com proposta e ação; PARCIAL = algum dado visível; SEM_DADOS = nada visível.",
+        "security": [
+          {
+            "sessaoPainel": []
+          }
+        ]
+      }
+    },
+    "/api/admin/relatorios/fontes": {
+      "get": {
+        "tags": [
+          "ADS: relatórios"
+        ],
+        "summary": "Registros vinculados a cada fonte (retidos por falta de aprovação)",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FontePendencia"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Atende: Módulo ADS.",
+        "security": [
+          {
+            "sessaoPainel": []
+          }
+        ]
+      }
+    },
+    "/api/admin/relatorios/cobertura.csv": {
+      "get": {
+        "tags": [
+          "ADS: relatórios"
+        ],
+        "summary": "Cobertura por UF em CSV (separador ';', UTF-8 com BOM)",
+        "responses": {
+          "200": {
+            "description": "Arquivo CSV",
+            "content": {
+              "text/csv": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "description": "Atende: Módulo ADS.",
+        "security": [
+          {
+            "sessaoPainel": []
+          }
+        ]
+      }
+    },
+    "/api/admin/resumo": {
+      "get": {
+        "tags": [
+          "ADS: relatórios"
+        ],
+        "summary": "Números da tela inicial do painel",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResumoPainel"
+                }
+              }
+            }
+          }
+        },
+        "description": "Atende: Módulo ADS.",
+        "security": [
+          {
+            "sessaoPainel": []
+          }
+        ]
+      }
+    },
+    "/api/admin/fontes": {
+      "get": {
+        "tags": [
+          "BES: fontes de dados"
+        ],
+        "summary": "Lista fontes e status de aprovação",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FonteResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Atende: Módulo BES; RN05, RF13.",
+        "security": [
+          {
+            "sessaoPainel": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "BES: fontes de dados"
+        ],
+        "summary": "Cadastra fonte (nasce não aprovada)",
+        "responses": {
+          "201": {
+            "description": "Criada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FonteResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "description": "Atende: Módulo BES; RF13.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FonteRequest"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "sessaoPainel": []
+          }
+        ]
+      }
+    },
+    "/api/admin/fontes/{id}": {
+      "put": {
+        "tags": [
+          "BES: fontes de dados"
+        ],
+        "summary": "Atualiza dados cadastrais da fonte",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FonteResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "description": "Atende: Módulo BES.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Identificador",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FonteRequest"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "sessaoPainel": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "BES: fontes de dados"
+        ],
+        "summary": "Exclui fonte (somente ADMIN, sem registros vinculados)",
+        "responses": {
+          "204": {
+            "description": "Excluída"
+          },
+          "404": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "description": "Atende: Módulo BES.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Identificador",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "security": [
+          {
+            "sessaoPainel": []
+          }
+        ]
+      }
+    },
+    "/api/admin/fontes/{id}/aprovar": {
+      "post": {
+        "tags": [
+          "BES: fontes de dados"
+        ],
+        "summary": "Registra a aprovação do cliente (somente ADMIN)",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FonteResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "description": "Atende: RN05, RF13. Exige periodicidade definida (critério do RF13).",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Identificador",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AprovacaoRequest"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "sessaoPainel": []
+          }
+        ]
+      }
+    },
+    "/api/admin/fontes/{id}/revogar": {
+      "post": {
+        "tags": [
+          "BES: fontes de dados"
+        ],
+        "summary": "Revoga a aprovação (somente ADMIN): dados voltam a ficar retidos",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FonteResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "description": "Atende: RN05.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Identificador",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "security": [
+          {
+            "sessaoPainel": []
+          }
+        ]
+      }
+    },
+    "/api/admin/importacoes": {
+      "get": {
+        "tags": [
+          "BES: importação de dados"
+        ],
+        "summary": "Histórico das últimas 50 importações",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LogImportacao"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Atende: RF13.",
+        "security": [
+          {
+            "sessaoPainel": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "BES: importação de dados"
+        ],
+        "summary": "Importa dados de uma fonte",
+        "responses": {
+          "201": {
+            "description": "Importação registrada (SUCESSO, PARCIAL ou ERRO)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LogImportacao"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        },
+        "description": "Atende: RF13. Cria ou atualiza (chave: nome+cargo+UF; título para propostas e ações). Registros inválidos são rejeitados e contados sem derrubar a carga. Dados de fonte não aprovada ficam retidos (RN05).",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportacaoRequest"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "sessaoPainel": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ProblemDetail": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "integer"
+          },
+          "detail": {
+            "type": "string",
+            "description": "Texto pronto para mostrar ao usuário"
+          },
+          "errors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Erros por campo (somente em HTTP 400)"
+          }
+        },
+        "description": "Erro padronizado (RFC 7807)"
+      },
+      "FonteInfo": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string"
+          },
+          "link": {
+            "type": "string",
+            "description": "Link para o original (RF08)"
+          },
+          "atualizadoEm": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "description": "Bloco de transparência do RF08"
+      },
+      "PoliticoPublico": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "nome": {
+            "type": "string"
+          },
+          "cargo": {
+            "type": "string"
+          },
+          "partido": {
+            "type": "string",
+            "nullable": true
+          },
+          "uf": {
+            "type": "string",
+            "nullable": true
+          },
+          "fotoUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "resumo": {
+            "type": "string",
+            "nullable": true
+          },
+          "inicioMandato": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "fimMandato": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "fonte": {
+            "$ref": "#/components/schemas/FonteInfo"
+          }
+        }
+      },
+      "ItemPublico": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "titulo": {
+            "type": "string"
+          },
+          "descricao": {
+            "type": "string",
+            "nullable": true
+          },
+          "data": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "fonte": {
+            "$ref": "#/components/schemas/FonteInfo"
+          }
+        }
+      },
+      "ResultadoPolitico": {
+        "type": "object",
+        "properties": {
+          "disponivel": {
+            "type": "boolean",
+            "description": "false = sem dado em fonte validada (RF12)"
+          },
+          "mensagem": {
+            "type": "string",
+            "nullable": true
+          },
+          "dados": {
+            "$ref": "#/components/schemas/PoliticoPublico",
+            "nullable": true
+          }
+        },
+        "required": [
+          "disponivel"
+        ],
+        "description": "Envelope das consultas públicas"
+      },
+      "ResultadoListaPoliticos": {
+        "type": "object",
+        "properties": {
+          "disponivel": {
+            "type": "boolean",
+            "description": "false = sem dado em fonte validada (RF12)"
+          },
+          "mensagem": {
+            "type": "string",
+            "nullable": true
+          },
+          "dados": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PoliticoPublico"
+            },
+            "nullable": true
+          }
+        },
+        "required": [
+          "disponivel"
+        ],
+        "description": "Envelope das consultas públicas"
+      },
+      "ResultadoListaItens": {
+        "type": "object",
+        "properties": {
+          "disponivel": {
+            "type": "boolean",
+            "description": "false = sem dado em fonte validada (RF12)"
+          },
+          "mensagem": {
+            "type": "string",
+            "nullable": true
+          },
+          "dados": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ItemPublico"
+            },
+            "nullable": true
+          }
+        },
+        "required": [
+          "disponivel"
+        ],
+        "description": "Envelope das consultas públicas"
+      },
+      "UfResumo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sigla": {
+            "type": "string"
+          },
+          "nome": {
+            "type": "string"
+          },
+          "regiao": {
+            "type": "string"
+          }
+        }
+      },
+      "UfPublica": {
+        "type": "object",
+        "properties": {
+          "sigla": {
+            "type": "string"
+          },
+          "nome": {
+            "type": "string"
+          },
+          "regiao": {
+            "type": "string"
+          },
+          "governador": {
+            "$ref": "#/components/schemas/ResultadoPolitico"
+          }
+        }
+      },
+      "Sessao": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "nome": {
+            "type": "string"
+          },
+          "perfil": {
+            "type": "string",
+            "enum": [
+              "ADMIN",
+              "EDITOR"
+            ]
+          }
+        }
+      },
+      "UsuarioRequest": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "username": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 60
+          },
+          "senha": {
+            "type": "string",
+            "maxLength": 72,
+            "description": "Obrigatória na criação (mín. 8). Na edição, vazio mantém a atual."
+          },
+          "perfil": {
+            "type": "string",
+            "enum": [
+              "ADMIN",
+              "EDITOR"
+            ]
+          },
+          "ativo": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "nome",
+          "username",
+          "perfil"
+        ]
+      },
+      "UsuarioResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "nome": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "perfil": {
+            "type": "string"
+          },
+          "ativo": {
+            "type": "boolean"
+          },
+          "criadoEm": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ultimoAcesso": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "PoliticoRequest": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "maxLength": 150
+          },
+          "partido": {
+            "type": "string",
+            "maxLength": 30,
+            "nullable": true
+          },
+          "fotoUrl": {
+            "type": "string",
+            "maxLength": 500,
+            "nullable": true
+          },
+          "resumo": {
+            "type": "string",
+            "maxLength": 1000,
+            "nullable": true
+          },
+          "cargoId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "ufId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Obrigatório para cargo ESTADUAL; proibido para NACIONAL",
+            "nullable": true
+          },
+          "inicioMandato": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "fimMandato": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "emExercicio": {
+            "type": "boolean"
+          },
+          "fonteId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "linkFonte": {
+            "type": "string",
+            "maxLength": 500,
+            "nullable": true
+          }
+        },
+        "required": [
+          "nome",
+          "cargoId",
+          "fonteId"
+        ]
+      },
+      "PoliticoAdminResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "nome": {
+            "type": "string"
+          },
+          "partido": {
+            "type": "string",
+            "nullable": true
+          },
+          "fotoUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "resumo": {
+            "type": "string",
+            "nullable": true
+          },
+          "cargoId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "cargoNome": {
+            "type": "string"
+          },
+          "ufId": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "ufSigla": {
+            "type": "string",
+            "nullable": true
+          },
+          "inicioMandato": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "fimMandato": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "emExercicio": {
+            "type": "boolean"
+          },
+          "fonteId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "fonteNome": {
+            "type": "string"
+          },
+          "fonteAprovada": {
+            "type": "boolean"
+          },
+          "linkFonte": {
+            "type": "string",
+            "nullable": true
+          },
+          "atualizadoEm": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ItemRequest": {
+        "type": "object",
+        "properties": {
+          "titulo": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "descricao": {
+            "type": "string",
+            "maxLength": 2000,
+            "nullable": true
+          },
+          "data": {
+            "type": "string",
+            "format": "date",
+            "nullable": true,
+            "description": "Data de referência (proposta) ou data da ação (obrigatória para ações, RF06)"
+          },
+          "fonteId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "linkFonte": {
+            "type": "string",
+            "maxLength": 500,
+            "nullable": true
+          }
+        },
+        "required": [
+          "titulo",
+          "fonteId"
+        ]
+      },
+      "ItemAdminResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "politicoId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "titulo": {
+            "type": "string"
+          },
+          "descricao": {
+            "type": "string",
+            "nullable": true
+          },
+          "data": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "fonteId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "fonteNome": {
+            "type": "string"
+          },
+          "fonteAprovada": {
+            "type": "boolean"
+          },
+          "linkFonte": {
+            "type": "string",
+            "nullable": true
+          },
+          "atualizadoEm": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "FonteRequest": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "maxLength": 150
+          },
+          "url": {
+            "type": "string",
+            "maxLength": 500,
+            "description": "Deve começar com http:// ou https://"
+          },
+          "tipo": {
+            "type": "string",
+            "enum": [
+              "API",
+              "SITE_OFICIAL",
+              "ARQUIVO"
+            ]
+          },
+          "periodicidade": {
+            "type": "string",
+            "maxLength": 60,
+            "nullable": true
+          },
+          "observacao": {
+            "type": "string",
+            "maxLength": 500,
+            "nullable": true
+          },
+          "ativa": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "nome",
+          "url",
+          "tipo"
+        ]
+      },
+      "FonteResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "nome": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "tipo": {
+            "type": "string"
+          },
+          "periodicidade": {
+            "type": "string",
+            "nullable": true
+          },
+          "aprovada": {
+            "type": "boolean"
+          },
+          "dataAprovacao": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "aprovadaPor": {
+            "type": "string",
+            "nullable": true
+          },
+          "observacao": {
+            "type": "string",
+            "nullable": true
+          },
+          "ativa": {
+            "type": "boolean"
+          },
+          "criadoEm": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AprovacaoRequest": {
+        "type": "object",
+        "properties": {
+          "aprovadaPor": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "dataAprovacao": {
+            "type": "string",
+            "format": "date",
+            "nullable": true,
+            "description": "Padrão: hoje"
+          },
+          "observacao": {
+            "type": "string",
+            "maxLength": 500,
+            "nullable": true
+          }
+        },
+        "required": [
+          "aprovadaPor"
+        ]
+      },
+      "ImportacaoItem": {
+        "type": "object",
+        "properties": {
+          "titulo": {
+            "type": "string"
+          },
+          "descricao": {
+            "type": "string",
+            "nullable": true
+          },
+          "data": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "linkFonte": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ImportacaoPolitico": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string"
+          },
+          "partido": {
+            "type": "string",
+            "nullable": true
+          },
+          "fotoUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "resumo": {
+            "type": "string",
+            "nullable": true
+          },
+          "cargo": {
+            "type": "string",
+            "description": "Código do cargo: PRESIDENTE, GOVERNADOR, SENADOR, DEPUTADO_FEDERAL"
+          },
+          "uf": {
+            "type": "string",
+            "nullable": true,
+            "description": "Sigla da UF; obrigatória para cargo estadual"
+          },
+          "inicioMandato": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "fimMandato": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "linkFonte": {
+            "type": "string",
+            "nullable": true
+          },
+          "propostas": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ImportacaoItem"
+            }
+          },
+          "acoes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ImportacaoItem"
+            }
+          }
+        },
+        "required": [
+          "nome",
+          "cargo"
+        ]
+      },
+      "ImportacaoRequest": {
+        "type": "object",
+        "properties": {
+          "fonteId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "politicos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ImportacaoPolitico"
+            },
+            "minItems": 1,
+            "maxItems": 500
+          }
+        },
+        "required": [
+          "fonteId",
+          "politicos"
+        ]
+      },
+      "LogImportacao": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "fonteId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "fonteNome": {
+            "type": "string"
+          },
+          "iniciadoEm": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "finalizadoEm": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "SUCESSO",
+              "PARCIAL",
+              "ERRO"
+            ]
+          },
+          "criados": {
+            "type": "integer"
+          },
+          "atualizados": {
+            "type": "integer"
+          },
+          "rejeitados": {
+            "type": "integer"
+          },
+          "mensagem": {
+            "type": "string",
+            "nullable": true
+          },
+          "executadoPor": {
+            "type": "string"
+          }
+        }
+      },
+      "CoberturaUf": {
+        "type": "object",
+        "properties": {
+          "sigla": {
+            "type": "string"
+          },
+          "nome": {
+            "type": "string"
+          },
+          "governador": {
+            "type": "string",
+            "nullable": true
+          },
+          "representantes": {
+            "type": "integer"
+          },
+          "comPropostas": {
+            "type": "integer"
+          },
+          "comAcoes": {
+            "type": "integer"
+          },
+          "situacao": {
+            "type": "string",
+            "enum": [
+              "COMPLETO",
+              "PARCIAL",
+              "SEM_DADOS"
+            ]
+          }
+        }
+      },
+      "FontePendencia": {
+        "type": "object",
+        "properties": {
+          "fonteId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "fonteNome": {
+            "type": "string"
+          },
+          "aprovada": {
+            "type": "boolean"
+          },
+          "ativa": {
+            "type": "boolean"
+          },
+          "politicos": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "propostas": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "acoes": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "ResumoPainel": {
+        "type": "object",
+        "properties": {
+          "politicos": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "propostas": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "acoes": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "fontesAprovadas": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "fontesPendentes": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "ufsComGovernador": {
+            "type": "integer"
+          },
+          "totalUfs": {
+            "type": "integer"
+          },
+          "ultimasImportacoes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LogImportacao"
+            }
+          }
+        }
+      },
+      "Catalogo": {
+        "type": "object",
+        "properties": {
+          "ufs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UfResumo"
+            }
+          },
+          "cargos": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "codigo": {
+                  "type": "string"
+                },
+                "nome": {
+                  "type": "string"
+                },
+                "esfera": {
+                  "type": "string",
+                  "enum": [
+                    "NACIONAL",
+                    "ESTADUAL"
+                  ]
+                }
+              }
+            }
+          },
+          "fontes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "nome": {
+                  "type": "string"
+                },
+                "aprovada": {
+                  "type": "boolean"
+                },
+                "ativa": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "sessaoPainel": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "JSESSIONID",
+        "description": "Cookie de sessão criado por POST /api/auth/login"
+      }
+    }
+  }
+}

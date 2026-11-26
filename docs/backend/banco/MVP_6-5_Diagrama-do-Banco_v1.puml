@@ -1,0 +1,121 @@
+@startuml MVP_6-5_Diagrama-do-Banco_v1
+title MinhaVidaPolitica.com - Diagrama do banco de dados (MySQL 8.4)
+skinparam dpi 170
+skinparam shadowing false
+skinparam defaultFontName "DejaVu Sans"
+skinparam ArrowColor #14213d
+skinparam entity {
+  BackgroundColor #FFFFFF
+  BorderColor #14213d
+}
+hide circle
+
+entity "unidade_federativa" as unidade_federativa {
+  *id : BIGINT <<PK>>
+  --
+  *sigla : VARCHAR(2) <<UQ>>
+  *nome : VARCHAR(60)
+  *regiao : VARCHAR(20)
+}
+
+entity "cargo" as cargo {
+  *id : BIGINT <<PK>>
+  --
+  *codigo : VARCHAR(30) <<UQ>>
+  *nome : VARCHAR(60)
+  *esfera : VARCHAR(10)
+  *ordem_exibicao : INT
+  *ativo : BOOLEAN
+}
+
+entity "fonte_dados" as fonte_dados {
+  *id : BIGINT <<PK>>
+  --
+  *nome : VARCHAR(150)
+  *url : VARCHAR(500)
+  *tipo : VARCHAR(20)
+   periodicidade : VARCHAR(60)
+  *aprovada : BOOLEAN
+   data_aprovacao : DATE
+   aprovada_por : VARCHAR(120)
+   observacao : VARCHAR(500)
+  *ativa : BOOLEAN
+  *criado_em : DATETIME(6)
+}
+
+entity "politico" as politico {
+  *id : BIGINT <<PK>>
+  --
+  *nome : VARCHAR(150)
+   partido : VARCHAR(30)
+   foto_url : VARCHAR(500)
+   resumo : VARCHAR(1000)
+  *cargo_id : BIGINT <<FK>>
+   uf_id : BIGINT <<FK>>
+   inicio_mandato : DATE
+   fim_mandato : DATE
+  *em_exercicio : BOOLEAN
+  *fonte_id : BIGINT <<FK>>
+   link_fonte : VARCHAR(500)
+  *atualizado_em : DATETIME(6)
+}
+
+entity "proposta" as proposta {
+  *id : BIGINT <<PK>>
+  --
+  *politico_id : BIGINT <<FK>>
+  *titulo : VARCHAR(200)
+   descricao : VARCHAR(2000)
+   data_referencia : DATE
+  *fonte_id : BIGINT <<FK>>
+   link_fonte : VARCHAR(500)
+  *atualizado_em : DATETIME(6)
+}
+
+entity "acao_concretizada" as acao_concretizada {
+  *id : BIGINT <<PK>>
+  --
+  *politico_id : BIGINT <<FK>>
+  *titulo : VARCHAR(200)
+   descricao : VARCHAR(2000)
+   data_acao : DATE
+  *fonte_id : BIGINT <<FK>>
+   link_fonte : VARCHAR(500)
+  *atualizado_em : DATETIME(6)
+}
+
+entity "log_atualizacao" as log_atualizacao {
+  *id : BIGINT <<PK>>
+  --
+  *fonte_id : BIGINT <<FK>>
+  *iniciado_em : DATETIME(6)
+   finalizado_em : DATETIME(6)
+  *status : VARCHAR(20)
+  *registros_criados : INT
+  *registros_atualizados : INT
+  *registros_rejeitados : INT
+   mensagem : VARCHAR(1000)
+  *executado_por : VARCHAR(60)
+}
+
+entity "usuario_painel" as usuario_painel {
+  *id : BIGINT <<PK>>
+  --
+  *nome : VARCHAR(120)
+  *username : VARCHAR(60) <<UQ>>
+  *senha_hash : VARCHAR(100)
+  *perfil : VARCHAR(20)
+  *ativo : BOOLEAN
+  *criado_em : DATETIME(6)
+   ultimo_acesso : DATETIME(6)
+}
+
+politico }o--|| cargo
+politico }o--o| unidade_federativa
+politico }o--|| fonte_dados
+proposta }o--|| politico
+proposta }o--|| fonte_dados
+acao_concretizada }o--|| politico
+acao_concretizada }o--|| fonte_dados
+log_atualizacao }o--|| fonte_dados
+@enduml

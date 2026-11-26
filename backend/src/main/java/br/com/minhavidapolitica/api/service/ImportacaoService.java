@@ -23,6 +23,7 @@ import br.com.minhavidapolitica.api.repository.PoliticoRepository;
 import br.com.minhavidapolitica.api.repository.PropostaRepository;
 import br.com.minhavidapolitica.api.repository.UnidadeFederativaRepository;
 import java.time.Clock;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -124,17 +125,24 @@ public class ImportacaoService {
                 : politicoRepository.findFirstByNomeIgnoreCaseAndCargoIdAndUfId(nome, cargo.getId(), uf.getId());
         boolean novo = existente.isEmpty();
         Politico politico = existente.orElseGet(Politico::new);
-        politico.setNome(nome);
-        politico.setPartido(partido);
-        politico.setFotoUrl(fotoUrl);
-        politico.setResumo(resumo);
-        politico.setCargo(cargo);
-        politico.setUf(uf);
-        politico.setInicioMandato(item.inicioMandato());
-        politico.setFimMandato(item.fimMandato());
-        politico.setEmExercicio(true);
-        politico.setFonte(fonte);
-        politico.setLinkFonte(linkFonte);
+        if (novo || !ehReeleicao(politico, item)) {
+            politico.setNome(nome);
+            politico.setPartido(partido);
+            politico.setFotoUrl(fotoUrl);
+            politico.setResumo(resumo);
+            politico.setCargo(cargo);
+            politico.setUf(uf);
+            politico.setInicioMandato(item.inicioMandato());
+            politico.setFimMandato(item.fimMandato());
+            politico.setEmExercicio(true);
+            politico.setFonte(fonte);
+            politico.setLinkFonte(linkFonte);
+        } else {
+            // Reeleição: o mandato atual segue valendo até a posse. Só estende o fim para o novo
+            // mandato; fonte, partido e demais dados do registro vigente permanecem como estão,
+            // para que ele não suma da consulta pública por causa de uma fonte ainda não aprovada.
+            politico.setFimMandato(item.fimMandato());
+        }
         politico.setAtualizadoEm(agora);
         politico = politicoRepository.save(politico);
         c.contar(novo);
@@ -195,6 +203,19 @@ public class ImportacaoService {
         acao.setAtualizadoEm(agora);
         acaoRepository.save(acao);
         c.contar(existente.isEmpty());
+    }
+
+    /**
+     * Reeleição: o registro existente está com o mandato vigente hoje e o dado importado traz um mandato
+     * que só começa no futuro (ex.: eleito em 2026, posse em 2027).
+     */
+    private boolean ehReeleicao(Politico existente, ImportacaoPolitico item) {
+        LocalDate hoje = LocalDate.now(clock);
+        boolean vigente = existente.isEmExercicio()
+                && (existente.getInicioMandato() == null || !existente.getInicioMandato().isAfter(hoje))
+                && (existente.getFimMandato() == null || !existente.getFimMandato().isBefore(hoje));
+        boolean novoMandatoFuturo = item.inicioMandato() != null && item.inicioMandato().isAfter(hoje);
+        return vigente && novoMandatoFuturo;
     }
 
     private UnidadeFederativa resolverUf(Cargo cargo, String sigla) {

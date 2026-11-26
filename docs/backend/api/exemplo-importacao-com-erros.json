@@ -1,0 +1,75 @@
+{
+  "politicos": [
+    {
+      "nome": "Presidente Exemplo Almeida",
+      "partido": "PEX",
+      "cargo": "PRESIDENTE",
+      "resumo": "DADOS FICTÍCIOS PARA DEMONSTRAÇÃO. Chefe do Executivo nacional no mandato atual.",
+      "inicioMandato": "2023-01-01",
+      "fimMandato": "2030-12-31",
+      "linkFonte": "https://exemplo.gov.br/demonstracao/presidente",
+      "propostas": [
+        {
+          "titulo": "Proposta fictícia de programa nacional de habitação",
+          "descricao": "DADOS FICTÍCIOS PARA DEMONSTRAÇÃO. Texto de exemplo sobre uma proposta registrada na fonte.",
+          "data": "2022-08-20",
+          "linkFonte": "https://exemplo.gov.br/demonstracao/p1"
+        }
+      ],
+      "acoes": [
+        {
+          "titulo": "Ação fictícia: sanção de lei de exemplo",
+          "descricao": "DADOS FICTÍCIOS PARA DEMONSTRAÇÃO. Texto de exemplo sobre uma ação já realizada.",
+          "data": "2024-05-14",
+          "linkFonte": "https://exemplo.gov.br/demonstracao/a1"
+        }
+      ]
+    },
+    {
+      "nome": "Governadora Exemplo da Silva",
+      "partido": "PEX",
+      "cargo": "GOVERNADOR",
+      "uf": "BA",
+      "resumo": "DADOS FICTÍCIOS PARA DEMONSTRAÇÃO. Chefe do Executivo estadual no mandato atual.",
+      "inicioMandato": "2023-01-01",
+      "fimMandato": "2030-12-31",
+      "linkFonte": "https://exemplo.gov.br/demonstracao/ba/governo",
+      "propostas": [
+        {
+          "titulo": "Proposta fictícia de ampliação de unidades de saúde",
+          "descricao": "DADOS FICTÍCIOS PARA DEMONSTRAÇÃO. Texto de exemplo.",
+          "data": "2022-09-01",
+          "linkFonte": "https://exemplo.gov.br/demonstracao/p2"
+        },
+        {
+          "titulo": "Proposta fictícia de reforma de escolas estaduais",
+          "descricao": "DADOS FICTÍCIOS PARA DEMONSTRAÇÃO. Texto de exemplo.",
+          "data": "2022-09-03",
+          "linkFonte": "https://exemplo.gov.br/demonstracao/p3"
+        }
+      ],
+      "acoes": [
+        {
+          "titulo": "Ação fictícia: inauguração de unidade de exemplo",
+          "descricao": "DADOS FICTÍCIOS PARA DEMONSTRAÇÃO. Texto de exemplo.",
+          "data": "2024-03-10",
+          "linkFonte": "https://exemplo.gov.br/demonstracao/a2"
+        },
+        {
+          "titulo": "Ação sem data (será recusada)",
+          "descricao": "RF06 exige data."
+        }
+      ]
+    },
+    {
+      "nome": "Registro com cargo inexistente",
+      "cargo": "PREFEITO",
+      "uf": "BA"
+    },
+    {
+      "nome": "Presidente com UF indevida",
+      "cargo": "PRESIDENTE",
+      "uf": "BA"
+    }
+  ]
+}

@@ -73,8 +73,11 @@ function desenhar() {
   }
   const hoje = hojeISO();
   $('#corpo').innerHTML = lista.map((p) => {
-    const visivel = p.emExercicio && p.fonteAprovada && (!p.fimMandato || p.fimMandato >= hoje);
-    const motivo = !p.emExercicio ? 'Fora de exercício' : (!p.fonteAprovada ? 'Retido: fonte sem aprovação' : 'Mandato encerrado');
+    const iniciou = !p.inicioMandato || p.inicioMandato <= hoje;
+    const visivel = p.emExercicio && p.fonteAprovada && iniciou && (!p.fimMandato || p.fimMandato >= hoje);
+    const motivo = !p.emExercicio ? 'Fora de exercício'
+      : (!p.fonteAprovada ? 'Retido: fonte sem aprovação'
+        : (!iniciou ? 'Mandato ainda não começou' : 'Mandato encerrado'));
     return `
       <tr>
         <td><strong>${esc(p.nome)}</strong></td>

@@ -1,0 +1,154 @@
+@startuml MVP_6-2_Diagrama-de-Classes_v1
+title MinhaVidaPolitica.com - Diagrama de Classes do domínio (back-end)
+skinparam dpi 170
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam roundCorner 6
+skinparam defaultFontName "DejaVu Sans"
+skinparam ArrowColor #14213d
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #14213d
+  HeaderBackgroundColor #E8EEF6
+}
+skinparam enum {
+  BackgroundColor #FBEFC9
+  BorderColor #8a6d00
+}
+skinparam note {
+  BackgroundColor #FFF8DC
+  BorderColor #8a6d00
+}
+hide empty members
+
+class UnidadeFederativa {
+  - id : Long
+  - sigla : String
+  - nome : String
+  - regiao : String
+}
+
+class Cargo {
+  - id : Long
+  - codigo : String
+  - nome : String
+  - esfera : Esfera
+  - ordemExibicao : int
+  - ativo : boolean
+}
+
+class FonteDados {
+  - id : Long
+  - nome : String
+  - url : String
+  - tipo : TipoFonte
+  - periodicidade : String
+  - aprovada : boolean
+  - dataAprovacao : LocalDate
+  - aprovadaPor : String
+  - observacao : String
+  - ativa : boolean
+  - criadoEm : LocalDateTime
+  + liberaExibicao() : boolean
+}
+
+class Politico {
+  - id : Long
+  - nome : String
+  - partido : String
+  - fotoUrl : String
+  - resumo : String
+  - inicioMandato : LocalDate
+  - fimMandato : LocalDate
+  - emExercicio : boolean
+  - linkFonte : String
+  - atualizadoEm : LocalDateTime
+}
+
+class Proposta {
+  - id : Long
+  - titulo : String
+  - descricao : String
+  - dataReferencia : LocalDate
+  - linkFonte : String
+  - atualizadoEm : LocalDateTime
+}
+
+class AcaoConcretizada {
+  - id : Long
+  - titulo : String
+  - descricao : String
+  - dataAcao : LocalDate
+  - linkFonte : String
+  - atualizadoEm : LocalDateTime
+}
+
+class LogAtualizacao {
+  - id : Long
+  - iniciadoEm : LocalDateTime
+  - finalizadoEm : LocalDateTime
+  - status : StatusImportacao
+  - registrosCriados : int
+  - registrosAtualizados : int
+  - registrosRejeitados : int
+  - mensagem : String
+  - executadoPor : String
+}
+
+class UsuarioPainel {
+  - id : Long
+  - nome : String
+  - username : String
+  - senhaHash : String
+  - perfil : PerfilUsuario
+  - ativo : boolean
+  - criadoEm : LocalDateTime
+  - ultimoAcesso : LocalDateTime
+}
+
+enum Esfera {
+  NACIONAL
+  ESTADUAL
+}
+enum TipoFonte {
+  API
+  SITE_OFICIAL
+  ARQUIVO
+}
+enum StatusImportacao {
+  SUCESSO
+  PARCIAL
+  ERRO
+}
+enum PerfilUsuario {
+  ADMIN
+  EDITOR
+}
+
+Politico "0..*" --> "1" Cargo : exerce
+Politico "0..*" --> "0..1" UnidadeFederativa : representa
+Politico "0..*" --> "1" FonteDados : sustentado por
+Politico "1" *-- "0..*" Proposta : propõe
+Politico "1" *-- "0..*" AcaoConcretizada : realiza
+Proposta "0..*" --> "1" FonteDados : sustentada por
+AcaoConcretizada "0..*" --> "1" FonteDados : sustentada por
+LogAtualizacao "0..*" --> "1" FonteDados : importou de
+
+Cargo ..> Esfera
+FonteDados ..> TipoFonte
+LogAtualizacao ..> StatusImportacao
+UsuarioPainel ..> PerfilUsuario
+
+note right of FonteDados
+  RN05: só dados de fontes
+  aprovadas pelo cliente e ativas
+  aparecem ao cidadão.
+  liberaExibicao() = aprovada E ativa.
+end note
+
+note bottom of Politico
+  RN01: só mandato atual (emExercicio e fimMandato futuro).
+  Cargo NACIONAL não tem UF; cargo ESTADUAL exige UF (RN02).
+  Sem campos de nota ou ranking (RN04, RF09).
+end note
+@enduml
