@@ -1,6 +1,6 @@
 # Cartão 6.5: Estruturação do Banco de Dados (descrição técnica)
 
-**Entregável:** diagrama do banco (`MVP_6-5_Diagrama-do-Banco_v1.png`) e esta descrição técnica, para o documento no Overleaf (atividade 6.10).
+**Entregável:** diagrama do banco (`MVP_6-5_Diagrama-do-Banco_v2.png`) e esta descrição técnica, para o documento no Overleaf (atividade 6.10).
 
 ## Visão geral
 
@@ -10,9 +10,9 @@
 | Codificação | `utf8mb4` com `utf8mb4_0900_ai_ci`, para acentos corretos nos nomes |
 | Versionamento do schema | Flyway. Os scripts ficam em `backend/src/main/resources/db/migration` |
 | Acesso pela aplicação | Spring Data JPA (Hibernate). O Hibernate não cria nem altera tabelas: o schema nasce só das migrations |
-| Tabelas | 8 |
+| Tabelas | 9 |
 
-**Migrations:** `V1__baseline.sql` (valida a conexão), `V2__estrutura_base.sql` (as 8 tabelas, chaves e índices) e `V3__dados_de_referencia.sql` (27 UFs e 4 cargos). Uma migration já aplicada nunca é editada: mudanças entram em `V4`, `V5` e assim por diante.
+**Migrations:** `V1__baseline.sql` (valida a conexão), `V2__estrutura_base.sql` (as 8 tabelas, chaves e índices) e `V3__dados_de_referencia.sql` (27 UFs e 4 cargos) e `V4__candidatura.sql` (tabela de candidaturas). Uma migration já aplicada nunca é editada: mudanças entram em `V5`, `V6` e assim por diante.
 
 ## Dicionário de dados
 
@@ -125,6 +125,28 @@ Histórico das importações de dados executadas no módulo BES (RF13).
 | `mensagem` | VARCHAR(1000) | Não |  |  | Resumo e motivos das rejeições. |
 | `executado_por` | VARCHAR(60) | Sim |  |  | Usuário do painel que executou. |
 
+### Tabela `candidatura`
+
+Candidaturas de uma eleição (somente presidente e governador). Extensão pedida pela equipe, fora do escopo validado (RN01): depende de decisão do cliente.
+
+| Campo | Tipo | Obrigatório | Chave | Padrão | Descrição |
+|---|---|---|---|---|---|
+| `id` | BIGINT | Sim | PK |  | Identificador (autoincremento). |
+| `ano_eleicao` | INT | Sim |  |  | Ano da eleição (ex.: 2026). |
+| `sq_candidato` | VARCHAR(30) | Sim |  |  | Sequencial do candidato no TSE. Com o ano, identifica a candidatura (único), e reimportar atualiza. |
+| `numero` | VARCHAR(10) | Sim |  |  | Número do candidato na urna. |
+| `nome` | VARCHAR(150) | Sim |  |  | Nome completo do candidato. |
+| `nome_urna` | VARCHAR(150) | Não |  |  | Nome na urna. |
+| `partido` | VARCHAR(30) | Não |  |  | Sigla do partido. |
+| `cargo_id` | BIGINT | Sim | FK → cargo |  | Cargo disputado (PRESIDENTE ou GOVERNADOR). |
+| `uf_id` | BIGINT | Não | FK → unidade_federativa |  | UF da disputa. Nulo para presidente. |
+| `situacao` | VARCHAR(20) | Sim |  |  | ELEITO, NAO_ELEITO, SEGUNDO_TURNO ou SEM_RESULTADO. Sem votos e sem ranking (RN04). |
+| `fonte_id` | BIGINT | Sim | FK → fonte_dados |  | Fonte que sustenta o registro (RF08). |
+| `link_fonte` | VARCHAR(500) | Não |  |  | Link do registro na fonte. |
+| `atualizado_em` | DATETIME(6) | Sim |  |  | Data/hora da última atualização (RF08). |
+
+Restrição adicional: `uq_candidatura_ano_sq` torna único o par (`ano_eleicao`, `sq_candidato`).
+
 ### Tabela `usuario_painel`
 
 Usuários da equipe mantenedora com acesso ao painel (módulo ADS).
@@ -152,6 +174,9 @@ Usuários da equipe mantenedora com acesso ao painel (módulo ADS).
 | `acao_concretizada.politico_id` | `politico.id` | N:1 | Obrigatório | ON DELETE CASCADE |
 | `acao_concretizada.fonte_id` | `fonte_dados.id` | N:1 | Obrigatório | RESTRICT (padrão) |
 | `log_atualizacao.fonte_id` | `fonte_dados.id` | N:1 | Obrigatório | RESTRICT (padrão) |
+| `candidatura.cargo_id` | `cargo.id` | N:1 | Obrigatório | RESTRICT (padrão) |
+| `candidatura.uf_id` | `unidade_federativa.id` | N:1 | Opcional | RESTRICT (padrão) |
+| `candidatura.fonte_id` | `fonte_dados.id` | N:1 | Obrigatório | RESTRICT (padrão) |
 
 ## Índices
 
@@ -164,8 +189,9 @@ Além das chaves primárias, únicas e estrangeiras:
 | `idx_proposta_politico` | `proposta` | politico_id |
 | `idx_acao_politico` | `acao_concretizada` | politico_id |
 | `idx_log_iniciado` | `log_atualizacao` | iniciado_em |
+| `idx_candidatura_ano_cargo_uf` | `candidatura` | ano_eleicao, cargo_id, uf_id |
 
-Os índices atendem às consultas mais frequentes: políticos por estado e cargo (páginas estaduais), busca por nome (painel) e histórico de importações por data.
+Os índices atendem às consultas mais frequentes: políticos por estado e cargo (páginas estaduais), busca por nome (painel), histórico de importações por data e candidaturas por ano, cargo e UF.
 
 ## Decisões técnicas
 
@@ -173,7 +199,8 @@ Os índices atendem às consultas mais frequentes: políticos por estado e cargo
 2. **Datas com precisão de microssegundos.** Campos de data e hora usam `DATETIME(6)`, e campos só de data usam `DATE`.
 3. **Cascata somente onde o pai é dono.** `proposta` e `acao_concretizada` são excluídas junto com o `politico`. As demais chaves estrangeiras seguem `RESTRICT`: não se exclui uma fonte, um cargo ou uma UF que ainda tenha registros ligados.
 4. **Senhas.** `usuario_painel.senha_hash` guarda somente hash BCrypt. Nenhuma senha aparece nas migrations; o administrador inicial é criado na primeira execução a partir do arquivo `.env`.
-5. **Sem dados políticos na carga inicial.** A V3 contém só dados de referência. Políticos, propostas e ações entram por fontes aprovadas pelo cliente (RN05).
+5. **Candidaturas separadas dos políticos.** `candidatura` guarda quem concorreu a presidente ou governador numa eleição, sem mandato, sem votos e sem ranking (RN04). É uma extensão pedida pela equipe, fora do escopo validado (RN01), e depende de decisão do cliente.
+6. **Sem dados políticos na carga inicial.** A V3 contém só dados de referência. Políticos, propostas e ações entram por fontes aprovadas pelo cliente (RN05).
 
 ## Regras garantidas pela aplicação (e não pelo banco)
 
@@ -185,6 +212,8 @@ Os índices atendem às consultas mais frequentes: políticos por estado e cargo
 | Toda ação tem data (RF06) | Cadastro de ações e importação |
 | Não remover o último administrador ativo | `UsuarioService` |
 | Reeleição na importação: mandato vigente só tem o fim estendido | `ImportacaoService` |
+| Candidaturas só de presidente e governador; presidente sem UF e governador com UF | `CandidaturaService` |
+| Candidaturas só aparecem com fonte aprovada e ativa, em ordem alfabética | Consultas de `CandidaturaRepository` |
 
 ## Observação sobre o diagrama
 

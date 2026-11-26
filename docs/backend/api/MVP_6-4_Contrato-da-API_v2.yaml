@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: MinhaVidaPolitica API
-  version: 1.0.0-v1
+  version: 1.1.0-v2
   description: 'Contrato da API do back-end (cartão 6.4). Gerado a partir da definição em docs/backend; o Swagger UI do projeto
     (/swagger-ui.html) gera a versão em tempo de execução.
 
@@ -22,6 +22,7 @@ tags:
 - name: 'ADS: relatórios'
 - name: 'BES: fontes de dados'
 - name: 'BES: importação de dados'
+- name: 'BES: candidaturas'
 paths:
   /api/presidente:
     get:
@@ -594,6 +595,99 @@ paths:
         description: Identificador
         schema: *id003
       security: *id004
+  /api/eleicoes/{ano}/presidente:
+    get:
+      tags:
+      - API pública (cidadão)
+      summary: Candidatos a presidente da eleição, em ordem alfabética
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultadoListaCandidaturas'
+      description: 'Atende: Extensão: candidaturas (fora do escopo validado, RN01). Sem votos e sem ranking (RN04). Só candidaturas
+        de fonte aprovada (RN05); sem dados, devolve a mensagem neutra (RF12).'
+      parameters:
+      - name: ano
+        in: path
+        required: true
+        schema: &id005
+          type: integer
+        example: 2026
+  /api/eleicoes/{ano}/ufs/{sigla}/governador:
+    get:
+      tags:
+      - API pública (cidadão)
+      summary: Candidatos a governador da UF na eleição, em ordem alfabética
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultadoListaCandidaturas'
+        '404': *id001
+      description: 'Atende: Extensão: candidaturas (fora do escopo validado, RN01).'
+      parameters:
+      - name: ano
+        in: path
+        required: true
+        schema: *id005
+        example: 2026
+      - name: sigla
+        in: path
+        required: true
+        schema: *id002
+        example: BA
+  /api/admin/candidaturas:
+    get:
+      tags:
+      - 'BES: candidaturas'
+      summary: Lista as candidaturas importadas de uma eleição (qualquer fonte)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CandidaturaAdminResponse'
+      description: 'Atende: Extensão: candidaturas.'
+      parameters:
+      - name: ano
+        in: query
+        required: true
+        schema: *id005
+        example: 2026
+      security: *id004
+  /api/admin/importacoes/candidaturas:
+    post:
+      tags:
+      - 'BES: candidaturas'
+      summary: Importa candidaturas de uma eleição
+      responses:
+        '201':
+          description: Importação registrada (SUCESSO, PARCIAL ou ERRO)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogImportacao'
+        '400': *id001
+        '404': *id001
+        '422': *id001
+      description: 'Atende: Extensão: candidaturas; RN05, RF13. Cria ou atualiza (chave: ano + sqCandidato). Aceita só PRESIDENTE
+        e GOVERNADOR; registros inválidos são rejeitados e contados sem derrubar a carga. Dados de fonte não aprovada ficam
+        retidos (RN05).'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImportacaoCandidaturasRequest'
+      security: *id004
   /api/admin/relatorios/cobertura:
     get:
       tags:
@@ -831,8 +925,7 @@ components:
     ProblemDetail:
       type: object
       properties:
-        status: &id007
-          type: integer
+        status: *id005
         detail:
           type: string
           description: Texto pronto para mostrar ao usuário
@@ -848,7 +941,7 @@ components:
         link:
           type: string
           description: Link para o original (RF08)
-        atualizadoEm: &id006
+        atualizadoEm: &id007
           type: string
           format: date-time
       description: Bloco de transparência do RF08
@@ -987,7 +1080,7 @@ components:
           enum:
           - ADMIN
           - EDITOR
-        ativo: &id005
+        ativo: &id006
           type: boolean
       required:
       - nome
@@ -1000,8 +1093,8 @@ components:
         nome: *id002
         username: *id002
         perfil: *id002
-        ativo: *id005
-        criadoEm: *id006
+        ativo: *id006
+        criadoEm: *id007
         ultimoAcesso:
           type: string
           format: date-time
@@ -1038,7 +1131,7 @@ components:
           type: string
           format: date
           nullable: true
-        emExercicio: *id005
+        emExercicio: *id006
         fonteId: *id003
         linkFonte:
           type: string
@@ -1079,14 +1172,14 @@ components:
           type: string
           format: date
           nullable: true
-        emExercicio: *id005
+        emExercicio: *id006
         fonteId: *id003
         fonteNome: *id002
-        fonteAprovada: *id005
+        fonteAprovada: *id006
         linkFonte:
           type: string
           nullable: true
-        atualizadoEm: *id006
+        atualizadoEm: *id007
     ItemRequest:
       type: object
       properties:
@@ -1125,11 +1218,11 @@ components:
           nullable: true
         fonteId: *id003
         fonteNome: *id002
-        fonteAprovada: *id005
+        fonteAprovada: *id006
         linkFonte:
           type: string
           nullable: true
-        atualizadoEm: *id006
+        atualizadoEm: *id007
     FonteRequest:
       type: object
       properties:
@@ -1154,7 +1247,7 @@ components:
           type: string
           maxLength: 500
           nullable: true
-        ativa: *id005
+        ativa: *id006
       required:
       - nome
       - url
@@ -1169,7 +1262,7 @@ components:
         periodicidade:
           type: string
           nullable: true
-        aprovada: *id005
+        aprovada: *id006
         dataAprovacao:
           type: string
           format: date
@@ -1180,8 +1273,8 @@ components:
         observacao:
           type: string
           nullable: true
-        ativa: *id005
-        criadoEm: *id006
+        ativa: *id006
+        criadoEm: *id007
     AprovacaoRequest:
       type: object
       properties:
@@ -1274,7 +1367,7 @@ components:
         id: *id003
         fonteId: *id003
         fonteNome: *id002
-        iniciadoEm: *id006
+        iniciadoEm: *id007
         finalizadoEm:
           type: string
           format: date-time
@@ -1285,9 +1378,9 @@ components:
           - SUCESSO
           - PARCIAL
           - ERRO
-        criados: *id007
-        atualizados: *id007
-        rejeitados: *id007
+        criados: *id005
+        atualizados: *id005
+        rejeitados: *id005
         mensagem:
           type: string
           nullable: true
@@ -1300,9 +1393,9 @@ components:
         governador:
           type: string
           nullable: true
-        representantes: *id007
-        comPropostas: *id007
-        comAcoes: *id007
+        representantes: *id005
+        comPropostas: *id005
+        comAcoes: *id005
         situacao:
           type: string
           enum:
@@ -1314,11 +1407,12 @@ components:
       properties:
         fonteId: *id003
         fonteNome: *id002
-        aprovada: *id005
-        ativa: *id005
+        aprovada: *id006
+        ativa: *id006
         politicos: *id003
         propostas: *id003
         acoes: *id003
+        candidaturas: *id003
     ResumoPainel:
       type: object
       properties:
@@ -1327,12 +1421,137 @@ components:
         acoes: *id003
         fontesAprovadas: *id003
         fontesPendentes: *id003
-        ufsComGovernador: *id007
-        totalUfs: *id007
+        ufsComGovernador: *id005
+        totalUfs: *id005
         ultimasImportacoes:
           type: array
           items:
             $ref: '#/components/schemas/LogImportacao'
+    CandidaturaPublica:
+      type: object
+      properties:
+        nome: *id002
+        nomeUrna:
+          type: string
+          nullable: true
+        numero: *id002
+        partido:
+          type: string
+          nullable: true
+        cargo: *id002
+        uf:
+          type: string
+          nullable: true
+        situacao: &id009
+          type: string
+          enum: &id008
+          - ELEITO
+          - NAO_ELEITO
+          - SEGUNDO_TURNO
+          - SEM_RESULTADO
+        fonte:
+          $ref: '#/components/schemas/FonteInfo'
+      description: Candidatura exibida ao cidadão. Sem votos e sem ranking (RN04).
+    ResultadoListaCandidaturas:
+      type: object
+      properties:
+        disponivel:
+          type: boolean
+          description: false = sem dado em fonte validada (RF12)
+        mensagem:
+          type: string
+          nullable: true
+        dados:
+          type: array
+          items:
+            $ref: '#/components/schemas/CandidaturaPublica'
+          nullable: true
+      required:
+      - disponivel
+      description: Envelope das consultas públicas
+    CandidaturaImportada:
+      type: object
+      properties:
+        sqCandidato:
+          type: string
+          maxLength: 30
+          description: Sequencial do candidato no TSE; com o ano, identifica a candidatura
+        nome:
+          type: string
+          maxLength: 150
+        nomeUrna:
+          type: string
+          maxLength: 150
+          nullable: true
+        numero:
+          type: string
+          maxLength: 10
+        partido:
+          type: string
+          maxLength: 30
+          nullable: true
+        cargo:
+          type: string
+          description: PRESIDENTE ou GOVERNADOR
+        uf:
+          type: string
+          nullable: true
+          description: Obrigatória para GOVERNADOR; proibida para PRESIDENTE
+        situacao:
+          type: string
+          enum: *id008
+          nullable: true
+          description: Vazio vale SEM_RESULTADO
+        linkFonte:
+          type: string
+          maxLength: 500
+          nullable: true
+      required:
+      - sqCandidato
+      - nome
+      - numero
+      - cargo
+    ImportacaoCandidaturasRequest:
+      type: object
+      properties:
+        fonteId: *id003
+        ano:
+          type: integer
+          minimum: 2000
+          example: 2026
+        candidaturas:
+          type: array
+          items:
+            $ref: '#/components/schemas/CandidaturaImportada'
+          minItems: 1
+          maxItems: 2000
+      required:
+      - fonteId
+      - ano
+      - candidaturas
+    CandidaturaAdminResponse:
+      type: object
+      properties:
+        id: *id003
+        anoEleicao: *id005
+        sqCandidato: *id002
+        numero: *id002
+        nome: *id002
+        nomeUrna:
+          type: string
+          nullable: true
+        partido:
+          type: string
+          nullable: true
+        cargo: *id002
+        uf:
+          type: string
+          nullable: true
+        situacao: *id009
+        fonteId: *id003
+        fonteNome: *id002
+        fonteAprovada: *id006
+        atualizadoEm: *id007
     Catalogo:
       type: object
       properties:
@@ -1360,8 +1579,8 @@ components:
             properties:
               id: *id003
               nome: *id002
-              aprovada: *id005
-              ativa: *id005
+              aprovada: *id006
+              ativa: *id006
   securitySchemes:
     sessaoPainel:
       type: apiKey

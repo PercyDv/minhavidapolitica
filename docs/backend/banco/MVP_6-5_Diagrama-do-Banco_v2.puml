@@ -1,4 +1,4 @@
-@startuml MVP_6-5_Diagrama-do-Banco_v1
+@startuml MVP_6-5_Diagrama-do-Banco_v2
 title MinhaVidaPolitica.com - Diagrama do banco de dados (MySQL 8.4)
 skinparam dpi 170
 skinparam shadowing false
@@ -98,6 +98,23 @@ entity "log_atualizacao" as log_atualizacao {
   *executado_por : VARCHAR(60)
 }
 
+entity "candidatura" as candidatura {
+  *id : BIGINT <<PK>>
+  --
+  *ano_eleicao : INT
+  *sq_candidato : VARCHAR(30)
+  *numero : VARCHAR(10)
+  *nome : VARCHAR(150)
+   nome_urna : VARCHAR(150)
+   partido : VARCHAR(30)
+  *cargo_id : BIGINT <<FK>>
+   uf_id : BIGINT <<FK>>
+  *situacao : VARCHAR(20)
+  *fonte_id : BIGINT <<FK>>
+   link_fonte : VARCHAR(500)
+  *atualizado_em : DATETIME(6)
+}
+
 entity "usuario_painel" as usuario_painel {
   *id : BIGINT <<PK>>
   --
@@ -118,4 +135,7 @@ proposta }o--|| fonte_dados
 acao_concretizada }o--|| politico
 acao_concretizada }o--|| fonte_dados
 log_atualizacao }o--|| fonte_dados
+candidatura }o--|| cargo
+candidatura }o--o| unidade_federativa
+candidatura }o--|| fonte_dados
 @enduml

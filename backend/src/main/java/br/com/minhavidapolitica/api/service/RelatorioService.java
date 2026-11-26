@@ -7,6 +7,7 @@ import br.com.minhavidapolitica.api.dto.FontePendencia;
 import br.com.minhavidapolitica.api.dto.LogResponse;
 import br.com.minhavidapolitica.api.dto.ResumoPainel;
 import br.com.minhavidapolitica.api.repository.AcaoConcretizadaRepository;
+import br.com.minhavidapolitica.api.repository.CandidaturaRepository;
 import br.com.minhavidapolitica.api.repository.FonteDadosRepository;
 import br.com.minhavidapolitica.api.repository.LogAtualizacaoRepository;
 import br.com.minhavidapolitica.api.repository.PoliticoRepository;
@@ -41,6 +42,7 @@ public class RelatorioService {
     private final AcaoConcretizadaRepository acaoRepository;
     private final FonteDadosRepository fonteRepository;
     private final LogAtualizacaoRepository logRepository;
+    private final CandidaturaRepository candidaturaRepository;
     private final Clock clock;
 
     /**
@@ -79,7 +81,8 @@ public class RelatorioService {
                 .map(f -> new FontePendencia(f.getId(), f.getNome(), f.isAprovada(), f.isAtiva(),
                         politicoRepository.countByFonteId(f.getId()),
                         propostaRepository.countByFonteId(f.getId()),
-                        acaoRepository.countByFonteId(f.getId())))
+                        acaoRepository.countByFonteId(f.getId()),
+                        candidaturaRepository.countByFonteId(f.getId())))
                 .toList();
     }
 

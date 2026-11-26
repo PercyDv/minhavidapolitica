@@ -76,3 +76,54 @@ As posses de presidente (5 de janeiro) e governadores (6 de janeiro) de 2027 e o
 - Quem tem `inicioMandato` no futuro **não aparece** ao cidadão até a data chegar. Por isso dá para importar os eleitos de 2026 agora, sem eles substituírem os atuais antes da posse.
 - **Reeleição:** se o sistema já tem a mesma pessoa, no mesmo cargo e UF, com mandato vigente hoje, a importação só **estende o fim do mandato**. Fonte, partido e demais dados do registro vigente não mudam, para a pessoa não sumir da consulta por causa de uma fonte ainda não aprovada.
 - Os **mandatos de 2022** (os atuais, até janeiro de 2027) dependem de dados de 2022. Este conversor só lê o formato do arquivo de eleitos; se o arquivo de 2022 tiver a mesma estrutura, use `--ano 2022`. Caso contrário, cadastre-os pela tela de Políticos ou peça um conversor para o formato CSV do Portal de Dados Abertos.
+
+---
+
+# Candidatos de uma eleição (presidente e governador)
+
+**Extensão pedida pela equipe, fora do escopo validado (RN01):** mostrar quem concorreu, e não só quem exerce mandato. Depende de decisão do cliente.
+
+## O que vem e o que não vem
+
+- Vem: nome, nome de urna, número, partido, cargo, UF e a situação final (`ELEITO`, `NAO_ELEITO`, `SEGUNDO_TURNO` ou `SEM_RESULTADO`).
+- Não vem, por escolha: votos e qualquer ordenação por resultado (RN04). A lista é sempre alfabética.
+- **Dados pessoais:** o CSV do TSE tem CPF, e-mail e outros campos. O conversor só lê as colunas necessárias e nunca grava esses dados.
+- Entram só candidaturas **deferidas**. As demais aparecem contadas no terminal, e `--todas-situacoes` as inclui.
+- Quem foi ao segundo turno fica com o resultado do **maior turno** disponível no arquivo.
+- A eleição já terminou (1º turno em 4/10 e 2º em 25/10 de 2026): são candidatos que **concorreram**.
+- **Não foi testado com o arquivo real do TSE.** Os nomes das colunas (`DS_CARGO`, `SG_UF`, `SQ_CANDIDATO`, `NM_CANDIDATO`, `NR_CANDIDATO`, `DS_SIT_TOT_TURNO` etc.) seguem o layout usual do TSE, e o teste usou um ZIP sintético (`exemplo/consulta_cand_2026_exemplo.zip`). Se alguma coluna obrigatória faltar, o conversor para e lista as colunas que encontrou.
+
+## Passo a passo
+
+1. Baixe `consulta_cand_2026.zip` no dataset de candidatos de 2026 do Portal de Dados Abertos (`https://dadosabertos.tse.jus.br/dataset/candidatos-2026`).
+2. Em **Fontes de dados**, cadastre a fonte "TSE: candidatos 2026" (tipo arquivo, periodicidade "A cada eleição") e anote o **id**.
+3. Gere o arquivo (PowerShell, na raiz do repositório; troque o `3` pelo id da fonte):
+
+   ```powershell
+   java scripts\tse\ConversorCandidatos.java --entrada C:\caminho\consulta_cand_2026.zip --fonte-id 3 --link https://dadosabertos.tse.jus.br/dataset/candidatos-2026 --saida candidaturas-tse.json
+   ```
+
+4. Revise o `candidaturas-tse.json` e as situações impressas no terminal.
+5. Envie para a API (não há tela para isso):
+
+   ```powershell
+   $base = "http://localhost:8080"
+   Invoke-RestMethod -Uri "$base/api/auth/login" -Method Post -SessionVariable sessao -Body @{ username = "admin"; password = "SUA_SENHA" }
+   $corpo = [System.IO.File]::ReadAllBytes("candidaturas-tse.json")
+   Invoke-RestMethod -Uri "$base/api/admin/importacoes/candidaturas" -Method Post -WebSession $sessao -ContentType "application/json; charset=utf-8" -Body $corpo
+   ```
+
+   A resposta informa quantas candidaturas foram criadas, atualizadas e rejeitadas, com o motivo das rejeições. Reenviar atualiza, sem duplicar.
+6. Confira em `GET /api/admin/candidaturas?ano=2026`.
+7. O cliente precisa **aprovar a fonte** (RN05). Depois disso, o cidadão consulta `GET /api/eleicoes/2026/presidente` e `GET /api/eleicoes/2026/ufs/BA/governador`.
+
+## Opções do conversor
+
+| Opção | Para que serve |
+|---|---|
+| `--entrada <arquivo>` | ZIP ou CSV do TSE. Pode repetir a opção |
+| `--saida <arquivo>` | Arquivo gerado (padrão `candidaturas-tse.json`) |
+| `--ano <aaaa>` | Ano da eleição (padrão: lido do arquivo) |
+| `--fonte-id <n>` | Id da fonte no sistema; deixa o arquivo pronto para enviar |
+| `--link <url>` | Link guardado em cada candidatura |
+| `--todas-situacoes` | Inclui também candidaturas indeferidas, canceladas etc. |

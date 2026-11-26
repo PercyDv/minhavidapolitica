@@ -52,8 +52,8 @@ function mostrarDetalhe(sigla) {
 }
 
 function desenharFontes(fontes) {
-  const retido = (f) => !(f.aprovada && f.ativa) && (f.politicos + f.propostas + f.acoes) > 0;
-  const totalRetido = fontes.filter(retido).reduce((s, f) => s + f.politicos + f.propostas + f.acoes, 0);
+  const retido = (f) => !(f.aprovada && f.ativa) && (f.politicos + f.propostas + f.acoes + f.candidaturas) > 0;
+  const totalRetido = fontes.filter(retido).reduce((s, f) => s + f.politicos + f.propostas + f.acoes + f.candidaturas, 0);
   $('#resumo-fontes').textContent = totalRetido > 0
     ? `${totalRetido} registro${totalRetido > 1 ? 's estão retidos' : ' está retido'} por falta de aprovação da fonte e não aparecem ao cidadão.`
     : 'Nenhum registro está retido por falta de aprovação.';
@@ -64,10 +64,10 @@ function desenharFontes(fontes) {
       return `<tr>
         <td><strong>${esc(f.fonteNome)}</strong>${retido(f) ? '<span class="sub">Registros retidos até a aprovação</span>' : ''}</td>
         <td>${chip}</td>
-        <td class="num">${f.politicos}</td><td class="num">${f.propostas}</td><td class="num">${f.acoes}</td>
+        <td class="num">${f.politicos}</td><td class="num">${f.propostas}</td><td class="num">${f.acoes}</td><td class="num">${f.candidaturas}</td>
       </tr>`;
     }).join('')
-    : '<tr><td colspan="5"><span class="sub">Nenhuma fonte cadastrada.</span></td></tr>';
+    : '<tr><td colspan="6"><span class="sub">Nenhuma fonte cadastrada.</span></td></tr>';
 }
 
 // A inicialização roda por último, depois de todas as declarações do módulo.

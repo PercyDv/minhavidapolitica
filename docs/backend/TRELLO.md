@@ -12,9 +12,9 @@ Etiqueta: Equipe de Backend. Membros: os dois devs back-end.
 
 | Arquivo | Onde está |
 |---|---|
-| `MVP_6-2_Diagrama-de-Classes_v1.png` | `docs/backend/diagramas/` |
-| `MVP_6-2_Diagrama-de-Classes_v1.puml` (fonte) | `docs/backend/diagramas/` |
-| `MVP_6-2_Texto-de-Apoio_v1.md` | `docs/backend/diagramas/` |
+| `MVP_6-2_Diagrama-de-Classes_v2.png` | `docs/backend/diagramas/` |
+| `MVP_6-2_Diagrama-de-Classes_v2.puml` (fonte) | `docs/backend/diagramas/` |
+| `MVP_6-2_Texto-de-Apoio_v2.md` | `docs/backend/diagramas/` |
 
 **Checklist**
 - [x] Levantar entidades a partir dos RF01–RF13 e das regras RN01–RN07
@@ -35,8 +35,8 @@ Etiqueta: Equipe de Backend. Membros: os dois devs back-end; André em testes e 
 
 | Arquivo | Onde está |
 |---|---|
-| `MVP_6-4_Contrato-da-API_v1.yaml` e `.json` | `docs/backend/api/` |
-| `MVP_6-4_Matriz-RF-Endpoint_v1.md` | `docs/backend/api/` |
+| `MVP_6-4_Contrato-da-API_v2.yaml` e `.json` | `docs/backend/api/` |
+| `MVP_6-4_Matriz-RF-Endpoint_v2.md` | `docs/backend/api/` |
 | `MVP_6-4_Fichas-das-Telas_v1.md` | `docs/backend/telas/` |
 | Prints das 6 telas (`ADS-1_...` a `BES-2_...`) | `docs/backend/telas/prints/` (a tirar) |
 
@@ -66,6 +66,7 @@ Etiqueta: Equipe de Backend. Membros: os dois devs back-end; André em testes e 
 - [x] Tela 2: Importação de dados (RF13, importação manual por JSON)
 - [x] Conversor do arquivo de eleitos do TSE para o formato de importação (`scripts/tse`, testado com arquivos sintéticos)
 - [x] Consulta pública considera o início do mandato (eleitos de 2026 só aparecem na posse, em 2027)
+- [x] **Extensão pedida pela equipe, fora do escopo validado:** candidaturas de presidente e governador (`/api/eleicoes/{ano}/...`, importação em `/api/admin/importacoes/candidaturas`, conversor `scripts/tse/ConversorCandidatos.java`). **Registrar no cartão a decisão do cliente (via PO)**; sem ela, não incluir nos slides como requisito atendido.
 
 **Checklist E: Fechamento**
 - [ ] Rodar os testes (`./mvnw test`): 4 classes de teste escritas **(validar)**
@@ -82,10 +83,10 @@ Etiqueta: Equipe de Backend. Membros: os dois devs back-end.
 
 | Arquivo | Onde está |
 |---|---|
-| `MVP_6-5_Diagrama-do-Banco_v1.png` | `docs/backend/banco/` |
-| `MVP_6-5_Diagrama-do-Banco_v1.puml` (fonte) | `docs/backend/banco/` |
-| `MVP_6-5_Descricao-Tecnica-do-Banco_v1.md` (dicionário de dados incluído) | `docs/backend/banco/` |
-| Migrations V1, V2 e V3 (evidência) | `backend/src/main/resources/db/migration/` |
+| `MVP_6-5_Diagrama-do-Banco_v2.png` | `docs/backend/banco/` |
+| `MVP_6-5_Diagrama-do-Banco_v2.puml` (fonte) | `docs/backend/banco/` |
+| `MVP_6-5_Descricao-Tecnica-do-Banco_v2.md` (dicionário de dados incluído) | `docs/backend/banco/` |
+| Migrations V1 a V4 (evidência) | `backend/src/main/resources/db/migration/` |
 
 **Checklist**
 - [x] Diagrama do banco (tabelas, chaves e relacionamentos)
@@ -111,6 +112,7 @@ Branches com o número da atividade, uma PR por branch, com 1 aprovação:
 | `feature/6.4-api-publica` | Serviço e controller públicos, DTOs e tratamento de erros | `feat: cria API pública de consulta (RF01 a RF08, RF12)` |
 | `feature/6.4-modulo-ads` | Segurança, usuários, políticos, propostas, ações e relatórios | `feat: cria módulo ADS` |
 | `feature/6.4-modulo-bes` | Fontes, aprovação e importação de dados | `feat: cria módulo BES` |
+| `feature/6.4-candidaturas` | Candidaturas de presidente e governador, migration V4, conversor, diagramas e contrato v2 | `feat: adiciona candidaturas de eleição (extensão de escopo)` |
 | `docs/6.4-contrato-e-fichas` | Contrato da API, matriz RF × endpoint e fichas das telas | `docs: documenta API e telas dos módulos` |
 
 ## Dependências de outras pessoas (não são do back-end)

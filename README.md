@@ -37,6 +37,7 @@ cd backend
 | `GET /api/ufs` e `GET /api/ufs/{sigla}` | RF02, RF03 |
 | `GET /api/ufs/{sigla}/representantes` | RF04 |
 | `GET /api/politicos/{id}`, `/propostas`, `/acoes` | RF07, RF05, RF06 |
+| `GET /api/eleicoes/{ano}/presidente` e `/ufs/{sigla}/governador` | Extensão: candidatos da eleição (fora do escopo validado; depende do cliente) |
 
 Toda resposta traz a fonte, o link e a data de atualização (RF08). Sem dado em fonte validada, a resposta traz `disponivel: false` e a mensagem neutra do RF12.
 

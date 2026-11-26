@@ -2,10 +2,10 @@ package br.com.minhavidapolitica.api.dto;
 
 /** Quantidade de registros vinculados a uma fonte, usada para mostrar o que está retido por falta de aprovação. */
 public record FontePendencia(Long fonteId, String fonteNome, boolean aprovada, boolean ativa,
-                             long politicos, long propostas, long acoes) {
+                             long politicos, long propostas, long acoes, long candidaturas) {
 
     public long total() {
-        return politicos + propostas + acoes;
+        return politicos + propostas + acoes + candidaturas;
     }
 
     public boolean retido() {

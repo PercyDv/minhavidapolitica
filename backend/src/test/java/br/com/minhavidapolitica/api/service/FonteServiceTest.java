@@ -11,6 +11,7 @@ import br.com.minhavidapolitica.api.dto.AprovacaoRequest;
 import br.com.minhavidapolitica.api.dto.FonteResponse;
 import br.com.minhavidapolitica.api.exception.RegraNegocioException;
 import br.com.minhavidapolitica.api.repository.AcaoConcretizadaRepository;
+import br.com.minhavidapolitica.api.repository.CandidaturaRepository;
 import br.com.minhavidapolitica.api.repository.FonteDadosRepository;
 import br.com.minhavidapolitica.api.repository.LogAtualizacaoRepository;
 import br.com.minhavidapolitica.api.repository.PoliticoRepository;
@@ -39,6 +40,8 @@ class FonteServiceTest {
     private AcaoConcretizadaRepository acaoRepository;
     @Mock
     private LogAtualizacaoRepository logRepository;
+    @Mock
+    private CandidaturaRepository candidaturaRepository;
 
     private FonteService service;
 
@@ -46,7 +49,7 @@ class FonteServiceTest {
     void preparar() {
         Clock clock = Clock.fixed(Instant.parse("2026-11-25T12:00:00Z"), ZoneId.of("America/Bahia"));
         service = new FonteService(repository, politicoRepository, propostaRepository, acaoRepository,
-                logRepository, clock);
+                logRepository, candidaturaRepository, clock);
     }
 
     @Test

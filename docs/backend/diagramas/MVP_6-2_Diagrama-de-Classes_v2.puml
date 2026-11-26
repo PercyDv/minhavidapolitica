@@ -1,4 +1,4 @@
-@startuml MVP_6-2_Diagrama-de-Classes_v1
+@startuml MVP_6-2_Diagrama-de-Classes_v2
 title MinhaVidaPolitica.com - Diagrama de Classes do domínio (back-end)
 skinparam dpi 170
 skinparam shadowing false
@@ -106,6 +106,19 @@ class UsuarioPainel {
   - ultimoAcesso : LocalDateTime
 }
 
+class Candidatura {
+  - id : Long
+  - anoEleicao : int
+  - sqCandidato : String
+  - numero : String
+  - nome : String
+  - nomeUrna : String
+  - partido : String
+  - situacao : SituacaoCandidatura
+  - linkFonte : String
+  - atualizadoEm : LocalDateTime
+}
+
 enum Esfera {
   NACIONAL
   ESTADUAL
@@ -119,6 +132,12 @@ enum StatusImportacao {
   SUCESSO
   PARCIAL
   ERRO
+}
+enum SituacaoCandidatura {
+  ELEITO
+  NAO_ELEITO
+  SEGUNDO_TURNO
+  SEM_RESULTADO
 }
 enum PerfilUsuario {
   ADMIN
@@ -134,7 +153,12 @@ Proposta "0..*" --> "1" FonteDados : sustentada por
 AcaoConcretizada "0..*" --> "1" FonteDados : sustentada por
 LogAtualizacao "0..*" --> "1" FonteDados : importou de
 
+Candidatura "0..*" --> "1" Cargo : disputa
+Candidatura "0..*" --> "0..1" UnidadeFederativa : na UF
+Candidatura "0..*" --> "1" FonteDados : sustentada por
+
 Cargo ..> Esfera
+Candidatura ..> SituacaoCandidatura
 FonteDados ..> TipoFonte
 LogAtualizacao ..> StatusImportacao
 UsuarioPainel ..> PerfilUsuario
@@ -147,8 +171,13 @@ note right of FonteDados
 end note
 
 note bottom of Politico
-  RN01: só mandato atual (emExercicio e fimMandato futuro).
+  RN01: só mandato atual (emExercicio e hoje entre inicioMandato e fimMandato).
   Cargo NACIONAL não tem UF; cargo ESTADUAL exige UF (RN02).
   Sem campos de nota ou ranking (RN04, RF09).
+end note
+note bottom of Candidatura
+  Extensão pedida pela equipe, fora do escopo validado (RN01).
+  Só presidente e governador, separada de Politico (quem exerce mandato).
+  Sem votos nem ranking (RN04).
 end note
 @enduml

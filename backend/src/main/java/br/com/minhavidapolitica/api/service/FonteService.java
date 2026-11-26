@@ -7,6 +7,7 @@ import br.com.minhavidapolitica.api.dto.FonteResponse;
 import br.com.minhavidapolitica.api.exception.RecursoNaoEncontradoException;
 import br.com.minhavidapolitica.api.exception.RegraNegocioException;
 import br.com.minhavidapolitica.api.repository.AcaoConcretizadaRepository;
+import br.com.minhavidapolitica.api.repository.CandidaturaRepository;
 import br.com.minhavidapolitica.api.repository.FonteDadosRepository;
 import br.com.minhavidapolitica.api.repository.LogAtualizacaoRepository;
 import br.com.minhavidapolitica.api.repository.PoliticoRepository;
@@ -32,6 +33,7 @@ public class FonteService {
     private final PropostaRepository propostaRepository;
     private final AcaoConcretizadaRepository acaoRepository;
     private final LogAtualizacaoRepository logRepository;
+    private final CandidaturaRepository candidaturaRepository;
     private final Clock clock;
 
     @Transactional(readOnly = true)
@@ -81,6 +83,7 @@ public class FonteService {
         boolean emUso = politicoRepository.countByFonteId(id) > 0
                 || propostaRepository.countByFonteId(id) > 0
                 || acaoRepository.countByFonteId(id) > 0
+                || candidaturaRepository.countByFonteId(id) > 0
                 || logRepository.existsByFonteId(id);
         if (emUso) {
             throw RegraNegocioException.conflito(
