@@ -43,4 +43,14 @@
     ui.erroGeral(elFeito, msg);
     document.getElementById("rodape-fontes").style.visibility = "hidden";
   });
+
+  /* Candidatos a presidente da eleição (extensão: /api/eleicoes) */
+  var elCandidatos = document.getElementById("lista-candidatos");
+  document.getElementById("titulo-candidatos").textContent =
+    "Candidatos a Presidente · Eleição " + window.MVPApi.anoEleicao();
+  window.MVPApi.candidatosPresidente().then(function (r) {
+    ui.preencherCandidatos(elCandidatos, r);
+  }).catch(function () {
+    ui.erroGeral(elCandidatos, "Não foi possível carregar os candidatos agora. Tente novamente em instantes.");
+  });
 })();

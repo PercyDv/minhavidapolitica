@@ -1,4 +1,5 @@
-/* Página estadual: governador em exercício, propostas, o que já foi feito e demais representantes (RF03 a RF06). */
+/* Página estadual: governador em exercício, propostas, o que já foi feito, demais representantes (RF03 a RF06)
+   e candidatos a governador da eleição (extensão: /api/eleicoes). */
 (function () {
   "use strict";
 
@@ -11,6 +12,9 @@
   var elPropostas = document.getElementById("lista-propostas");
   var elFeito = document.getElementById("lista-feito");
   var elRepresentantes = document.getElementById("lista-representantes");
+  var elCandidatos = document.getElementById("lista-candidatos");
+  document.getElementById("titulo-candidatos").textContent =
+    "Candidatos a Governador · Eleição " + window.MVPApi.anoEleicao();
 
   ui.iniciarMenuEstados({ atual: sigla, nomeAtual: ufLocal ? ufLocal.nome : "" });
   ui.iniciarAbas(document.querySelector(".painel"));
@@ -22,6 +26,7 @@
     ui.erroGeral(elPropostas, mensagem);
     ui.erroGeral(elFeito, mensagem);
     ui.erroGeral(elRepresentantes, mensagem);
+    ui.erroGeral(elCandidatos, mensagem);
   }
 
   if (!/^[A-Z]{2}$/.test(sigla)) {
@@ -54,5 +59,11 @@
     ui.erroGeral(elPropostas, msg);
     ui.erroGeral(elFeito, msg);
     ui.erroGeral(elRepresentantes, msg);
+  });
+
+  window.MVPApi.candidatosGovernador(sigla).then(function (r) {
+    ui.preencherCandidatos(elCandidatos, r);
+  }).catch(function () {
+    ui.erroGeral(elCandidatos, "Não foi possível carregar os candidatos agora. Tente novamente em instantes.");
   });
 })();

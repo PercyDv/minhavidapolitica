@@ -652,3 +652,20 @@ button.config__linha:hover, a.config__linha:hover { background: var(--fundo); }
   .config__textos { flex: 1 1 0; }
   .config__rodape { font-size: 12px; }
 }
+
+/* =========================================================================
+   Candidatos da eleição (extensão: /api/eleicoes). Reaproveita o cartão de representante.
+   Selo verde só marca o resultado oficial; sem votos nem ranking (RN04).
+   ========================================================================= */
+.candidatos__nota { font-size: 13px; line-height: 1.4; color: var(--texto-suave); }
+.candidatos__fonte {
+  padding: 4px 2px 0;
+  font-family: var(--fonte-cartoes); font-size: 11px; line-height: 1.4; color: var(--texto-suave);
+}
+.candidatos__fonte a { color: var(--primaria); text-decoration: underline; }
+.cartao-candidato .faixa { background: var(--rep-faixa-dados); }
+.cartao-candidato .cartao-rep__selo { color: var(--rep-texto); }
+.cartao-candidato--eleito .faixa { background: var(--concluida-faixa); }
+.cartao-candidato--eleito .cartao-rep__selo { background: var(--concluida-fundo); color: var(--concluida-texto); }
+.cartao-candidato--segundo-turno .faixa { background: var(--andamento-faixa); }
+.cartao-candidato--segundo-turno .cartao-rep__selo { background: var(--andamento-fundo); color: var(--andamento-texto); }

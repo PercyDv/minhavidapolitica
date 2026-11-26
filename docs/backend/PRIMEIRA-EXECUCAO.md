@@ -9,7 +9,7 @@ O código do back-end foi escrito e conferido estaticamente (sintaxe, referênci
 3. `cd backend`
 4. `./mvnw test`
 5. `./mvnw spring-boot:run`
-6. No log, procure: Flyway aplicando V1, V2 e V3; "Administrador inicial 'admin' criado"; "Started MinhaVidaPoliticaApplication".
+6. No log, procure: Flyway aplicando V1, V2, V3 e V4; "Administrador inicial 'admin' criado"; "Started MinhaVidaPoliticaApplication".
 7. Abra `http://localhost:8080/swagger-ui.html` e `http://localhost:8080/api/ufs` (deve listar 27 UFs).
 8. Abra `http://localhost:8080/admin/login.html` e entre com `ADMIN_USERNAME` e `ADMIN_PASSWORD`.
 9. Se tudo estiver certo, mude `JPA_DDL_AUTO=validate` no `.env` e reinicie: o Hibernate passa a conferir as entidades contra o banco.
@@ -23,7 +23,7 @@ O código do back-end foi escrito e conferido estaticamente (sintaxe, referênci
 | Erros de "cannot find symbol" em `getX()`, `builder()` ou `log` | O Lombok não está processando: ative *annotation processing* na IDE |
 | Erro de conexão ou `Access denied` | Confira `docker compose ps`, a porta `MYSQL_PORT` e se as senhas do `.env` não mudaram depois do primeiro `up` (se mudaram: `docker compose down -v`) |
 | Flyway falha ao aplicar V2 | Banco com tabelas de tentativas anteriores: recrie com `docker compose down -v` e suba de novo |
-| `Schema-validation` falha com `JPA_DDL_AUTO=validate` | Volte para `none`, anote a coluna indicada no erro e corrija a entidade ou crie a migration V4 |
+| `Schema-validation` falha com `JPA_DDL_AUTO=validate` | Volte para `none`, anote a coluna indicada no erro e corrija a entidade ou crie a migration V5 |
 | `.env` não é lido | Rode a aplicação a partir de `backend/` (na IDE, *working directory* = pasta `backend`) |
 | `/swagger-ui.html` com erro ou página em branco | Confira a versão do springdoc no `pom.xml` (linha 3.x é a do Spring Boot 4) |
 

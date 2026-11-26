@@ -1,0 +1,16 @@
+# Normaliza quebras de linha no repositório (LF) e deixa o Git converter no Windows.
+* text=auto
+
+# Scripts de shell precisam de LF, senão ./mvnw falha no Git Bash/Linux ("$'\r': command not found")
+mvnw text eol=lf
+*.sh text eol=lf
+
+# Scripts do Windows ficam com CRLF
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+# Binários
+*.png binary
+*.jpg binary
+*.woff2 binary
+*.jar binary

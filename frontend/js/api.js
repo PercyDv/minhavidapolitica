@@ -9,6 +9,8 @@
  *   GET /api/ufs/{sigla}/representantes    -> Resultado<List<PoliticoPublico>>
  *   GET /api/politicos/{id}/propostas      -> Resultado<List<ItemPublico>>
  *   GET /api/politicos/{id}/acoes          -> Resultado<List<ItemPublico>>
+ *   GET /api/eleicoes/{ano}/presidente     -> Resultado<List<CandidaturaPublica>>
+ *   GET /api/eleicoes/{ano}/ufs/{sigla}/governador -> Resultado<List<CandidaturaPublica>>
  *
  * Quando a API responde "disponivel: false", a tela mostra a mensagem neutra que vem
  * dela (RF12), sem inventar dado.
@@ -50,7 +52,7 @@
         if (timer) clearTimeout(timer);
         if (!resposta.ok) {
           return resposta.json().catch(function () { return {}; }).then(function (corpo) {
-            throw new ErroApi(resposta.status, corpo && (corpo.mensagem || corpo.message));
+            throw new ErroApi(resposta.status, corpo && (corpo.mensagem || corpo.detail || corpo.message));
           });
         }
         return resposta.json();
@@ -231,6 +233,61 @@
     });
   }
 
+  /* ---------- Candidatos da eleição (extensão: /api/eleicoes) ----------
+   * Ordem alfabética, como vem da API: sem votos nem ranking (RN04).
+   * No modo demonstração não há candidatos inventados: aparece a mensagem neutra (RF12). */
+  var SITUACOES = {
+    ELEITO: "Eleito(a)",
+    NAO_ELEITO: "Não eleito(a)",
+    SEGUNDO_TURNO: "2º turno",
+    SEM_RESULTADO: "Sem resultado"
+  };
+  function anoEleicao() {
+    var daUrl = parseInt(new URLSearchParams(window.location.search).get("ano"), 10);
+    if (daUrl >= 2000) return daUrl;
+    return cfg.anoEleicao || new Date().getFullYear();
+  }
+  function candidatoParaTela(c) {
+    var nomeExibido = c.nomeUrna || c.nome || "";
+    var detalhes = [];
+    if (c.nomeUrna && c.nome && c.nomeUrna !== c.nome) detalhes.push(c.nome);
+    if (c.numero) detalhes.push("Nº " + c.numero);
+    detalhes.push(c.partido ? "Partido " + c.partido : "Partido: não informado");
+    var situacao = SITUACOES[c.situacao] ? c.situacao : "SEM_RESULTADO";
+    return {
+      iniciais: iniciais(nomeExibido),
+      nome: nomeExibido,
+      detalhe: detalhes.join(" · "),
+      situacao: situacao,
+      selo: SITUACOES[situacao],
+      fonte: c.fonte ? { nome: c.fonte.nome || "", link: c.fonte.link || null, atualizacao: dataCompleta(c.fonte.atualizadoEm) } : null
+    };
+  }
+  function fontesDosCandidatos(itens) {
+    var vistas = {};
+    return itens.reduce(function (todas, c) {
+      if (c.fonte && c.fonte.nome && !vistas[c.fonte.nome]) {
+        vistas[c.fonte.nome] = true;
+        todas.push(c.fonte);
+      }
+      return todas;
+    }, []);
+  }
+  function candidatosDe(montarCaminho) {
+    var ano = anoEleicao();
+    var semDados = function () { return { ano: ano, itens: null, mensagem: MENSAGEM_PADRAO, fontes: [] }; };
+    if (modoAtual() === "demo") return Promise.resolve(semDados());
+    return obter(montarCaminho(ano)).then(function (res) {
+      var r = lista(res, candidatoParaTela);
+      r.ano = ano;
+      r.fontes = r.itens ? fontesDosCandidatos(r.itens) : [];
+      return r;
+    }).catch(function (erro) {
+      if (erro instanceof SemConexao && modoAtual() === "api") throw erro;
+      return semDados();
+    });
+  }
+
   /* ---------- Escolha entre API e protótipo ---------- */
   function comModo(daApi, doDemo) {
     var modo = modoAtual();
@@ -249,6 +306,13 @@
     brasil: function () { return comModo(brasilApi, brasilDemo); },
     estado: function (sigla) { return comModo(function () { return estadoApi(sigla); }, function () { return estadoDemo(sigla); }); },
     ufs: function () { return comModo(ufsApi, function () { return window.MVPDemo.ufs; }); },
+    anoEleicao: anoEleicao,
+    candidatosPresidente: function () {
+      return candidatosDe(function (ano) { return "/eleicoes/" + ano + "/presidente"; });
+    },
+    candidatosGovernador: function (sigla) {
+      return candidatosDe(function (ano) { return "/eleicoes/" + ano + "/ufs/" + encodeURIComponent(sigla) + "/governador"; });
+    },
     ErroApi: ErroApi,
     SemConexao: SemConexao,
     formatar: { dataCompleta: dataCompleta, dataMesAno: dataMesAno, iniciais: iniciais },

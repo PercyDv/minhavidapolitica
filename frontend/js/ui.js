@@ -96,6 +96,30 @@
       "</article>";
   }
 
+  /* ---------- Candidatos da eleição ---------- */
+  var SITUACAO_CLASSE = { ELEITO: "eleito", SEGUNDO_TURNO: "segundo-turno" };
+  function cartaoCandidato(c) {
+    var mod = SITUACAO_CLASSE[c.situacao];
+    return '<article class="cartao-rep cartao-candidato' + (mod ? " cartao-candidato--" + mod : "") + '">' +
+      '<span class="faixa" aria-hidden="true"></span>' +
+      '<span class="cartao-rep__avatar" aria-hidden="true">' + esc(c.iniciais) + "</span>" +
+      '<div class="cartao-rep__textos"><h3 class="cartao-rep__nome">' + esc(c.nome) + '</h3><p class="cartao-rep__detalhe">' + esc(c.detalhe) + "</p></div>" +
+      '<span class="cartao-rep__selo">' + esc(c.selo) + "</span>" +
+      "</article>";
+  }
+  function preencherCandidatos(el, resultado) {
+    if (!resultado.itens || !resultado.itens.length) { el.innerHTML = avisoNeutro(resultado.mensagem); return; }
+    var fontes = (resultado.fontes || []).map(function (f) {
+      var link = linkSeguro(f.link);
+      var nome = link
+        ? '<a href="' + esc(link) + '" target="_blank" rel="noopener noreferrer">' + esc(f.nome) + "</a>"
+        : esc(f.nome);
+      return nome + (f.atualizacao ? " · Atualização: " + esc(f.atualizacao) : "");
+    }).join("; ");
+    el.innerHTML = resultado.itens.map(cartaoCandidato).join("") +
+      (fontes ? '<p class="candidatos__fonte">Fonte: ' + fontes + "</p>" : "");
+  }
+
   function avisoNeutro(mensagem) {
     return '<p class="aviso-neutro">' + esc(mensagem || window.MVPApi.MENSAGEM_PADRAO) + "</p>";
   }
@@ -230,6 +254,8 @@
     registro: registro,
     cartaoRepresentante: cartaoRepresentante,
     cartaoResumoRepresentantes: cartaoResumoRepresentantes,
+    cartaoCandidato: cartaoCandidato,
+    preencherCandidatos: preencherCandidatos,
     avisoNeutro: avisoNeutro,
     preencherRepresentante: preencherRepresentante,
     preencherPropostas: preencherPropostas,

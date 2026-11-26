@@ -32,7 +32,9 @@ async function iniciar() {
     const catalogo = await api('/api/admin/catalogos');
     fontes = catalogo.fontes;
     const codigos = catalogo.cargos.map((c) => c.codigo).join(', ');
-    $('#resumo-arquivo').textContent = `Códigos de cargo aceitos: ${codigos}. Cargos estaduais exigem a sigla da UF.`;
+    $('#resumo-arquivo').textContent = `Códigos de cargo aceitos: ${codigos}. Cargos estaduais exigem a sigla da UF. `
+      + 'Também aceita arquivo de candidaturas de eleição (campos "ano" e "candidaturas", como o gerado por '
+      + 'scripts/tse/ConversorCandidatos.java); nesse caso vale a fonte selecionada acima, não o "fonteId" do arquivo.';
   } catch (e) {
     toast(e.message, 'erro');
     return;
@@ -68,8 +70,11 @@ function lerArquivo(ev) {
   leitor.readAsText(arquivo, 'UTF-8');
 }
 
-/** Lê o JSON e devolve a lista de políticos, ou lança Error com a explicação. */
-function extrairPoliticos() {
+/**
+ * Lê o JSON e identifica a carga: políticos em exercício ({ politicos: [...] }) ou candidaturas de uma
+ * eleição ({ ano, candidaturas: [...] }). Lança Error com a explicação quando o formato não serve.
+ */
+function extrairCarga() {
   const texto = $('#conteudo-json').value.trim();
   if (!texto) throw new Error('Envie um arquivo ou cole o conteúdo JSON.');
   let dados;
@@ -78,11 +83,22 @@ function extrairPoliticos() {
   } catch (e) {
     throw new Error('O conteúdo não é um JSON válido: ' + e.message);
   }
+  if (!dados || typeof dados !== 'object') {
+    throw new Error('O arquivo precisa ser um objeto JSON. Baixe o arquivo modelo para ver o formato.');
+  }
+  if (!Array.isArray(dados) && Array.isArray(dados.candidaturas)) {
+    if (dados.candidaturas.length === 0) throw new Error('A lista "candidaturas" está vazia.');
+    const ano = Number(dados.ano);
+    if (!Number.isInteger(ano) || ano < 2000) {
+      throw new Error('O arquivo de candidaturas precisa do campo "ano" da eleição (por exemplo, "ano": 2026).');
+    }
+    return { tipo: 'candidaturas', ano, lista: dados.candidaturas };
+  }
   const lista = Array.isArray(dados) ? dados : dados.politicos;
   if (!Array.isArray(lista) || lista.length === 0) {
-    throw new Error('O arquivo precisa ter a lista "politicos" com ao menos um registro. Baixe o arquivo modelo para ver o formato.');
+    throw new Error('O arquivo precisa ter a lista "politicos" (mandato atual) ou "candidaturas" (eleição) com ao menos um registro. Baixe o arquivo modelo para ver o formato.');
   }
-  return lista;
+  return { tipo: 'politicos', lista };
 }
 
 function conferirConteudo() {
@@ -90,7 +106,12 @@ function conferirConteudo() {
   erro.hidden = true;
   if (!$('#conteudo-json').value.trim()) return;
   try {
-    const lista = extrairPoliticos();
+    const carga = extrairCarga();
+    if (carga.tipo === 'candidaturas') {
+      toast(`Arquivo lido: ${carga.lista.length} candidatura(s) da eleição ${carga.ano}.`);
+      return;
+    }
+    const lista = carga.lista;
     const propostas = lista.reduce((s, p) => s + (p.propostas?.length || 0), 0);
     const acoes = lista.reduce((s, p) => s + (p.acoes?.length || 0), 0);
     toast(`Arquivo lido: ${lista.length} político(s), ${propostas} proposta(s), ${acoes} ação(ões).`);
@@ -113,9 +134,9 @@ async function importar(ev) {
   ev.preventDefault();
   const erro = $('#erro-form');
   erro.hidden = true;
-  let lista;
+  let carga;
   try {
-    lista = extrairPoliticos();
+    carga = extrairCarga();
   } catch (e) {
     erro.textContent = e.message;
     erro.hidden = false;
@@ -125,10 +146,16 @@ async function importar(ev) {
   botao.disabled = true;
   botao.textContent = 'Importando…';
   try {
-    const r = await api('/api/admin/importacoes', {
-      method: 'POST',
-      body: { fonteId: Number($('#sel-fonte').value), politicos: lista },
-    });
+    const fonteId = Number($('#sel-fonte').value);
+    const r = carga.tipo === 'candidaturas'
+      ? await api('/api/admin/importacoes/candidaturas', {
+        method: 'POST',
+        body: { fonteId, ano: carga.ano, candidaturas: carga.lista },
+      })
+      : await api('/api/admin/importacoes', {
+        method: 'POST',
+        body: { fonteId, politicos: carga.lista },
+      });
     mostrarResultado(r);
     await carregarHistorico();
   } catch (e) {

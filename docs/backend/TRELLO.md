@@ -43,7 +43,7 @@ Etiqueta: Equipe de Backend. Membros: os dois devs back-end; André em testes e 
 **Checklist A: Fundação técnica**
 - [x] Projeto Spring Boot criado em `backend/` (Java 17, Maven, Lombok)
 - [ ] MySQL + Docker Compose + `.env` no ar: arquivos prontos, falta subir e conectar **(validar)**
-- [ ] `application.yml` e baseline do Flyway: arquivos prontos, falta aplicar V1, V2 e V3 **(validar)**
+- [ ] `application.yml` e baseline do Flyway: arquivos prontos, falta aplicar V1 a V4 **(validar)**
 - [x] Estrutura de pacotes e tratamento padronizado de erros
 - [x] Segurança do painel (login por sessão, perfis ADMIN e EDITOR; login não conta na pontuação)
 
@@ -69,7 +69,7 @@ Etiqueta: Equipe de Backend. Membros: os dois devs back-end; André em testes e 
 - [x] **Extensão pedida pela equipe, fora do escopo validado:** candidaturas de presidente e governador (`/api/eleicoes/{ano}/...`, importação em `/api/admin/importacoes/candidaturas`, conversor `scripts/tse/ConversorCandidatos.java`). **Registrar no cartão a decisão do cliente (via PO)**; sem ela, não incluir nos slides como requisito atendido.
 
 **Checklist E: Fechamento**
-- [ ] Rodar os testes (`./mvnw test`): 4 classes de teste escritas **(validar)**
+- [ ] Rodar os testes (`./mvnw test`): 5 classes de teste escritas **(validar)**
 - [ ] Prints das telas de cada módulo com breve descrição de função e fluxo (as fichas já estão escritas)
 - [ ] Sistema rodando de ponta a ponta para a demonstração (roteiro no `README.md`)
 

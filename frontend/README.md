@@ -39,6 +39,9 @@ Também dá para forçar pela URL: `?modo=demo` ou `?modo=api`.
 
 Endpoints usados (todos públicos, só leitura): `GET /api/presidente`, `/api/ufs`, `/api/ufs/{sigla}`,
 `/api/ufs/{sigla}/representantes`, `/api/politicos/{id}/propostas` e `/api/politicos/{id}/acoes`.
+Candidatos da eleição (extensão fora do escopo validado): `/api/eleicoes/{ano}/presidente` na página Brasil e
+`/api/eleicoes/{ano}/ufs/{sigla}/governador` na página do estado. O ano vem de `anoEleicao` em `js/config.js`
+(ou `?ano=` na URL). No modo demo essa seção mostra a mensagem neutra: não há candidatos de demonstração.
 Quando a API responde `disponivel: false`, a tela mostra a mensagem neutra que vem dela (RF12).
 Os links das fontes abrem o original em nova aba (RF08).
 

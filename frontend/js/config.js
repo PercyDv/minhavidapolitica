@@ -14,5 +14,7 @@
 window.MVP_CONFIG = {
   apiBase: "http://localhost:8080/api",
   modo: "auto",
+  // Ano da eleição cujos candidatos aparecem nas páginas (também dá para trocar pela URL: ?ano=2026)
+  anoEleicao: 2026,
   versao: "1.0.0"
 };
