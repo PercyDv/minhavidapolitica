@@ -1,0 +1,127 @@
+{
+  "ele": "999999",
+  "cdabr": "br",
+  "nmabr": "Brasil",
+  "t": "1",
+  "f": "o",
+  "cdcar": "3",
+  "nmcar": "Governador",
+  "dg": "01/11/2026",
+  "hg": "20:00:00",
+  "idg": "1",
+  "abr": [
+    {
+      "dt": "01/11/2026",
+      "ht": "20:00:00",
+      "tpabr": "uf",
+      "cdabr": "BA",
+      "nmabr": "Bahia",
+      "tvap": "100000",
+      "scv": "n",
+      "esae": "n",
+      "mnae": [],
+      "cand": [
+        {
+          "n": "11",
+          "sqcand": "1",
+          "nm": "GOVERNADORA EXEMPLO DA SILVA",
+          "nmu": "GOVERNADORA EXEMPLO",
+          "sgp": "PEX",
+          "com": "PEX",
+          "vap": "1000",
+          "seq": "1",
+          "vs": [
+            {
+              "tp": "v",
+              "sqcand": "900",
+              "nm": "VICE EXEMPLO DE SOUZA",
+              "nmu": "VICE EXEMPLO DE SOUZA",
+              "sgp": "PEX"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dt": "01/11/2026",
+      "ht": "20:00:00",
+      "tpabr": "uf",
+      "cdabr": "SP",
+      "nmabr": "São Paulo",
+      "tvap": "100000",
+      "scv": "n",
+      "esae": "n",
+      "mnae": [],
+      "cand": [
+        {
+          "n": "22",
+          "sqcand": "3",
+          "nm": "GOVERNADOR EXEMPLO PEREIRA DOS SANTOS",
+          "nmu": "PEREIRA EXEMPLO",
+          "sgp": "PEY",
+          "com": "PEY",
+          "vap": "1000",
+          "seq": "1",
+          "vs": [
+            {
+              "tp": "v",
+              "sqcand": "900",
+              "nm": "VICE EXEMPLO DAS NEVES",
+              "nmu": "VICE EXEMPLO DAS NEVES",
+              "sgp": "PEX"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dt": "01/11/2026",
+      "ht": "20:00:00",
+      "tpabr": "uf",
+      "cdabr": "RJ",
+      "nmabr": "Rio de Janeiro",
+      "tvap": "100000",
+      "scv": "n",
+      "esae": "n",
+      "mnae": [],
+      "cand": [
+        {
+          "n": "33",
+          "sqcand": "5",
+          "nm": "CANDIDATO EXEMPLO UM",
+          "nmu": "UM EXEMPLO",
+          "sgp": "PEX",
+          "com": "PEX",
+          "vap": "1000",
+          "seq": "1",
+          "vs": []
+        },
+        {
+          "n": "44",
+          "sqcand": "7",
+          "nm": "CANDIDATA EXEMPLO DOIS",
+          "nmu": "DOIS EXEMPLO",
+          "sgp": "PEY",
+          "com": "PEY",
+          "vap": "1000",
+          "seq": "1",
+          "vs": []
+        }
+      ]
+    },
+    {
+      "dt": "01/11/2026",
+      "ht": "20:00:00",
+      "tpabr": "uf",
+      "cdabr": "ES",
+      "nmabr": "Espírito Santo",
+      "tvap": "100000",
+      "scv": "n",
+      "esae": "s",
+      "mnae": [
+        "Motivo de exemplo: eleição sem atribuição de eleito"
+      ],
+      "cand": []
+    }
+  ]
+}
