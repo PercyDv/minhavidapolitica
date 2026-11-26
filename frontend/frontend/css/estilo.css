@@ -1,0 +1,150 @@
+/* Minha Vida Política: site do cidadão.
+   Visual do protótipo validado no Figma: marinho, papel, âmbar e petróleo. */
+:root {
+  --marinho: #14213d;
+  --papel: #f5f7fa;
+  --branco: #ffffff;
+  --linha: #d9dfe8;
+  --linha-forte: #bcc5d3;
+  --grafite: #56627a;
+  --petroleo: #1d6a8a;
+  --petroleo-claro: #e6f1f6;
+  --ambar: #f2c14e;
+  --ambar-claro: #fdf6df;
+  --fonte: "Segoe UI", "Helvetica Neue", Roboto, "Noto Sans", Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html { font-size: 16px; }
+body {
+  margin: 0;
+  font-family: var(--fonte);
+  color: var(--marinho);
+  background: var(--papel);
+  line-height: 1.5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+h1, h2, p, ul { margin: 0; }
+ul { padding: 0; list-style: none; }
+a { color: var(--petroleo); }
+:focus-visible { outline: 3px solid var(--petroleo); outline-offset: 2px; }
+[hidden] { display: none !important; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.pular { position: absolute; left: -999px; top: 8px; background: var(--branco); padding: 8px 12px; border-radius: 6px; z-index: 20; }
+.pular:focus { left: 8px; }
+
+/* ---------- topo ---------- */
+.topo { background: var(--branco); border-bottom: 1px solid var(--linha); }
+.topo-interno {
+  max-width: 760px; margin: 0 auto; padding: 14px 20px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+}
+.logo { font-weight: 800; font-size: 1.05rem; color: var(--marinho); text-decoration: none; letter-spacing: -0.01em; }
+.logo mark { background: var(--ambar); color: var(--marinho); padding: 1px 6px; border-radius: 3px; }
+.seletor { display: flex; align-items: center; gap: 10px; font-size: .88rem; color: var(--marinho); }
+.btn-estado {
+  font: inherit; font-size: .9rem; color: var(--marinho); background: var(--papel);
+  border: 1px solid var(--linha-forte); border-radius: 8px; padding: 7px 14px; cursor: pointer; min-width: 148px; text-align: left;
+}
+.btn-estado:hover { background: #eaeff5; }
+
+/* ---------- página ---------- */
+.pagina { flex: 1; width: 100%; max-width: 760px; margin: 0 auto; padding: 36px 20px 48px; outline: none; }
+.titulo { font-size: clamp(1.9rem, 5vw, 2.6rem); line-height: 1.1; font-weight: 800; letter-spacing: -0.025em; max-width: 18ch; }
+.subtitulo { color: var(--grafite); margin: 14px 0 28px; max-width: 58ch; }
+.voltar { display: inline-block; margin-bottom: 14px; font-weight: 600; text-decoration: none; }
+.voltar::before { content: "\2190"; margin-right: 8px; }
+.voltar:hover { text-decoration: underline; }
+.carregando { color: var(--grafite); padding: 24px 0; }
+.erro-pagina { padding: 24px 0; }
+.erro-pagina p { margin-top: 14px; color: var(--grafite); }
+
+/* ---------- cartão do cargo ---------- */
+.cartao { background: var(--branco); border: 1px solid var(--linha); border-radius: 12px; padding: 22px 24px; margin-bottom: 28px; }
+.pessoa { display: flex; align-items: center; gap: 18px; }
+.avatar {
+  flex: none; width: 64px; height: 64px; border-radius: 50%; background: #e3e8f0; color: var(--grafite);
+  display: grid; place-items: center; font-weight: 700; font-size: 1.15rem; object-fit: cover;
+}
+.cargo { font-size: .85rem; color: var(--grafite); }
+.cartao h2 { font-size: 1.35rem; line-height: 1.2; font-weight: 800; margin: 2px 0 6px; letter-spacing: -0.01em; }
+.meta { font-size: .88rem; color: var(--grafite); }
+.resumo { margin-top: 16px; font-size: .92rem; color: var(--marinho); max-width: 62ch; }
+
+.abas { display: flex; gap: 6px; margin-top: 20px; border-bottom: 1px solid var(--linha); }
+.aba {
+  font: inherit; font-size: .92rem; background: none; border: 0; padding: 10px 14px; cursor: pointer; color: var(--grafite);
+  border-bottom: 3px solid transparent; margin-bottom: -1px;
+}
+.aba[aria-selected="true"] { color: var(--marinho); font-weight: 700; border-bottom-color: var(--marinho); }
+.painel-aba { padding: 16px 0 4px; min-height: 56px; }
+.neutra { color: var(--marinho); }
+.itens > li { padding: 12px 0; border-bottom: 1px solid var(--linha); }
+.itens > li:last-child { border-bottom: 0; }
+.item-titulo { font-weight: 700; }
+.item-texto { font-size: .92rem; margin-top: 2px; }
+.item-meta { font-size: .82rem; color: var(--grafite); margin-top: 4px; }
+
+.fonte { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--linha); font-size: .82rem; color: var(--grafite); }
+.pilula { border: 1px solid var(--petroleo); color: var(--petroleo); border-radius: 999px; padding: 1px 12px; font-size: .78rem; }
+
+/* ---------- candidatos ---------- */
+.secao { margin-bottom: 32px; }
+.secao h2 { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.01em; }
+.intro { margin-top: 6px; font-size: .9rem; color: var(--grafite); max-width: 62ch; }
+.contagem { margin: 16px 0 8px; font-size: .85rem; color: var(--grafite); }
+.secao > .neutra { margin-top: 14px; }
+.candidatos { background: var(--branco); border: 1px solid var(--linha); border-radius: 12px; overflow: hidden; }
+.candidato {
+  display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; align-items: center; gap: 16px;
+  padding: 14px 18px; border-bottom: 1px solid var(--linha);
+}
+.candidato:last-child { border-bottom: 0; }
+.numero {
+  display: grid; place-items: center; height: 44px; border: 2px solid var(--marinho); border-radius: 8px;
+  font-weight: 800; font-size: 1.15rem; font-variant-numeric: tabular-nums; letter-spacing: .02em;
+}
+.candidato-info { min-width: 0; }
+.nome { font-weight: 700; overflow-wrap: anywhere; }
+.completo { font-size: .85rem; color: var(--grafite); overflow-wrap: anywhere; }
+.partido { font-size: .85rem; color: var(--grafite); }
+.resultado { font-size: .82rem; color: var(--marinho); border: 1px solid var(--linha-forte); border-radius: 999px; padding: 3px 12px; white-space: nowrap; }
+.secao > .fonte { margin-top: 12px; border-top: 0; padding-top: 0; }
+
+/* ---------- demais representantes ---------- */
+.reps { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-top: 14px; }
+.rep { background: var(--branco); border: 1px solid var(--linha); border-radius: 12px; padding: 14px 16px; }
+
+/* ---------- avisos e rodapé ---------- */
+.aviso { background: var(--branco); border-left: 4px solid var(--ambar); padding: 12px 16px; border-radius: 4px; font-size: .88rem; color: var(--grafite); }
+.rodape { max-width: 760px; width: 100%; margin: 0 auto; padding: 8px 20px 40px; font-size: .8rem; color: var(--grafite); }
+.rodape p + p { margin-top: 4px; }
+
+/* ---------- seletor de estado ---------- */
+dialog { border: 1px solid var(--linha); border-radius: 14px; padding: 22px 22px 16px; width: min(440px, calc(100vw - 28px)); color: var(--marinho); box-shadow: 0 24px 60px rgba(20, 33, 61, .28); }
+dialog::backdrop { background: rgba(20, 33, 61, .45); }
+dialog h2 { font-size: 1.1rem; font-weight: 800; margin-bottom: 14px; }
+.grade-uf { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+.uf {
+  font: inherit; font-weight: 800; font-size: 1rem; color: var(--marinho); background: var(--branco);
+  border: 1px solid var(--linha); border-radius: 10px; height: 50px; cursor: pointer;
+}
+.uf:hover { background: var(--petroleo-claro); border-color: var(--petroleo); }
+.uf[aria-current="true"] { background: var(--marinho); color: var(--branco); border-color: var(--marinho); }
+.btn-link { font: inherit; font-weight: 700; color: var(--petroleo); background: none; border: 0; padding: 14px 0 4px; cursor: pointer; }
+
+/* ---------- celular ---------- */
+@media (max-width: 560px) {
+  .topo-interno { flex-wrap: wrap; }
+  .seletor { width: 100%; }
+  .btn-estado { flex: 1; }
+  .pagina { padding-top: 26px; }
+  .cartao { padding: 18px; }
+  .candidato { grid-template-columns: 56px minmax(0, 1fr); row-gap: 8px; }
+  .resultado { grid-column: 2; justify-self: start; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .btn-estado, .uf, .aba { transition: background-color .12s ease, border-color .12s ease; }
+}

@@ -1,70 +1,81 @@
-# Front-end público — Minha VidaPolitica
+# MinhaVidaPolitica.com
 
-Site do cidadão em **HTML, CSS e JavaScript puro**, feito a partir do protótipo do Figma
-*KSI — Koda Software Inteligente — Protótipo*. Não depende de build nem de framework.
-O back-end (`../backend`) não foi alterado.
+Plataforma web que reúne, de forma simples e sem viés, informações oficiais sobre políticos em exercício, por estado. Este repositório é um monorepo.
 
-## Telas
-
-| Arquivo | Tela do Figma |
+| Pasta | Conteúdo |
 |---|---|
-| `index.html` | Brasil / Propostas e Brasil / O que já foi feito (desktop e celular) |
-| `estado.html?uf=BA` | {Estado} / Propostas e {Estado} / O que já foi feito, com Demais representantes |
-| `configuracoes.html` | configuracoes_desktop e configuracoes_mobile |
-| menu no cabeçalho | Menu de estados — desktop e celular |
+| `backend/` | API REST e painel da equipe (Java 17, Spring Boot, MySQL) |
+| `frontend/` | Site público do cidadão (HTML, CSS e JavaScript puros), veja `frontend/README.md` |
+| `docs/backend/` | Diagramas, banco, contrato da API e fichas das telas (cartões 6.2, 6.4 e 6.5) |
+| `scripts/tse/` | Conversor do arquivo de eleitos do TSE para o formato de importação |
 
-As abas "Propostas" e "O que já foi feito" trocam na mesma página (`?aba=feito` abre direto na segunda).
-Abaixo de 768px de largura o layout muda para a versão de celular do protótipo.
+## Stack do back-end
+
+Java 17, Spring Boot 4.1, Spring Data JPA, Spring Security, Flyway, MySQL 8.4 LTS, Lombok, springdoc (Swagger), JUnit 5 e Mockito, Maven (wrapper) e Docker Compose para o banco local.
 
 ## Como rodar
 
-1. Suba a API como no README da raiz (`./mvnw spring-boot:run`, porta 8080).
-2. No VS Code, abra a pasta `frontend` com a extensão **Live Server** (porta 5500).
-   O back-end já libera CORS para `http://localhost:5500` e `http://127.0.0.1:5500`.
-3. Acesse `http://localhost:5500/index.html`.
+Pré-requisitos: JDK 17 e Docker.
 
-Sem Live Server: `python -m http.server 5500` dentro de `frontend/`.
-
-## De onde vêm os dados
-
-Configure em `js/config.js`:
-
-- `apiBase`: endereço da API (padrão `http://localhost:8080/api`).
-- `modo`:
-  - `"auto"` (padrão): usa a API; se ela estiver fora do ar, mostra o conteúdo do protótipo.
-  - `"api"`: usa só a API. Recomendado para publicar.
-  - `"demo"`: usa só o conteúdo do protótipo (`js/dados-demo.js`).
-
-Também dá para forçar pela URL: `?modo=demo` ou `?modo=api`.
-
-Endpoints usados (todos públicos, só leitura): `GET /api/presidente`, `/api/ufs`, `/api/ufs/{sigla}`,
-`/api/ufs/{sigla}/representantes`, `/api/politicos/{id}/propostas` e `/api/politicos/{id}/acoes`.
-Quando a API responde `disponivel: false`, a tela mostra a mensagem neutra que vem dela (RF12).
-Os links das fontes abrem o original em nova aba (RF08).
-
-O conteúdo de `js/dados-demo.js` é o texto do protótipo, para demonstração. Ele não passou
-pela validação de fontes do back-end (RN05).
-
-## Diferenças em relação ao protótipo
-
-- A API ainda não tem **status** da proposta (Em andamento, Concluída, Apresentada). Com dados reais,
-  o selo de status só aparece quando o campo existir; a faixa lateral fica azul.
-- O cartão de resumo "Deputados federais e estaduais" só aparece no modo demo (a API não envia esses totais).
-- As telas `noticia_*` do Figma imitam um portal de notícias externo (destino de um link de fonte)
-  e não fazem parte deste site.
-- Política de privacidade, Termos de uso e Enviar sugestão mostram "em preparação" até existirem.
-
-## Estrutura
-
+```bash
+cp .env.example .env            # troque as senhas, inclusive ADMIN_PASSWORD (8+ caracteres)
+docker compose up -d            # sobe o MySQL (porta 3307 por padrão)
+cd backend
+./mvnw test                     # testes unitários
+./mvnw spring-boot:run          # API em http://localhost:8080
 ```
-frontend/
-├── index.html, estado.html, configuracoes.html
-├── css/estilo.css          # tokens de cor do Figma, layout desktop e celular, tema escuro
-├── js/config.js            # endereço da API e modo
-├── js/preferencias.js      # preferências salvas no aparelho (tema, tamanho do texto, estado padrão)
-├── js/api.js               # chamadas à API e conversão para as telas
-├── js/dados-demo.js        # conteúdo do protótipo
-├── js/ui.js                # componentes (cartões, linha do tempo, menu de estados, abas)
-├── js/brasil.js, js/estado.js, js/configuracoes.js
-└── assets/                 # ícones exportados do Figma e fontes (Atkinson Hyperlegible, Public Sans, Inter — licença OFL)
-```
+
+- Site do cidadão (com a API rodando e os dados importados):
+
+  ```bash
+  cd frontend
+  python -m http.server 5500 --bind 127.0.0.1   # abra http://localhost:5500
+  ```
+
+- Swagger UI: `http://localhost:8080/swagger-ui.html`
+- Painel da equipe: `http://localhost:8080/admin/login.html` (usuário e senha do `.env`)
+- Primeira execução e solução de problemas: [`docs/backend/PRIMEIRA-EXECUCAO.md`](docs/backend/PRIMEIRA-EXECUCAO.md)
+
+## API pública (cidadão)
+
+| Endpoint | Requisito |
+|---|---|
+| `GET /api/presidente` | RF01 |
+| `GET /api/ufs` e `GET /api/ufs/{sigla}` | RF02, RF03 |
+| `GET /api/ufs/{sigla}/representantes` | RF04 |
+| `GET /api/politicos/{id}`, `/propostas`, `/acoes` | RF07, RF05, RF06 |
+| `GET /api/eleicoes/{ano}/presidente` e `/ufs/{sigla}/governador` | Extensão: candidatos da eleição (fora do escopo validado; depende do cliente) |
+
+Toda resposta traz a fonte, o link e a data de atualização (RF08). Sem dado em fonte validada, a resposta traz `disponivel: false` e a mensagem neutra do RF12.
+
+## Roteiro de demonstração (regra RN05 em ação)
+
+Os dados de exemplo são fictícios e rotulados como demonstração (`docs/backend/api/exemplo-importacao.json`).
+
+1. Entre no painel e abra **Fontes de dados**. Cadastre "Fonte de demonstração" com periodicidade "Mensal". Ela nasce **aguardando aprovação**.
+2. Abra **Importação de dados**, escolha a fonte e envie `exemplo-importacao.json`. A tela avisa que os dados ficam retidos.
+3. Consulte `http://localhost:8080/api/presidente`: resposta com `disponivel: false` e a mensagem neutra.
+4. Volte em **Fontes de dados** e use **Registrar aprovação** (informe quem do cliente aprovou).
+5. Consulte `/api/presidente` e `/api/ufs/BA` de novo: agora vêm os dados, com fonte, link e data.
+6. Abra **Relatórios** e veja Bahia e São Paulo como "completo". Use `exemplo-importacao-com-erros.json` para mostrar a rejeição de registros inválidos.
+
+## Regras de negócio no código
+
+| Regra | Onde |
+|---|---|
+| RN01 só mandato atual | Consultas `...Visiveis` em `PoliticoRepository` |
+| RN05 só fonte aprovada e ativa | Mesmas consultas e `FonteDados.liberaExibicao()` |
+| RF12 mensagem neutra | `Resultado` e `PublicoService` |
+| RF13 aprovação e periodicidade da fonte | `FonteService` e `ImportacaoService` |
+
+## Convenções de trabalho
+
+- `main` sempre estável. Mudanças por Pull Request com 1 aprovação.
+- Branches com o número da atividade do roteiro: `feature/6.4-modulo-ads`, `docs/6.5-banco`.
+- Commits no padrão *Conventional Commits*: `feat:`, `fix:`, `docs:`, `test:`, `refactor:`, `chore:`.
+- Migrations do Flyway nunca são editadas depois de aplicadas: mudanças entram em nova versão.
+- Nenhuma senha ou chave no código. Tudo vai no `.env`, que não é versionado.
+
+## Licença
+
+A licença do projeto (RN07, código aberto) ainda será definida com o cliente.
