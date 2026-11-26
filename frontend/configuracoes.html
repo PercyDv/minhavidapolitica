@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Minha VidaPolitica · Configurações</title>
+  <meta name="description" content="Ajuste o app do seu jeito. Não há cadastro: suas escolhas ficam salvas só neste aparelho.">
+  <link rel="icon" href="assets/icons/configuracoes.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/estilo.css">
+  <script src="js/preferencias.js"></script>
+</head>
+<body class="pagina-config">
+  <header class="cabecalho">
+    <div class="conteudo cabecalho__conteudo">
+      <a class="marca" href="index.html?brasil=1" aria-label="Minha VidaPolitica — página inicial">
+        <span class="marca__destaque">Minha</span><span class="marca__nome">VidaPolítica</span>
+      </a>
+      <a class="atalho-configuracoes" href="configuracoes.html" aria-label="Configurações" aria-current="page">
+        <img src="assets/icons/configuracoes.svg" width="42" height="42" alt="">
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <div class="conteudo config">
+      <a class="config__voltar" href="index.html?brasil=1" id="voltar">‹ Voltar</a>
+      <h1 class="config__titulo">Configurações</h1>
+      <p class="config__resumo">Ajuste o app do seu jeito. Não há cadastro: suas escolhas ficam salvas só neste aparelho.</p>
+
+      <section class="config__secao" aria-labelledby="sec-estado">
+        <h2 class="config__secao-titulo config__secao-titulo--primeira" id="sec-estado">Seu estado</h2>
+        <div class="config__cartao">
+          <div class="config__linha config__linha--empilhada">
+            <div class="config__textos">
+              <label class="config__rotulo" for="estado-padrao">Estado padrão</label>
+              <span class="config__descricao" id="desc-estado">O app abre direto nas informações deste estado.</span>
+            </div>
+            <div class="config__select">
+              <select id="estado-padrao" aria-describedby="desc-estado">
+                <option value="">Nenhum</option>
+              </select>
+              <svg width="12" height="8" viewBox="0 0 12 8" fill="none" aria-hidden="true"><path d="M1 1L6 7L11 1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="config__secao" aria-labelledby="sec-aparencia">
+        <h2 class="config__secao-titulo" id="sec-aparencia">Aparência</h2>
+        <div class="config__cartao">
+          <div class="config__linha config__linha--empilhada">
+            <div class="config__textos">
+              <span class="config__rotulo" id="rot-tema">Tema</span>
+              <span class="config__descricao">Escolha como o app aparece na tela.</span>
+            </div>
+            <div class="segmentos" role="radiogroup" aria-labelledby="rot-tema" data-pref="tema">
+              <button class="segmentos__opcao" type="button" role="radio" data-valor="claro">Claro</button>
+              <button class="segmentos__opcao" type="button" role="radio" data-valor="escuro">Escuro</button>
+              <button class="segmentos__opcao" type="button" role="radio" data-valor="automatico">Automático</button>
+            </div>
+          </div>
+          <div class="config__linha config__linha--empilhada">
+            <div class="config__textos">
+              <span class="config__rotulo" id="rot-tamanho">Tamanho do texto</span>
+              <span class="config__descricao">Aumente a letra para ler com mais conforto.</span>
+            </div>
+            <div class="segmentos" role="radiogroup" aria-labelledby="rot-tamanho" data-pref="tamanho">
+              <button class="segmentos__opcao" type="button" role="radio" data-valor="pequeno">Pequeno</button>
+              <button class="segmentos__opcao" type="button" role="radio" data-valor="normal">Normal</button>
+              <button class="segmentos__opcao" type="button" role="radio" data-valor="grande">Grande</button>
+            </div>
+          </div>
+          <div class="config__linha">
+            <div class="config__textos">
+              <span class="config__rotulo" id="rot-contraste">Alto contraste</span>
+              <span class="config__descricao">Reforça cores e bordas para facilitar a leitura.</span>
+            </div>
+            <button class="interruptor" type="button" role="switch" aria-labelledby="rot-contraste" data-pref="contraste"></button>
+          </div>
+          <div class="config__linha config__linha--curta">
+            <span class="config__rotulo">Idioma</span>
+            <span class="config__valor">Português (Brasil)
+              <svg class="config__chevron" viewBox="0 0 8 12" fill="none" aria-hidden="true"><path d="M1 1L7 6L1 11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <section class="config__secao" aria-labelledby="sec-notificacoes">
+        <h2 class="config__secao-titulo" id="sec-notificacoes">Notificações</h2>
+        <div class="config__cartao">
+          <div class="config__linha">
+            <div class="config__textos">
+              <span class="config__rotulo" id="rot-avisos">Receber avisos</span>
+              <span class="config__descricao">Seja avisado sobre novidades do seu estado.</span>
+            </div>
+            <button class="interruptor" type="button" role="switch" aria-labelledby="rot-avisos" data-notificacao="avisos"></button>
+          </div>
+          <div class="config__linha">
+            <div class="config__textos">
+              <span class="config__rotulo" id="rot-propostas">Novas propostas</span>
+              <span class="config__descricao">Quando um representante apresentar uma proposta.</span>
+            </div>
+            <button class="interruptor" type="button" role="switch" aria-labelledby="rot-propostas" data-notificacao="propostas"></button>
+          </div>
+          <div class="config__linha">
+            <div class="config__textos">
+              <span class="config__rotulo" id="rot-acoes">Novas ações registradas</span>
+              <span class="config__descricao">Quando uma ação for publicada em fonte oficial.</span>
+            </div>
+            <button class="interruptor" type="button" role="switch" aria-labelledby="rot-acoes" data-notificacao="acoes"></button>
+          </div>
+        </div>
+      </section>
+
+      <section class="config__secao" aria-labelledby="sec-dados">
+        <h2 class="config__secao-titulo" id="sec-dados">Dados neste aparelho</h2>
+        <div class="config__cartao">
+          <button class="config__linha config__linha--perigo" type="button" id="limpar-dados">
+            <span class="config__textos">
+              <span class="config__rotulo">Limpar dados salvos</span>
+              <span class="config__descricao">Apaga o estado escolhido e as preferências deste aparelho.</span>
+            </span>
+            <svg class="config__chevron" viewBox="0 0 8 12" fill="none" aria-hidden="true"><path d="M1 1L7 6L1 11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </section>
+
+      <section class="config__secao" aria-labelledby="sec-sobre">
+        <h2 class="config__secao-titulo" id="sec-sobre">Sobre o app</h2>
+        <div class="config__cartao">
+          <button class="config__linha" type="button" data-aviso="As informações vêm apenas de fontes oficiais aprovadas, sempre com o link e a data de atualização.">
+            <span class="config__textos">
+              <span class="config__rotulo">Como as informações são obtidas</span>
+              <span class="config__descricao">Veja as fontes oficiais e como os dados são atualizados.</span>
+            </span>
+            <svg class="config__chevron" viewBox="0 0 8 12" fill="none" aria-hidden="true"><path d="M1 1L7 6L1 11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="config__linha config__linha--curta" type="button" data-aviso="Política de privacidade em preparação.">
+            <span class="config__rotulo">Política de privacidade</span>
+            <svg class="config__chevron" viewBox="0 0 8 12" fill="none" aria-hidden="true"><path d="M1 1L7 6L1 11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="config__linha config__linha--curta" type="button" data-aviso="Termos de uso em preparação.">
+            <span class="config__rotulo">Termos de uso</span>
+            <svg class="config__chevron" viewBox="0 0 8 12" fill="none" aria-hidden="true"><path d="M1 1L7 6L1 11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="config__linha" type="button" data-aviso="Canal de sugestões em preparação.">
+            <span class="config__textos">
+              <span class="config__rotulo">Enviar sugestão ou relatar erro</span>
+              <span class="config__descricao">Encontrou algo errado? Conte para a gente.</span>
+            </span>
+            <svg class="config__chevron" viewBox="0 0 8 12" fill="none" aria-hidden="true"><path d="M1 1L7 6L1 11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="config__linha config__linha--curta" type="button" id="compartilhar">
+            <span class="config__rotulo">Compartilhar o app</span>
+            <svg class="config__chevron" viewBox="0 0 8 12" fill="none" aria-hidden="true"><path d="M1 1L7 6L1 11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="config__linha config__linha--curta">
+            <span class="config__rotulo">Dados atualizados em</span>
+            <span class="config__valor" id="dados-atualizados">16/10/2026</span>
+          </div>
+          <div class="config__linha config__linha--curta">
+            <span class="config__rotulo">Versão do app</span>
+            <span class="config__valor" id="versao-app">1.0.0</span>
+          </div>
+        </div>
+      </section>
+
+      <p class="config__rodape">Minha VidaPolítica · Informações oficiais, sem opinião.</p>
+    </div>
+  </main>
+
+  <div class="config__aviso" id="aviso" role="status" aria-live="polite" hidden></div>
+
+  <script src="js/config.js"></script>
+  <script src="js/dados-demo.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/configuracoes.js"></script>
+</body>
+</html>

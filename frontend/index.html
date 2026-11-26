@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Minha VidaPolitica · Brasil</title>
+  <meta name="description" content="Informações oficiais sobre quem está no cargo agora: o que propôs e o que já fez. Sem opinião, sem rótulos.">
+  <link rel="icon" href="assets/icons/configuracoes.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/estilo.css">
+  <script src="js/preferencias.js"></script>
+</head>
+<body class="pagina-brasil">
+  <header class="cabecalho">
+    <div class="conteudo cabecalho__conteudo">
+      <a class="marca" href="index.html?brasil=1" aria-label="Minha VidaPolitica — página inicial">
+        <span class="marca__destaque">Minha</span><span class="marca__nome">VidaPolitica</span>
+      </a>
+      <div class="escolha-estado">
+        <span class="escolha-estado__rotulo" id="rotulo-estado">Seu estado</span>
+        <button class="seletor-estado" id="seletor-estado" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="menu-estados" aria-labelledby="rotulo-estado seletor-estado">
+          <span class="seletor-estado__valor">Escolher…</span>
+          <img class="seletor-estado__seta" src="assets/icons/seta-seletor.svg" width="9" height="7" alt="">
+        </button>
+        <div class="menu-estados" id="menu-estados" role="dialog" aria-labelledby="titulo-menu-estados" hidden>
+          <p class="menu-estados__titulo" id="titulo-menu-estados">Escolha seu estado</p>
+          <nav class="menu-estados__opcoes" aria-label="Estados"></nav>
+          <button class="menu-estados__fechar" type="button">Fechar</button>
+        </div>
+      </div>
+      <a class="atalho-configuracoes" href="configuracoes.html" aria-label="Configurações">
+        <img src="assets/icons/configuracoes.svg" width="42" height="42" alt="">
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <div class="conteudo">
+      <section class="introducao">
+        <div class="introducao__titulo-resumo">
+          <h1 class="introducao__titulo" id="titulo-pagina">Entenda quem decide por você, de forma simples.</h1>
+          <p class="introducao__resumo" id="resumo-pagina">Informações oficiais sobre quem está no cargo agora: o que propôs e o que já fez. Sem opinião, sem rótulos.</p>
+        </div>
+      </section>
+
+      <section class="painel" aria-label="Mandato atual">
+        <div class="representante" id="representante">
+          <span class="avatar" aria-hidden="true"></span>
+          <div class="identificacao"><p class="identificacao__linha">Carregando…</p></div>
+        </div>
+        <div class="abas" role="tablist" aria-label="Informações do mandato">
+          <button class="aba" type="button" role="tab" id="aba-propostas" aria-controls="lista-propostas" data-aba="propostas" aria-selected="true">Propostas</button>
+          <button class="aba" type="button" role="tab" id="aba-feito" aria-controls="lista-feito" data-aba="feito" aria-selected="false" tabindex="-1">O que já foi feito</button>
+        </div>
+        <div class="lista-informacoes" id="lista-propostas" role="tabpanel" aria-labelledby="aba-propostas"><p class="carregando">Carregando…</p></div>
+        <div class="lista-informacoes" id="lista-feito" role="tabpanel" aria-labelledby="aba-feito" hidden><p class="carregando">Carregando…</p></div>
+      </section>
+    </div>
+
+    <footer class="conteudo rodape-fontes" id="rodape-fontes">
+      <p id="rodape-fonte"></p>
+      <p id="rodape-atualizacao"></p>
+    </footer>
+    <div class="espaco-final" aria-hidden="true"></div>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/dados-demo.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/brasil.js"></script>
+</body>
+</html>
