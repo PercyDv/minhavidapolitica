@@ -1,4 +1,4 @@
-/* Página estadual: governador em exercício, propostas, o que já foi feito e demais representantes (RF03 a RF06). */
+/* Página estadual: governador em exercício, propostas, o que já foi feito, candidatos a governador e demais representantes (RF03 a RF06). */
 (function () {
   "use strict";
 
@@ -32,6 +32,12 @@
     elTitulo.textContent = ufLocal.nome;
     document.title = "Minha VidaPolitica · " + ufLocal.nome;
   }
+
+  // Candidatos ao governo do estado escolhido: só os desta UF (RN06).
+  window.MVPApi.candidatosEstado(sigla).then(function (resultado) {
+    ui.preencherCandidatos(document.getElementById("candidatos"), resultado,
+      "Candidatos ao governo em " + window.MVPApi.anoEleicao);
+  });
 
   window.MVPApi.estado(sigla).then(function (dados) {
     if (!dados) { semEstado("UF não encontrada: " + sigla); return; }

@@ -9,6 +9,8 @@
  *   GET /api/ufs/{sigla}/representantes    -> Resultado<List<PoliticoPublico>>
  *   GET /api/politicos/{id}/propostas      -> Resultado<List<ItemPublico>>
  *   GET /api/politicos/{id}/acoes          -> Resultado<List<ItemPublico>>
+ *   GET /api/eleicoes/{ano}/presidente                 -> Resultado<List<CandidaturaPublica>>
+ *   GET /api/eleicoes/{ano}/ufs/{sigla}/governador     -> Resultado<List<CandidaturaPublica>>
  *
  * Quando a API responde "disponivel: false", a tela mostra a mensagem neutra que vem
  * dela (RF12), sem inventar dado.
@@ -89,6 +91,7 @@
       iniciais: iniciais(p.nome),
       cargo: p.cargo || "",
       nome: p.nome || "",
+      resumo: p.resumo || "",
       mandato: mandato,
       partido: "Partido: " + (p.partido || "não informado"),
       fonte: p.fonte || null
@@ -231,6 +234,48 @@
     });
   }
 
+  /* ---------- Candidatos da eleição (extensão fora do escopo validado, RN01) ---------- */
+  var ANO_ELEICAO = cfg.anoEleicao || 2026;
+  var TEXTO_SITUACAO = { ELEITO: "Eleito(a)", NAO_ELEITO: "Não eleito(a)", SEGUNDO_TURNO: "Foi ao 2º turno", SEM_RESULTADO: "Sem resultado" };
+  var ORDEM = typeof Intl !== "undefined" && Intl.Collator ? new Intl.Collator("pt-BR", { sensitivity: "base" }) : null;
+
+  function nomeExibido(c) { return c.nomeUrna || c.nome || ""; }
+  function comparar(a, b) {
+    var x = nomeExibido(a), y = nomeExibido(b);
+    return ORDEM ? ORDEM.compare(x, y) : (x < y ? -1 : (x > y ? 1 : 0));
+  }
+  function candidatoParaTela(c) {
+    return {
+      numero: String(c.numero || ""),
+      nome: nomeExibido(c),
+      completo: c.nomeUrna && c.nomeUrna !== c.nome ? c.nome : "",
+      partido: c.partido ? "Partido: " + c.partido : "Partido não informado",
+      situacao: TEXTO_SITUACAO[c.situacao] || ""
+    };
+  }
+  function candidatos(caminho) {
+    var modo = modoAtual();
+    if (modo === "demo") return Promise.resolve({ oculto: true });
+    return obter(caminho).then(function (res) {
+      var vazio = { itens: null, fonte: "", linkFonte: null, atualizacao: "", ano: ANO_ELEICAO };
+      if (!res || !res.disponivel || !res.dados || !res.dados.length) {
+        vazio.mensagem = (res && res.mensagem) || MENSAGEM_PADRAO;
+        return vazio;
+      }
+      var lista = res.dados.slice().sort(comparar);
+      var fonte = lista[0].fonte || null;
+      return {
+        itens: lista.map(candidatoParaTela), mensagem: null, ano: ANO_ELEICAO,
+        fonte: fonte ? fonte.nome || "" : "", linkFonte: fonte ? fonte.link || null : null,
+        atualizacao: fonte ? dataCompleta(fonte.atualizadoEm) : ""
+      };
+    }).catch(function (erro) {
+      // API fora do ar no modo "auto": a página já mostra o protótipo, então a seção não aparece.
+      if (modo === "auto" && erro instanceof SemConexao) return { oculto: true };
+      return { itens: null, mensagem: "Não foi possível carregar os candidatos agora.", fonte: "", linkFonte: null, atualizacao: "", ano: ANO_ELEICAO };
+    });
+  }
+
   /* ---------- Escolha entre API e protótipo ---------- */
   function comModo(daApi, doDemo) {
     var modo = modoAtual();
@@ -248,6 +293,9 @@
     modo: modoAtual,
     brasil: function () { return comModo(brasilApi, brasilDemo); },
     estado: function (sigla) { return comModo(function () { return estadoApi(sigla); }, function () { return estadoDemo(sigla); }); },
+    anoEleicao: ANO_ELEICAO,
+    candidatosBrasil: function () { return candidatos("/eleicoes/" + ANO_ELEICAO + "/presidente"); },
+    candidatosEstado: function (sigla) { return candidatos("/eleicoes/" + ANO_ELEICAO + "/ufs/" + encodeURIComponent(sigla) + "/governador"); },
     ufs: function () { return comModo(ufsApi, function () { return window.MVPDemo.ufs; }); },
     ErroApi: ErroApi,
     SemConexao: SemConexao,

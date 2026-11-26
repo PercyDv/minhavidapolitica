@@ -1,4 +1,4 @@
-/* Página Brasil: presidente em exercício, propostas e o que já foi feito (RF01, RF05, RF06). */
+/* Página Brasil: presidente em exercício, propostas, o que já foi feito (RF01, RF05, RF06) e candidatos à Presidência. */
 (function () {
   "use strict";
 
@@ -23,6 +23,12 @@
   var elRep = document.getElementById("representante");
   var elPropostas = document.getElementById("lista-propostas");
   var elFeito = document.getElementById("lista-feito");
+
+  // Candidatos da eleição: carregam à parte, para não atrasar nem derrubar o cartão do presidente.
+  window.MVPApi.candidatosBrasil().then(function (resultado) {
+    ui.preencherCandidatos(document.getElementById("candidatos"), resultado,
+      "Candidatos à Presidência em " + window.MVPApi.anoEleicao);
+  });
 
   window.MVPApi.brasil().then(function (dados) {
     ui.preencherRepresentante(elRep, dados.presidente, dados.mensagem);

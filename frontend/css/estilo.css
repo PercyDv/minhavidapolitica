@@ -652,3 +652,36 @@ button.config__linha:hover, a.config__linha:hover { background: var(--fundo); }
   .config__textos { flex: 1 1 0; }
   .config__rodape { font-size: 12px; }
 }
+
+/* =========================================================================
+   Candidatos da eleição (extensão fora do escopo validado, RN01)
+   Reaproveita o cartão de representante; faixa e etiqueta ficam neutras,
+   sem cor de destaque para eleito ou não eleito (RN04).
+   ========================================================================= */
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.identificacao__resumo { margin-top: 4px; font-size: 13px; line-height: 1.4; color: var(--texto-suave); }
+
+.candidatos__intro { font-size: 13px; line-height: 1.45; color: var(--texto-suave); max-width: 62ch; padding-bottom: 4px; }
+.candidatos__fonte {
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 16px;
+  padding: 4px 2px 0; font-size: 10.5px; line-height: 13px; color: var(--texto-suave);
+}
+.candidatos__fonte a { color: inherit; }
+.candidatos[hidden] { display: none; }
+.pagina-brasil .candidatos { padding-bottom: 20px; }
+
+.cartao-rep--candidato .faixa { background: var(--rep-faixa-dados); }
+.cartao-rep--candidato .cartao-rep__avatar {
+  border-radius: 8px; border: 2px solid var(--cartao-titulo);
+  background: var(--superficie); color: var(--cartao-titulo);
+  font-size: 16px; font-variant-numeric: tabular-nums;
+}
+.cartao-rep--candidato .cartao-rep__selo { background: transparent; border: 1px solid var(--rep-borda); color: var(--rep-texto); }
+.cartao-rep--candidato .cartao-rep__nome { overflow-wrap: anywhere; }
+
+@media (max-width: 767px) {
+  .cartao-rep--candidato .cartao-rep__avatar { font-size: 15px; }
+  .cartao-rep--candidato { min-height: 94px; }
+  .candidatos__fonte { padding-bottom: 8px; }
+}
+
