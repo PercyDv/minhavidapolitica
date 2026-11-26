@@ -75,6 +75,18 @@ Etiqueta: Equipe de Backend. Membros: os dois devs back-end; André em testes e 
 
 Observação: as telas do painel foram escritas, mas só passaram por um teste parcial no navegador, contra uma API simulada. A confirmação acontece ao rodar o sistema de verdade.
 
+## Cartão 6.3: Front-end (apoio do back-end)
+
+Cartão do FrontEnd (João). O site do cidadão é dele (`frontend/`, feito a partir do Figma). O back-end acrescentou:
+
+- [x] Seção de candidatos (presidência em `index.html` e governo por estado em `estado.html`), no padrão visual dos cartões de representantes
+- [x] Linha de resumo do político no cartão do mandato atual (ex.: governador interino)
+- [ ] Revisão do João e do design da seção de candidatos, que não existe no Figma
+- [ ] **Decisão do cliente (via PO) sobre mostrar candidatos**: é extensão fora do escopo validado (RN01)
+- [ ] Prints das telas para o documento (6.10)
+
+Documentação: `frontend/README.md`.
+
 ## Cartão 6.5: Estruturação do Banco de Dados (obrigatório: grupo ADS)
 
 Etiqueta: Equipe de Backend. Membros: os dois devs back-end.
