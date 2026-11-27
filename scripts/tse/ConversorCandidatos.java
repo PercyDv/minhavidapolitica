@@ -45,6 +45,10 @@ public class ConversorCandidatos {
         boolean todasSituacoes;
     }
 
+    /** Siglas que aparecem em nomes de urna e têm vogal (as sem vogal já são tratadas por regra). */
+    private static final java.util.Set<String> SIGLAS_CONHECIDAS =
+            java.util.Set.of("acm", "pco", "psol", "pstu", "pcb", "psdb", "mdb", "psd");
+
     /** Aliases aceitos para cada coluna (os nomes do TSE vêm primeiro). */
     private static final Map<String, List<String>> COLUNAS = new LinkedHashMap<>();
     static {
@@ -316,7 +320,8 @@ public class ConversorCandidatos {
             boolean semVogal = !titulo && !sigla.isEmpty() && sigla.length() <= 4
                     && !sigla.matches(".*[aeiouáéíóúâêôãõà].*");
             boolean romano = sigla.matches("(?i)ii|iii|iv|vi|vii|viii|ix");
-            if (semVogal || romano) {
+            boolean conhecida = SIGLAS_CONHECIDAS.contains(sigla);
+            if (semVogal || romano || conhecida) {
                 sb.append(p.toUpperCase(Locale.forLanguageTag("pt-BR")));
                 continue;
             }

@@ -43,7 +43,7 @@ Etiqueta: Equipe de Backend. Membros: os dois devs back-end; André em testes e 
 **Checklist A: Fundação técnica**
 - [x] Projeto Spring Boot criado em `backend/` (Java 17, Maven, Lombok)
 - [ ] MySQL + Docker Compose + `.env` no ar: arquivos prontos, falta subir e conectar **(validar)**
-- [ ] `application.yml` e baseline do Flyway: arquivos prontos, falta aplicar V1 a V4 **(validar)**
+- [ ] `application.yml` e baseline do Flyway: arquivos prontos, falta aplicar V1, V2 e V3 **(validar)**
 - [x] Estrutura de pacotes e tratamento padronizado de erros
 - [x] Segurança do painel (login por sessão, perfis ADMIN e EDITOR; login não conta na pontuação)
 
@@ -69,11 +69,23 @@ Etiqueta: Equipe de Backend. Membros: os dois devs back-end; André em testes e 
 - [x] **Extensão pedida pela equipe, fora do escopo validado:** candidaturas de presidente e governador (`/api/eleicoes/{ano}/...`, importação em `/api/admin/importacoes/candidaturas`, conversor `scripts/tse/ConversorCandidatos.java`). **Registrar no cartão a decisão do cliente (via PO)**; sem ela, não incluir nos slides como requisito atendido.
 
 **Checklist E: Fechamento**
-- [ ] Rodar os testes (`./mvnw test`): 5 classes de teste escritas **(validar)**
+- [ ] Rodar os testes (`./mvnw test`): 4 classes de teste escritas **(validar)**
 - [ ] Prints das telas de cada módulo com breve descrição de função e fluxo (as fichas já estão escritas)
 - [ ] Sistema rodando de ponta a ponta para a demonstração (roteiro no `README.md`)
 
 Observação: as telas do painel foram escritas, mas só passaram por um teste parcial no navegador, contra uma API simulada. A confirmação acontece ao rodar o sistema de verdade.
+
+## Cartão 6.3: Front-end (apoio do back-end)
+
+Cartão do FrontEnd (João). O site do cidadão é dele (`frontend/`, feito a partir do Figma). O back-end acrescentou:
+
+- [x] Seção de candidatos (presidência em `index.html` e governo por estado em `estado.html`), no padrão visual dos cartões de representantes
+- [x] Linha de resumo do político no cartão do mandato atual (ex.: governador interino)
+- [ ] Revisão do João e do design da seção de candidatos, que não existe no Figma
+- [ ] **Decisão do cliente (via PO) sobre mostrar candidatos**: é extensão fora do escopo validado (RN01)
+- [ ] Prints das telas para o documento (6.10)
+
+Documentação: `frontend/README.md`.
 
 ## Cartão 6.5: Estruturação do Banco de Dados (obrigatório: grupo ADS)
 
