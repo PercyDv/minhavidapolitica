@@ -5,7 +5,7 @@ spring:
     # Lê o .env da raiz do repositório (a aplicação deve rodar a partir de backend/)
       import: optional:file:./.env[.properties],optional:file:../.env[.properties]
   datasource:
-    url: jdbc:mysql://localhost:${MYSQL_PORT:3307}/${MYSQL_DATABASE:minhavidapolitica}?serverTimezone=America/Bahia&allowPublicKeyRetrieval=true&useSSL=false&characterEncoding=UTF-8
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3307}/${MYSQL_DATABASE:minhavidapolitica}?serverTimezone=America/Bahia&allowPublicKeyRetrieval=true&useSSL=false&characterEncoding=UTF-8
     username: ${MYSQL_USER:mvp_user}
     password: ${MYSQL_PASSWORD:}
   jpa:

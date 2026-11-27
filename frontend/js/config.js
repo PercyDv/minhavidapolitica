@@ -12,8 +12,13 @@
  * Também dá para trocar pela URL: ?modo=demo ou ?modo=api
  */
 window.MVP_CONFIG = {
-  apiBase: "http://localhost:8080/api",
-  modo: "auto",
+  // Servido pelo próprio backend (Railway ou localhost:8080): usa a API da mesma origem.
+  // Servido à parte (Live Server/http-server nas portas 5500 ou 3000): usa a API local na porta 8080.
+  apiBase: (location.port === "5500" || location.port === "3000")
+    ? "http://localhost:8080/api"
+    : "/api",
+  // "api": nunca mostra o conteúdo de demonstração no lugar de dados reais
+  modo: "api",
   // Ano da eleição cujos candidatos aparecem nas páginas (também dá para trocar pela URL: ?ano=2026)
   anoEleicao: 2026,
   versao: "1.0.0"

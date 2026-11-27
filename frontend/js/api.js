@@ -45,7 +45,7 @@
   function obter(caminho) {
     var base = (cfg.apiBase || "/api").replace(/\/$/, "");
     var controle = typeof AbortController !== "undefined" ? new AbortController() : null;
-    var timer = controle ? setTimeout(function () { controle.abort(); }, 8000) : null;
+    var timer = controle ? setTimeout(function () { controle.abort(); }, 60000) : null;
     return fetch(base + caminho, { headers: { Accept: "application/json" }, signal: controle ? controle.signal : undefined })
       .catch(function (erro) { throw new SemConexao(erro); })
       .then(function (resposta) {
