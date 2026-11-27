@@ -142,7 +142,7 @@ export function seloFonte(fonte) {
 const MENU = [
   { grupo: null, itens: [{ chave: 'inicio', rotulo: 'Visão geral', href: 'index.html' }] },
   {
-    grupo: 'Módulo ADS',
+    grupo: null,
     itens: [
       { chave: 'politicos', rotulo: 'Políticos', href: 'politicos.html' },
       { chave: 'propostas-acoes', rotulo: 'Propostas e ações', href: 'propostas-acoes.html' },
@@ -151,7 +151,7 @@ const MENU = [
     ],
   },
   {
-    grupo: 'Módulo BES',
+    grupo: null,
     itens: [
       { chave: 'fontes', rotulo: 'Fontes de dados', href: 'fontes.html' },
       { chave: 'importacao', rotulo: 'Importação de dados', href: 'importacao.html' },

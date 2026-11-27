@@ -127,3 +127,95 @@ As posses de presidente (5 de janeiro) e governadores (6 de janeiro) de 2027 e o
 | `--fonte-id <n>` | Id da fonte no sistema; deixa o arquivo pronto para enviar |
 | `--link <url>` | Link guardado em cada candidatura |
 | `--todas-situacoes` | Inclui também candidaturas indeferidas, canceladas etc. |
+
+---
+
+# Fotos e planos de governo dos candidatos
+
+Liga a **foto** e o **plano de governo** registrados no TSE a cada candidatura, para aparecerem nos cartões do site. O plano entra como **link para o PDF oficial**, sem resumo nem interpretação (RN04).
+
+## O que a ferramenta faz
+
+- Lê os ZIPs "Fotos de candidatos" e "Proposta de governo" do Portal de Dados Abertos do TSE (licença Creative Commons Atribuição).
+- Acha o arquivo de cada candidato pelo **identificador do TSE (`sqCandidato`) que aparece no nome do arquivo**, seja qual for o formato do nome. Os nomes reais seguem `FBA50002536624_div.jpg` (foto) e `BA/2026BA50002536314_01.pdf` (plano). Se houver mais de um arquivo do mesmo candidato, fica o de **menor número** (`_01`), e a ferramenta avisa. Um candidato do DF, por exemplo, tem um `_02` que é um documento de outro processo, não o plano.
+- Copia **só os candidatos do seu arquivo** (presidente e governador), para `frontend/assets/fotos/<ano>/` e `frontend/assets/planos/<ano>/`.
+- Reduz fotos maiores que 400 px (JPEG). As fotos do TSE já são pequenas (cerca de 160×225 px, poucos KB) e ficam **exatamente como o TSE publicou**. PDFs acima de 25 MB são ignorados, com aviso. O `leiame.pdf` que vem nos ZIPs é ignorado.
+- Confere se o conteúdo é mesmo imagem ou PDF, e ignora o que não for.
+- Escreve um JSON novo com `fotoUrl` e `planoUrl` em cada candidatura.
+- Com `--mandatos`, dá a foto a quem está no cargo **somente** se for sem dúvida a mesma pessoa de uma candidatura (mesmo cargo, mesma UF e mesmo nome). Os pares aparecem na tela para você revisar. Quem não foi candidato fica com as iniciais: o TSE não tem a foto dessa pessoa.
+
+## Passo a passo
+
+1. Baixe os ZIPs na página `https://dadosabertos.tse.jus.br/dataset/candidatos-2026`. Cada recurso tem o botão "Ir para recurso":
+   - **BR - Fotos de candidatos** e **BR - Proposta de governo** (presidente);
+   - **UF - Fotos de candidatos** e **UF - Proposta de governo** de cada estado que você quiser.
+
+   Guarde as fotos em `C:\tse\fotos` e os planos em `C:\tse\planos`. Os ZIPs de UF trazem candidatos de outros cargos e podem ser grandes.
+2. Para ver como os arquivos de dentro se chamam, sem gravar nada:
+
+   ```powershell
+   java scripts\tse\ExtrairMidias.java --listar --fotos C:\tse\fotos\AC.zip --planos C:\tse\planos\AC.zip
+   ```
+3. Na raiz do repositório, gere tudo. O PowerShell não expande `*.zip` para o Java, então use a lista abaixo:
+
+   ```powershell
+   $fotos  = Get-ChildItem C:\tse\fotos\*.zip  | ForEach-Object { "--fotos";  $_.FullName }
+   $planos = Get-ChildItem C:\tse\planos\*.zip | ForEach-Object { "--planos"; $_.FullName }
+   java scripts\tse\ExtrairMidias.java --candidaturas candidaturas-tse.json @fotos @planos --mandatos importacao-mandato-atual.json
+   ```
+
+   Use o `candidaturas-tse.json` que já tem o `fonteId` correto. O arquivo novo mantém esse valor.
+4. A tela mostra quantas candidaturas ficaram com foto e com plano, quem ficou sem, e os avisos. Os arquivos gerados são:
+   - `candidaturas-tse-midia.json`: candidaturas com `fotoUrl` e `planoUrl`;
+   - `importacao-mandato-atual-com-fotos.json`: mandatos atuais com `fotoUrl` quando há par seguro;
+   - as pastas `frontend/assets/fotos/<ano>` e `frontend/assets/planos/<ano>`.
+5. Reimporte os dois arquivos pelo mesmo caminho de antes (a importação atualiza, sem duplicar), com o back-end reiniciado para o Flyway aplicar a migration V5:
+   - candidaturas: `POST /api/admin/importacoes/candidaturas` com o `candidaturas-tse-midia.json`;
+   - mandatos: tela **Importação de dados**, na fonte dos mandatos atuais, com o `importacao-mandato-atual-com-fotos.json`.
+6. Recarregue o site (Ctrl+F5).
+
+## Opções
+
+| Opção | Para que serve |
+|---|---|
+| `--candidaturas <arq>` | JSON de candidaturas (precisa do `sqCandidato`) |
+| `--fotos <zip>` / `--planos <zip>` | ZIPs do TSE. Repita a opção para vários |
+| `--saida <pasta>` | Pasta base (padrão `frontend/assets`) |
+| `--json-saida <arq>` | JSON atualizado (padrão `candidaturas-tse-midia.json`) |
+| `--mandatos <arq>` | `importacao-mandato-atual.json`, para dar foto a quem está no cargo |
+| `--mandatos-saida <arq>` | Saída dos mandatos (padrão `importacao-mandato-atual-com-fotos.json`) |
+| `--lado-foto <px>` | Maior lado da foto (padrão 400) |
+| `--limite-mb-plano <n>` | Ignora PDFs maiores que n MB (padrão 25) |
+| `--listar` | Só lista o conteúdo dos ZIPs |
+
+## Cuidados
+
+- **Testada com os ZIPs reais de Brasil, Bahia e Distrito Federal** (26/11/2026): 30 fotos e 30 planos casados (13 da Presidência, 6 da Bahia e 11 do DF), todos os PDFs abrem, nenhum é protegido. Se o TSE mudar o formato dos nomes e nenhum arquivo casar, a ferramenta avisa e mostra exemplos de nomes.
+- **Tamanho:** Brasil, Bahia e DF somam cerca de 39 MB de planos (as fotos, 0,2 MB). Para os 27 estados, a estimativa é de algumas centenas de MB. Se passarem de 200 MB, ela avisa; avalie se vale colocar no Git (o GitHub recusa arquivos acima de 100 MB, e a ferramenta já ignora PDFs acima de 25 MB).
+- **Crédito:** a licença exige citar o TSE. O site já mostra "Fotos e planos de governo registrados no TSE (licença Creative Commons Atribuição)" quando há foto ou plano.
+- **Nada de adivinhação:** a ferramenta nunca escolhe foto por semelhança de nome. Quem não casa pelo identificador fica sem foto.
+
+---
+
+# Plano de governo na aba "Propostas" de quem está no cargo
+
+Quem está no cargo e também foi candidato em 2026 (hoje: Lula, Jerônimo Rodrigues e Celina Leão) ganha, na aba **Propostas**, um cartão com o **plano de governo registrado no TSE** e o botão **Ler o plano aqui**, que abre o PDF dentro da própria página. Não há resumo nem interpretação: é o documento oficial.
+
+**Atenção ao sentido:** esse plano é o da **eleição de 2026**, ou seja, vale para o próximo mandato, e não para o mandato atual. O texto do cartão diz isso de forma explícita. As propostas do mandato atual seriam as de 2022 (base do TSE de 2022, que não foi carregada). Isso também toca a regra RN01 (sem projeções futuras) e depende da decisão do cliente.
+
+## Como cadastrar
+
+1. Tenha os PDFs em `frontend/assets/planos/2026/` (gerados pelo `ExtrairMidias.java`) e a fonte `TSE: candidatos 2026` cadastrada e aprovada.
+2. Com a aplicação no ar, na raiz do repositório:
+
+   ```powershell
+   powershell -ExecutionPolicy Bypass -File scripts\tse\vincular-planos-aos-mandatos.ps1
+   ```
+
+   O script pede a senha do administrador e, para cada pessoa de `scripts/tse/planos-no-mandato.json`, cria a proposta (ou atualiza, se ela já existir: pode rodar mais de uma vez sem duplicar). O resultado são linhas `CRIADO` ou `ATUALIZADO`. Se alguma busca não achar exatamente um político, a linha é `PULADO`.
+3. Recarregue o site (Ctrl+F5).
+
+## Para incluir mais pessoas
+
+Acrescente itens em `planos-no-mandato.json` com `busca` (parte do nome, só letras sem acento, que identifique uma única pessoa) e `arquivo` (`assets/planos/2026/<sqCandidato>.pdf`). O `sqCandidato` aparece no nome do arquivo do plano e no `candidaturas-tse-midia.json`. O script em si só tem caracteres ASCII de propósito, e os textos com acento ficam no arquivo `.json` (UTF-8).
+

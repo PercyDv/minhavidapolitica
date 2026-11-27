@@ -5,7 +5,8 @@ Plataforma web que reúne, de forma simples e sem viés, informações oficiais 
 | Pasta | Conteúdo |
 |---|---|
 | `backend/` | API REST e painel da equipe (Java 17, Spring Boot, MySQL) |
-| `frontend/` | Site público do cidadão (HTML, CSS e JavaScript) |
+| `frontend/` | Site público do cidadão (HTML, CSS e JavaScript puros), veja `frontend/README.md` |
+| `scripts/tse/` | Conversores dos arquivos do TSE (eleitos e candidatos) para o formato de importação |
 | `docs/backend/` | Diagramas, banco, contrato da API e fichas das telas (cartões 6.2, 6.4 e 6.5) |
 | `scripts/tse/` | Conversor do arquivo de eleitos do TSE para o formato de importação |
 

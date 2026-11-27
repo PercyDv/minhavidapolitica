@@ -1,4 +1,4 @@
-@startuml MVP_6-2_Diagrama-de-Classes_v2
+@startuml MVP_6-2_Diagrama-de-Classes_v3
 title MinhaVidaPolitica.com - Diagrama de Classes do domínio (back-end)
 skinparam dpi 170
 skinparam shadowing false
@@ -117,6 +117,8 @@ class Candidatura {
   - situacao : SituacaoCandidatura
   - linkFonte : String
   - atualizadoEm : LocalDateTime
+  - fotoUrl : String
+  - planoUrl : String
 }
 
 enum Esfera {

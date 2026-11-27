@@ -1,4 +1,4 @@
-/* Página Brasil: presidente em exercício, propostas e o que já foi feito (RF01, RF05, RF06). */
+/* Página Brasil: presidente em exercício, propostas, o que já foi feito (RF01, RF05, RF06) e candidatos à Presidência. */
 (function () {
   "use strict";
 
@@ -24,7 +24,24 @@
   var elPropostas = document.getElementById("lista-propostas");
   var elFeito = document.getElementById("lista-feito");
 
+  // A seção de candidatos é opcional: se faltar código ou a chamada falhar, ela só não aparece.
+  // Nada disso pode travar o resto da página.
+  function carregarCandidatos(buscar, titulo) {
+    try {
+      if (typeof ui.preencherCandidatos !== "function") return;
+      var promessa = buscar();
+      if (!promessa || typeof promessa.then !== "function") return;
+      promessa.then(function (resultado) {
+        ui.preencherCandidatos(document.getElementById("candidatos"), resultado, titulo);
+      }).catch(function () { /* a seção continua oculta */ });
+    } catch (erro) { /* a seção continua oculta */ }
+  }
+
   window.MVPApi.brasil().then(function (dados) {
+    // Candidatos da eleição: depois do conteúdo principal, para saber se a API respondeu.
+    carregarCandidatos(function () { return window.MVPApi.candidatosBrasil(); },
+      "Candidatos à Presidência em " + window.MVPApi.anoEleicao);
+
     ui.preencherRepresentante(elRep, dados.presidente, dados.mensagem);
     ui.preencherPropostas(elPropostas, dados.propostas);
     ui.preencherFeitos(elFeito, dados.feitos);
@@ -42,15 +59,5 @@
     ui.erroGeral(elPropostas, msg);
     ui.erroGeral(elFeito, msg);
     document.getElementById("rodape-fontes").style.visibility = "hidden";
-  });
-
-  /* Candidatos a presidente da eleição (extensão: /api/eleicoes) */
-  var elCandidatos = document.getElementById("lista-candidatos");
-  document.getElementById("titulo-candidatos").textContent =
-    "Candidatos a Presidente · Eleição " + window.MVPApi.anoEleicao();
-  window.MVPApi.candidatosPresidente().then(function (r) {
-    ui.preencherCandidatos(elCandidatos, r);
-  }).catch(function () {
-    ui.erroGeral(elCandidatos, "Não foi possível carregar os candidatos agora. Tente novamente em instantes.");
   });
 })();

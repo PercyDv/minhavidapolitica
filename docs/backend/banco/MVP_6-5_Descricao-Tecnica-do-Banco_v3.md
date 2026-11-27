@@ -1,6 +1,6 @@
 # Cartão 6.5: Estruturação do Banco de Dados (descrição técnica)
 
-**Entregável:** diagrama do banco (`MVP_6-5_Diagrama-do-Banco_v2.png`) e esta descrição técnica, para o documento no Overleaf (atividade 6.10).
+**Entregável:** diagrama do banco (`MVP_6-5_Diagrama-do-Banco_v3.png`) e esta descrição técnica, para o documento no Overleaf (atividade 6.10).
 
 ## Visão geral
 
@@ -12,7 +12,7 @@
 | Acesso pela aplicação | Spring Data JPA (Hibernate). O Hibernate não cria nem altera tabelas: o schema nasce só das migrations |
 | Tabelas | 9 |
 
-**Migrations:** `V1__baseline.sql` (valida a conexão), `V2__estrutura_base.sql` (as 8 tabelas, chaves e índices) e `V3__dados_de_referencia.sql` (27 UFs e 4 cargos) e `V4__candidatura.sql` (tabela de candidaturas). Uma migration já aplicada nunca é editada: mudanças entram em `V5`, `V6` e assim por diante.
+**Migrations:** `V1__baseline.sql` (valida a conexão), `V2__estrutura_base.sql` (as 8 tabelas, chaves e índices) e `V3__dados_de_referencia.sql` (27 UFs e 4 cargos) `V4__candidatura.sql` (tabela de candidaturas) e `V5__candidatura_foto_plano.sql` (colunas de foto e plano de governo das candidaturas). Uma migration já aplicada nunca é editada: mudanças entram em `V6`, `V7` e assim por diante.
 
 ## Dicionário de dados
 
@@ -144,6 +144,8 @@ Candidaturas de uma eleição (somente presidente e governador). Extensão pedid
 | `fonte_id` | BIGINT | Sim | FK → fonte_dados |  | Fonte que sustenta o registro (RF08). |
 | `link_fonte` | VARCHAR(500) | Não |  |  | Link do registro na fonte. |
 | `atualizado_em` | DATETIME(6) | Sim |  |  | Data/hora da última atualização (RF08). |
+| `foto_url` | VARCHAR(500) | Não |  |  | Caminho (assets/...) ou URL da foto oficial do candidato, quando houver. |
+| `plano_url` | VARCHAR(500) | Não |  |  | Caminho (assets/...) ou URL do plano de governo registrado, quando houver. |
 
 Restrição adicional: `uq_candidatura_ano_sq` torna único o par (`ano_eleicao`, `sq_candidato`).
 
@@ -200,7 +202,8 @@ Os índices atendem às consultas mais frequentes: políticos por estado e cargo
 3. **Cascata somente onde o pai é dono.** `proposta` e `acao_concretizada` são excluídas junto com o `politico`. As demais chaves estrangeiras seguem `RESTRICT`: não se exclui uma fonte, um cargo ou uma UF que ainda tenha registros ligados.
 4. **Senhas.** `usuario_painel.senha_hash` guarda somente hash BCrypt. Nenhuma senha aparece nas migrations; o administrador inicial é criado na primeira execução a partir do arquivo `.env`.
 5. **Candidaturas separadas dos políticos.** `candidatura` guarda quem concorreu a presidente ou governador numa eleição, sem mandato, sem votos e sem ranking (RN04). É uma extensão pedida pela equipe, fora do escopo validado (RN01), e depende de decisão do cliente.
-6. **Sem dados políticos na carga inicial.** A V3 contém só dados de referência. Políticos, propostas e ações entram por fontes aprovadas pelo cliente (RN05).
+6. **Foto e plano guardados como caminho.** `candidatura.foto_url` e `plano_url` guardam só o caminho (`assets/...`) ou a URL; os arquivos ficam no front. A aplicação recusa qualquer valor que não seja URL http(s) ou caminho em `assets/`, porque o valor vira link e imagem na página pública. Fotos e planos vêm do TSE, com licença Creative Commons Atribuição.
+7. **Sem dados políticos na carga inicial.** A V3 contém só dados de referência. Políticos, propostas e ações entram por fontes aprovadas pelo cliente (RN05).
 
 ## Regras garantidas pela aplicação (e não pelo banco)
 

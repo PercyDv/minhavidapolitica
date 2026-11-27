@@ -12,9 +12,9 @@ Etiqueta: Equipe de Backend. Membros: os dois devs back-end.
 
 | Arquivo | Onde está |
 |---|---|
-| `MVP_6-2_Diagrama-de-Classes_v2.png` | `docs/backend/diagramas/` |
-| `MVP_6-2_Diagrama-de-Classes_v2.puml` (fonte) | `docs/backend/diagramas/` |
-| `MVP_6-2_Texto-de-Apoio_v2.md` | `docs/backend/diagramas/` |
+| `MVP_6-2_Diagrama-de-Classes_v3.png` | `docs/backend/diagramas/` |
+| `MVP_6-2_Diagrama-de-Classes_v3.puml` (fonte) | `docs/backend/diagramas/` |
+| `MVP_6-2_Texto-de-Apoio_v3.md` | `docs/backend/diagramas/` |
 
 **Checklist**
 - [x] Levantar entidades a partir dos RF01–RF13 e das regras RN01–RN07
@@ -35,15 +35,15 @@ Etiqueta: Equipe de Backend. Membros: os dois devs back-end; André em testes e 
 
 | Arquivo | Onde está |
 |---|---|
-| `MVP_6-4_Contrato-da-API_v2.yaml` e `.json` | `docs/backend/api/` |
-| `MVP_6-4_Matriz-RF-Endpoint_v2.md` | `docs/backend/api/` |
+| `MVP_6-4_Contrato-da-API_v3.yaml` e `.json` | `docs/backend/api/` |
+| `MVP_6-4_Matriz-RF-Endpoint_v3.md` | `docs/backend/api/` |
 | `MVP_6-4_Fichas-das-Telas_v1.md` | `docs/backend/telas/` |
 | Prints das 6 telas (`ADS-1_...` a `BES-2_...`) | `docs/backend/telas/prints/` (a tirar) |
 
 **Checklist A: Fundação técnica**
 - [x] Projeto Spring Boot criado em `backend/` (Java 17, Maven, Lombok)
 - [ ] MySQL + Docker Compose + `.env` no ar: arquivos prontos, falta subir e conectar **(validar)**
-- [ ] `application.yml` e baseline do Flyway: arquivos prontos, falta aplicar V1 a V4 **(validar)**
+- [ ] `application.yml` e baseline do Flyway: arquivos prontos, falta aplicar V1, V2 e V3 **(validar)**
 - [x] Estrutura de pacotes e tratamento padronizado de erros
 - [x] Segurança do painel (login por sessão, perfis ADMIN e EDITOR; login não conta na pontuação)
 
@@ -66,14 +66,29 @@ Etiqueta: Equipe de Backend. Membros: os dois devs back-end; André em testes e 
 - [x] Tela 2: Importação de dados (RF13, importação manual por JSON)
 - [x] Conversor do arquivo de eleitos do TSE para o formato de importação (`scripts/tse`, testado com arquivos sintéticos)
 - [x] Consulta pública considera o início do mandato (eleitos de 2026 só aparecem na posse, em 2027)
+- [x] Foto e plano de governo das candidaturas: colunas na migration V5 e ferramenta `scripts/tse/ExtrairMidias.java` (testada com ZIPs sintéticos; **falta rodar com os ZIPs reais do TSE**)
 - [x] **Extensão pedida pela equipe, fora do escopo validado:** candidaturas de presidente e governador (`/api/eleicoes/{ano}/...`, importação em `/api/admin/importacoes/candidaturas`, conversor `scripts/tse/ConversorCandidatos.java`). **Registrar no cartão a decisão do cliente (via PO)**; sem ela, não incluir nos slides como requisito atendido.
 
 **Checklist E: Fechamento**
-- [ ] Rodar os testes (`./mvnw test`): 5 classes de teste escritas **(validar)**
+- [ ] Rodar os testes (`./mvnw test`): 4 classes de teste escritas **(validar)**
 - [ ] Prints das telas de cada módulo com breve descrição de função e fluxo (as fichas já estão escritas)
 - [ ] Sistema rodando de ponta a ponta para a demonstração (roteiro no `README.md`)
 
 Observação: as telas do painel foram escritas, mas só passaram por um teste parcial no navegador, contra uma API simulada. A confirmação acontece ao rodar o sistema de verdade.
+
+## Cartão 6.3: Front-end (apoio do back-end)
+
+Cartão do FrontEnd (João). O site do cidadão é dele (`frontend/`, feito a partir do Figma). O back-end acrescentou:
+
+- [x] Seção de candidatos (presidência em `index.html` e governo por estado em `estado.html`), no padrão visual dos cartões de representantes
+- [x] Linha de resumo do político no cartão do mandato atual (ex.: governador interino)
+- [x] Foto e link do plano de governo nos cartões de candidatos, e foto no cartão do mandato atual
+- [x] Plano de governo de 2026 na aba Propostas de quem está no cargo e foi candidato, com leitor de PDF no cartão (`scripts/tse/vincular-planos-aos-mandatos.ps1`; script **não testado no PowerShell**)
+- [ ] Revisão do João e do design da seção de candidatos, que não existe no Figma
+- [ ] **Decisão do cliente (via PO) sobre mostrar candidatos**: é extensão fora do escopo validado (RN01)
+- [ ] Prints das telas para o documento (6.10)
+
+Documentação: `frontend/README.md`.
 
 ## Cartão 6.5: Estruturação do Banco de Dados (obrigatório: grupo ADS)
 
@@ -83,10 +98,10 @@ Etiqueta: Equipe de Backend. Membros: os dois devs back-end.
 
 | Arquivo | Onde está |
 |---|---|
-| `MVP_6-5_Diagrama-do-Banco_v2.png` | `docs/backend/banco/` |
-| `MVP_6-5_Diagrama-do-Banco_v2.puml` (fonte) | `docs/backend/banco/` |
-| `MVP_6-5_Descricao-Tecnica-do-Banco_v2.md` (dicionário de dados incluído) | `docs/backend/banco/` |
-| Migrations V1 a V4 (evidência) | `backend/src/main/resources/db/migration/` |
+| `MVP_6-5_Diagrama-do-Banco_v3.png` | `docs/backend/banco/` |
+| `MVP_6-5_Diagrama-do-Banco_v3.puml` (fonte) | `docs/backend/banco/` |
+| `MVP_6-5_Descricao-Tecnica-do-Banco_v3.md` (dicionário de dados incluído) | `docs/backend/banco/` |
+| Migrations V1 a V5 (evidência) | `backend/src/main/resources/db/migration/` |
 
 **Checklist**
 - [x] Diagrama do banco (tabelas, chaves e relacionamentos)

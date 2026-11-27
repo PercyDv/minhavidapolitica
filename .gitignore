@@ -32,3 +32,6 @@ node_modules/
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+# Exemplo sintético usado para testar o conversor de candidatos (o *.zip acima o ignoraria)
+!scripts/tse/exemplo/*.zip

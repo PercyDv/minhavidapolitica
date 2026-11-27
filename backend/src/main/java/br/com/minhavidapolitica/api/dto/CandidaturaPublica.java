@@ -11,6 +11,8 @@ public record CandidaturaPublica(
         String cargo,
         String uf,
         String situacao,
+        String fotoUrl,
+        String planoUrl,
         FonteInfo fonte) {
 
     public static CandidaturaPublica de(Candidatura c) {
@@ -22,6 +24,8 @@ public record CandidaturaPublica(
                 c.getCargo().getNome(),
                 c.getUf() == null ? null : c.getUf().getSigla(),
                 c.getSituacao().name(),
+                c.getFotoUrl(),
+                c.getPlanoUrl(),
                 FonteInfo.de(c.getFonte(), c.getLinkFonte(), c.getAtualizadoEm()));
     }
 }

@@ -1,6 +1,6 @@
 # Cartão 6.2: Modelagem de Classes (texto de apoio)
 
-**Entregável:** Diagrama de Classes (`MVP_6-2_Diagrama-de-Classes_v2.png`) com este texto curto de apoio para o documento no Overleaf (atividade 6.10).
+**Entregável:** Diagrama de Classes (`MVP_6-2_Diagrama-de-Classes_v3.png`) com este texto curto de apoio para o documento no Overleaf (atividade 6.10).
 
 ## Visão geral
 
@@ -17,7 +17,7 @@ O diagrama mostra o modelo de domínio do back-end do MinhaVidaPolitica.com: as 
 | `AcaoConcretizada` | Ação já realizada no mandato atual. Exige fonte e data. | RF06 |
 | `FonteDados` | Fonte oficial ou confiável, com o registro de aprovação do cliente (quem, quando) e a periodicidade de atualização. É a classe central das regras de transparência. | RF08, RF13, RN05 |
 | `LogAtualizacao` | Histórico de cada importação de dados: resultado, contagens e motivos de rejeição. | RF13 |
-| `Candidatura` | Quem concorreu a presidente ou governador numa eleição (ano, número, nome, partido e situação final: eleito, não eleito, segundo turno ou sem resultado). Não tem mandato, votos nem ranking. **Extensão pedida pela equipe, fora do escopo validado (RN01), que depende de decisão do cliente.** | Pedido da equipe |
+| `Candidatura` | Quem concorreu a presidente ou governador numa eleição (ano, número, nome, partido e situação final: eleito, não eleito, segundo turno ou sem resultado, mais a foto e o plano de governo registrados no TSE, quando houver). Não tem mandato, votos nem ranking. **Extensão pedida pela equipe, fora do escopo validado (RN01), que depende de decisão do cliente.** | Pedido da equipe |
 | `UsuarioPainel` | Pessoa da equipe mantenedora com acesso ao painel, com perfil ADMIN ou EDITOR. A senha é guardada somente como hash BCrypt. | Perfil "Equipe mantenedora" |
 
 As enumerações `Esfera`, `TipoFonte`, `StatusImportacao`, `SituacaoCandidatura` e `PerfilUsuario` restringem os valores possíveis de cada campo correspondente.

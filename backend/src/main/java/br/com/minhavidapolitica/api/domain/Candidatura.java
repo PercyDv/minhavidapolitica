@@ -79,6 +79,12 @@ public class Candidatura {
     @Column(name = "atualizado_em", nullable = false)
     private LocalDateTime atualizadoEm;
 
+    @Column(name = "foto_url", length = 500)
+    private String fotoUrl;
+
+    @Column(name = "plano_url", length = 500)
+    private String planoUrl;
+
     @PrePersist
     void aoCriar() {
         if (atualizadoEm == null) {

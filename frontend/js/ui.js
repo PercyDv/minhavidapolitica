@@ -19,6 +19,26 @@
     } catch (e) { return null; }
   }
 
+  /* Foto oficial ou, sem foto (ou se o arquivo não carregar), as iniciais. */
+  function avatarHtml(foto, iniciaisTexto, classe) {
+    var url = linkSeguro(foto);
+    if (url) {
+      return '<img class="' + classe + " " + classe + '--foto" src="' + esc(url) + '" alt="" loading="lazy" data-iniciais="' + esc(iniciaisTexto) + '">';
+    }
+    return '<span class="' + classe + '" aria-hidden="true">' + esc(iniciaisTexto) + "</span>";
+  }
+  function ativarFotos(raiz) {
+    Array.prototype.forEach.call(raiz.querySelectorAll("img[data-iniciais]"), function (img) {
+      img.addEventListener("error", function () {
+        var span = document.createElement("span");
+        span.className = img.className.replace(/\S+--foto/, "").trim();
+        span.setAttribute("aria-hidden", "true");
+        span.textContent = img.getAttribute("data-iniciais");
+        img.replaceWith(span);
+      }, { once: true });
+    });
+  }
+
   var SETA = '<svg width="8" height="8" viewBox="8.19 5.19 7.62 7.62" fill="none" aria-hidden="true"><path d="M9 12L15 6M15 11V6H10" stroke="currentColor" stroke-width="1.62" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
   var STATUS = {
@@ -46,6 +66,35 @@
   }
 
   /* ---------- Proposta ---------- */
+  /* PDF do próprio site (assets/planos/...): pode ser lido dentro do cartão, sem sair da página. */
+  function pdfDoSite(url) {
+    try {
+      var u = new URL(url, window.location.href);
+      return (u.origin === window.location.origin && /\.pdf$/i.test(u.pathname)) ? u.href : null;
+    } catch (e) { return null; }
+  }
+  function ativarLeitores(raiz) {
+    Array.prototype.forEach.call(raiz.querySelectorAll("button[data-pdf]"), function (botao) {
+      botao.addEventListener("click", function () {
+        var area = botao.parentNode;
+        var quadro = area.querySelector("iframe");
+        if (quadro) {
+          quadro.remove();
+          botao.textContent = "Ler o plano aqui";
+          botao.setAttribute("aria-expanded", "false");
+          return;
+        }
+        quadro = document.createElement("iframe");
+        quadro.className = "cartao-proposta__pdf";
+        quadro.src = botao.getAttribute("data-pdf");
+        quadro.title = "Plano de governo (PDF)";
+        area.appendChild(quadro);
+        botao.textContent = "Fechar a leitura";
+        botao.setAttribute("aria-expanded", "true");
+      });
+    });
+  }
+
   function cartaoProposta(item) {
     var st = item.status ? STATUS[String(item.status).toLowerCase()] : null;
     var classes = "cartao-proposta" + (st ? " cartao-proposta--" + st.classe : "") + (item.textoUnico ? " cartao-proposta--com-texto-unico" : "");
@@ -55,12 +104,17 @@
     var fontes = (item.fontes || []).map(function (f, i, todas) {
       return pilula(f, i === todas.length - 1, "pilula");
     }).join("");
+    var pdf = (item.fontes || []).map(function (f) { return pdfDoSite(f.link); }).filter(Boolean)[0];
+    var leitor = pdf
+      ? '<div class="cartao-proposta__leitor"><button type="button" class="cartao-proposta__ler" data-pdf="' + esc(pdf) + '" aria-expanded="false">Ler o plano aqui</button></div>'
+      : "";
     return '<article class="' + classes + '">' +
       '<span class="faixa" aria-hidden="true"></span>' +
       '<div class="cartao-proposta__topo">' + selo + '<div class="cartao-proposta__fontes">' + fontes + "</div></div>" +
       '<h3 class="cartao-proposta__titulo">' + esc(item.titulo) + "</h3>" +
       (item.descricao ? '<p class="cartao-proposta__descricao">' + esc(item.descricao) + "</p>" : "") +
       (item.textoUnico ? '<p class="cartao-proposta__texto-unico">' + esc(item.textoUnico) + "</p>" : "") +
+      leitor +
       "</article>";
   }
 
@@ -97,27 +151,43 @@
   }
 
   /* ---------- Candidatos da eleição ---------- */
-  var SITUACAO_CLASSE = { ELEITO: "eleito", SEGUNDO_TURNO: "segundo-turno" };
   function cartaoCandidato(c) {
-    var mod = SITUACAO_CLASSE[c.situacao];
-    return '<article class="cartao-rep cartao-candidato' + (mod ? " cartao-candidato--" + mod : "") + '">' +
+    var plano = linkSeguro(c.plano);
+    return '<article class="cartao-rep cartao-rep--candidato">' +
       '<span class="faixa" aria-hidden="true"></span>' +
-      '<span class="cartao-rep__avatar" aria-hidden="true">' + esc(c.iniciais) + "</span>" +
-      '<div class="cartao-rep__textos"><h3 class="cartao-rep__nome">' + esc(c.nome) + '</h3><p class="cartao-rep__detalhe">' + esc(c.detalhe) + "</p></div>" +
-      '<span class="cartao-rep__selo">' + esc(c.selo) + "</span>" +
+      avatarHtml(c.foto, c.iniciais, "cartao-rep__avatar") +
+      '<div class="cartao-rep__textos"><h3 class="cartao-rep__nome">' + esc(c.nome) + "</h3>" +
+      (c.completo ? '<p class="cartao-rep__detalhe">' + esc(c.completo) + "</p>" : "") +
+      '<p class="cartao-rep__detalhe"><span class="numero-urna"><span class="sr-only">Número na urna: </span>' + esc(c.numero) + "</span>" + esc(c.partido) + "</p>" +
+      (plano ? '<a class="cartao-rep__plano" href="' + esc(plano) + '" target="_blank" rel="noopener noreferrer" title="Abrir o plano de governo registrado no TSE">' + SETA + "Plano de governo (PDF)</a>" : "") +
+      "</div>" +
+      '<span class="cartao-rep__selo">' + esc(c.situacao) + "</span>" +
       "</article>";
   }
-  function preencherCandidatos(el, resultado) {
-    if (!resultado.itens || !resultado.itens.length) { el.innerHTML = avisoNeutro(resultado.mensagem); return; }
-    var fontes = (resultado.fontes || []).map(function (f) {
-      var link = linkSeguro(f.link);
-      var nome = link
-        ? '<a href="' + esc(link) + '" target="_blank" rel="noopener noreferrer">' + esc(f.nome) + "</a>"
-        : esc(f.nome);
-      return nome + (f.atualizacao ? " · Atualização: " + esc(f.atualizacao) : "");
-    }).join("; ");
-    el.innerHTML = resultado.itens.map(cartaoCandidato).join("") +
-      (fontes ? '<p class="candidatos__fonte">Fonte: ' + fontes + "</p>" : "");
+
+  /* Preenche a seção #candidatos. Sem dado de candidatos (modo protótipo), a seção continua oculta. */
+  function preencherCandidatos(secao, resultado, titulo) {
+    if (!secao || !resultado || resultado.oculto) return;
+    var ano = resultado.ano || (window.MVPApi && window.MVPApi.anoEleicao) || "";
+    secao.querySelector(".demais__titulo").textContent = titulo;
+    secao.querySelector(".candidatos__intro").textContent = "Quem concorreu na eleição de " + ano +
+      ", em ordem alfabética. A lista não indica preferência nem ranking, e quem concorreu não é, necessariamente, quem exerce o cargo hoje.";
+    var lista = secao.querySelector(".lista-representantes");
+    var rodape = secao.querySelector(".candidatos__fonte");
+    if (!resultado.itens || !resultado.itens.length) {
+      lista.innerHTML = avisoNeutro(resultado.mensagem);
+      rodape.innerHTML = "<span>Fonte: pendente</span><span>Atualização: —</span>";
+    } else {
+      lista.innerHTML = resultado.itens.map(cartaoCandidato).join("");
+      var link = linkSeguro(resultado.linkFonte);
+      var fonte = link
+        ? '<a href="' + esc(link) + '" target="_blank" rel="noopener noreferrer">' + esc(resultado.fonte) + "</a>"
+        : esc(resultado.fonte || "pendente");
+      rodape.innerHTML = "<span>Fonte: " + fonte + "</span><span>Atualização: " + esc(resultado.atualizacao || "—") + "</span>" +
+        (resultado.credito ? '<span class="candidatos__credito">Fotos e planos de governo registrados no TSE (licença Creative Commons Atribuição).</span>' : "");
+      ativarFotos(lista);
+    }
+    secao.hidden = false;
   }
 
   function avisoNeutro(mensagem) {
@@ -131,18 +201,21 @@
       return;
     }
     el.innerHTML =
-      '<span class="avatar" aria-hidden="true">' + esc(pessoa.iniciais) + "</span>" +
+      avatarHtml(pessoa.foto, pessoa.iniciais, "avatar") +
       '<div class="identificacao">' +
       '<p class="identificacao__linha">' + esc(pessoa.cargo) + "</p>" +
       '<h2 class="identificacao__nome">' + esc(pessoa.nome) + "</h2>" +
       '<p class="identificacao__linha">' + esc(pessoa.mandato) + "</p>" +
       '<p class="identificacao__linha">' + esc(pessoa.partido) + "</p>" +
+      (pessoa.resumo ? '<p class="identificacao__resumo">' + esc(pessoa.resumo) + "</p>" : "") +
       "</div>";
+    ativarFotos(el);
   }
 
   function preencherPropostas(el, resultado) {
     if (!resultado.itens || !resultado.itens.length) { el.innerHTML = avisoNeutro(resultado.mensagem); return; }
     el.innerHTML = resultado.itens.map(cartaoProposta).join("");
+    ativarLeitores(el);
   }
   function preencherFeitos(el, resultado) {
     if (!resultado.itens || !resultado.itens.length) { el.innerHTML = avisoNeutro(resultado.mensagem); return; }

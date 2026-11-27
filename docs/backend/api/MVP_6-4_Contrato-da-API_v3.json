@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "MinhaVidaPolitica API",
-    "version": "1.1.0-v2",
+    "version": "1.2.0-v3",
     "description": "Contrato da API do back-end (cartão 6.4). Gerado a partir da definição em docs/backend; o Swagger UI do projeto (/swagger-ui.html) gera a versão em tempo de execução.\n\nAPI pública: aberta, somente leitura, sem cadastro de cidadão. API do painel (/api/admin/**): exige login (sessão por cookie)."
   },
   "servers": [
@@ -2992,6 +2992,16 @@
               "SEM_RESULTADO"
             ]
           },
+          "fotoUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "Caminho (assets/...) ou URL da foto oficial; relativo ao site do cidadão"
+          },
+          "planoUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "Caminho (assets/...) ou URL do plano de governo registrado no TSE (PDF)"
+          },
           "fonte": {
             "$ref": "#/components/schemas/FonteInfo"
           }
@@ -3071,6 +3081,18 @@
           "linkFonte": {
             "type": "string",
             "maxLength": 500,
+            "nullable": true
+          },
+          "fotoUrl": {
+            "type": "string",
+            "maxLength": 500,
+            "description": "URL http(s) ou caminho em assets/",
+            "nullable": true
+          },
+          "planoUrl": {
+            "type": "string",
+            "maxLength": 500,
+            "description": "URL http(s) ou caminho em assets/",
             "nullable": true
           }
         },
@@ -3164,6 +3186,14 @@
           "atualizadoEm": {
             "type": "string",
             "format": "date-time"
+          },
+          "fotoUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "planoUrl": {
+            "type": "string",
+            "nullable": true
           }
         }
       },
