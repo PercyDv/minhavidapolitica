@@ -1,0 +1,707 @@
+/* =========================================================================
+   Minha VidaPolitica — site público do cidadão
+   Estilos fiéis ao protótipo do Figma (KSI — Koda Software Inteligente).
+   Desktop: conteúdo de 840px centralizado. Celular (< 768px): layout de 390px.
+   ========================================================================= */
+
+/* ---------- Fontes (arquivos locais em assets/fonts) ---------- */
+@font-face { font-family: "Atkinson Hyperlegible"; font-weight: 400; font-style: normal; font-display: swap; src: url("../assets/fonts/atkinson-hyperlegible-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Atkinson Hyperlegible"; font-weight: 700; font-style: normal; font-display: swap; src: url("../assets/fonts/atkinson-hyperlegible-latin-700-normal.woff2") format("woff2"); }
+@font-face { font-family: "Public Sans"; font-weight: 400; font-style: normal; font-display: swap; src: url("../assets/fonts/public-sans-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Public Sans"; font-weight: 500; font-style: normal; font-display: swap; src: url("../assets/fonts/public-sans-latin-500-normal.woff2") format("woff2"); }
+@font-face { font-family: "Public Sans"; font-weight: 600; font-style: normal; font-display: swap; src: url("../assets/fonts/public-sans-latin-600-normal.woff2") format("woff2"); }
+@font-face { font-family: "Public Sans"; font-weight: 700; font-style: normal; font-display: swap; src: url("../assets/fonts/public-sans-latin-700-normal.woff2") format("woff2"); }
+@font-face { font-family: "Inter"; font-weight: 400; font-style: normal; font-display: swap; src: url("../assets/fonts/inter-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Inter"; font-weight: 700; font-style: normal; font-display: swap; src: url("../assets/fonts/inter-latin-700-normal.woff2") format("woff2"); }
+
+/* ---------- Tokens (cores do Figma) ---------- */
+:root {
+  --fonte-titulos: "Atkinson Hyperlegible", system-ui, sans-serif;
+  --fonte-cartoes: "Public Sans", system-ui, sans-serif;
+  --fonte-config: "Inter", system-ui, sans-serif;
+
+  --fundo: #f5f7fa;
+  --superficie: #ffffff;
+  --borda: #d9dfe8;
+  --texto: #14213d;
+  --texto-suave: #56627a;
+  --primaria: #1d6a8a;
+  --primaria-clara: #e3eff4;
+  --marca: #f2c14e;
+
+  --seletor-fundo: #f5f7fa;
+  --cartao-fundo: #f6f8fb;
+  --cartao-borda: #dde5ef;
+  --cartao-titulo: #172a45;
+  --cartao-texto: #5e6d80;
+  --pilula-fundo: #e9eef4;
+  --data-fundo: #e8edf4;
+  --data-texto: #26374e;
+  --trilha: #d5dfea;
+  --avatar: #d9dfe8;
+
+  --rep-borda: #dce4ee;
+  --rep-faixa: #3478d4;
+  --rep-selo-fundo: #eef4fb;
+  --rep-avatar: #e7edf5;
+  --rep-iniciais: #5d6b82;
+  --rep-texto: #64748b;
+  --rep-faixa-dados: #b8c3d2;
+
+  /* status das propostas */
+  --andamento-faixa: #eab542; --andamento-fundo: #fff0c7; --andamento-texto: #8c5e0a;
+  --concluida-faixa: #31a06a; --concluida-fundo: #dff3e7; --concluida-texto: #24734a;
+  --apresentada-faixa: #2382a5; --apresentada-fundo: #dceff7; --apresentada-texto: #176a89;
+
+  /* cores das fontes (linha do tempo) */
+  --azul-faixa: #2382a5; --azul-fundo: #dceff7; --azul-texto: #176a89;
+  --verde-faixa: #31a06a; --verde-fundo: #dff3e7; --verde-texto: #24734a;
+  --roxo-faixa: #7454c7; --roxo-fundo: #eee8fb; --roxo-texto: #604aa2;
+
+  /* configurações */
+  --cfg-linha: #e3e8ef;
+  --cfg-segmento: #eceff3;
+  --cfg-toggle-off: #cbd2dd;
+  --cfg-perigo: #b42318;
+
+  color-scheme: light;
+}
+
+/* Tema escuro (escolhido em Configurações ou "Automático" com o sistema escuro) */
+:root[data-tema="escuro"] {
+  --fundo: #0f1726;
+  --superficie: #16213a;
+  --borda: #2b3a55;
+  --texto: #e8edf6;
+  --texto-suave: #a7b3c8;
+  --primaria: #6cb8d8;
+  --primaria-clara: #1b3346;
+  --seletor-fundo: #111b2f;
+  --cartao-fundo: #1b2742;
+  --cartao-borda: #2d3d5a;
+  --cartao-titulo: #e8edf6;
+  --cartao-texto: #a7b3c8;
+  --pilula-fundo: #26344f;
+  --data-fundo: #26344f;
+  --data-texto: #dbe3f0;
+  --trilha: #2d3d5a;
+  --avatar: #2b3a55;
+  --rep-borda: #2d3d5a;
+  --rep-selo-fundo: #1e2f4d;
+  --rep-avatar: #26344f;
+  --rep-iniciais: #c4cee0;
+  --rep-texto: #a7b3c8;
+  --andamento-fundo: #3d321a; --andamento-texto: #f3cd7a;
+  --concluida-fundo: #183828; --concluida-texto: #8fd8b0;
+  --apresentada-fundo: #173445; --apresentada-texto: #8fd0ea;
+  --azul-fundo: #173445; --azul-texto: #8fd0ea;
+  --verde-fundo: #183828; --verde-texto: #8fd8b0;
+  --roxo-fundo: #2c2547; --roxo-texto: #c5b5f5;
+  --cfg-linha: #2b3a55;
+  --cfg-segmento: #111b2f;
+  --cfg-toggle-off: #3b4a66;
+  --cfg-perigo: #ff8a80;
+  color-scheme: dark;
+}
+
+/* Alto contraste: reforça cores e bordas */
+:root[data-contraste="alto"] {
+  --borda: #56627a;
+  --cartao-borda: #56627a;
+  --rep-borda: #56627a;
+  --texto-suave: #2c3850;
+  --cartao-texto: #2c3850;
+  --rep-texto: #2c3850;
+  --primaria: #0b4a63;
+}
+:root[data-contraste="alto"][data-tema="escuro"] {
+  --borda: #a7b3c8;
+  --cartao-borda: #a7b3c8;
+  --rep-borda: #a7b3c8;
+  --texto-suave: #dbe3f0;
+  --cartao-texto: #dbe3f0;
+  --rep-texto: #dbe3f0;
+  --primaria: #9bd8f0;
+}
+
+/* Tamanho do texto */
+:root[data-tamanho="pequeno"] body { zoom: 0.9; }
+:root[data-tamanho="grande"] body { zoom: 1.15; }
+
+/* ---------- Base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--fundo);
+  color: var(--texto);
+  font-family: var(--fonte-titulos);
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, p, ol, ul { margin: 0; padding: 0; }
+ol, ul { list-style: none; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+img, svg { display: block; }
+:focus-visible { outline: 3px solid var(--marca); outline-offset: 2px; }
+.visualmente-oculto {
+  position: absolute !important; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0; padding: 0; margin: -1px;
+}
+.conteudo { width: 840px; max-width: calc(100% - 144px); margin: 0 auto; }
+
+/* =========================================================================
+   Cabeçalho
+   ========================================================================= */
+.cabecalho { background: var(--superficie); border-bottom: 1px solid var(--borda); }
+.cabecalho__conteudo {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0;
+}
+.marca { display: inline-flex; align-items: center; gap: 2px; font-weight: 700; font-size: 19px; line-height: 1.55; color: #14213d; }
+.marca__destaque { background: var(--marca); border-radius: 4px; padding: 0 6px; }
+.marca__nome { color: var(--texto); }
+.escolha-estado { position: relative; display: flex; align-items: center; gap: 8px; }
+.escolha-estado__rotulo { font-size: 15px; line-height: 1.55; white-space: nowrap; }
+.seletor-estado {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 172px; height: 44px; padding: 0 10px;
+  background: var(--seletor-fundo); border: 1px solid var(--borda); border-radius: 8px;
+  font-size: 15px; line-height: 1.55; text-align: left;
+}
+.seletor-estado__valor { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.seletor-estado__seta { width: 9px; height: 7px; flex: none; }
+:root[data-tema="escuro"] .seletor-estado__seta { filter: invert(1) brightness(1.6); }
+
+.atalho-configuracoes {
+  position: absolute; top: 16px; right: -52px;
+  width: 40px; height: 40px;
+}
+.atalho-configuracoes img { width: 42px; height: 42px; margin: -1px; max-width: none; }
+
+/* Variante do cabeçalho da página Brasil (desktop) */
+@media (min-width: 768px) {
+  .pagina-brasil .cabecalho__conteudo { padding: 16px 0; }
+  .pagina-brasil .marca { gap: 3px; font-size: 16px; line-height: 20px; }
+  .pagina-brasil .marca__destaque { width: 67px; height: 29px; border-radius: 5px; padding: 4px 6px 5px; }
+  .pagina-brasil .escolha-estado__rotulo { font-size: 14px; line-height: 18px; }
+  .pagina-brasil .seletor-estado { height: 40px; background: var(--cartao-fundo); font-size: 14px; line-height: 18px; }
+}
+
+/* ---------- Menu de estados ---------- */
+.menu-estados {
+  position: absolute; top: calc(100% + 8px); right: 0; z-index: 20;
+  width: 420px;
+  display: flex; flex-direction: column; gap: 12px;
+  padding: 16px;
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(20, 33, 61, 0.14);
+}
+.menu-estados[hidden] { display: none; }
+.menu-estados__titulo { font-size: 18px; font-weight: 700; line-height: 22px; }
+.menu-estados__opcoes { display: flex; flex-wrap: wrap; gap: 8px; }
+.menu-estados__uf {
+  display: flex; align-items: center; justify-content: center;
+  width: 69.09px; height: 48px;
+  background: var(--superficie); border: 1px solid var(--borda); border-radius: 8px;
+  font-size: 17px; font-weight: 700; line-height: 1.55; color: var(--texto);
+}
+a.menu-estados__uf:hover { border-color: var(--primaria); background: var(--primaria-clara); }
+.menu-estados__uf[aria-current="true"] { border-color: var(--primaria); box-shadow: inset 0 0 0 1px var(--primaria); }
+.menu-estados__uf--inativa { cursor: default; }
+.menu-estados__ultima { display: flex; justify-content: center; gap: 8px; width: 100%; }
+.menu-estados__fechar { align-self: flex-start; font-size: 15px; font-weight: 700; line-height: normal; color: var(--primaria); }
+
+/* =========================================================================
+   Página (layout geral)
+   ========================================================================= */
+main { flex: 1 0 auto; display: flex; flex-direction: column; }
+.introducao__titulo-resumo { display: flex; flex-direction: column; gap: 8px; padding: 32px 0 24px; }
+.introducao__titulo { font-size: 42px; font-weight: 700; line-height: 1.15; }
+.introducao__resumo { max-width: 663px; font-size: 17px; line-height: 1.55; color: var(--texto-suave); }
+
+.botao-voltar {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 160px; height: 35.25px; padding: 0 12px;
+  background: var(--superficie); border: 1px solid var(--primaria); border-radius: 6px;
+  font-size: 14px; font-weight: 700; line-height: normal; color: var(--primaria);
+  white-space: pre;
+}
+
+/* Página Brasil (desktop) */
+@media (min-width: 768px) {
+  .pagina-brasil .introducao__titulo-resumo { gap: 0; padding: 19px 0 0; }
+  .pagina-brasil .introducao__titulo { font-size: 30px; line-height: 34px; }
+  .pagina-brasil .introducao__resumo { max-width: none; margin-top: 42px; font-size: 16px; line-height: 22px; }
+  .pagina-brasil .painel { margin-top: 56.25px; }
+}
+
+.espaco-final { height: 102px; flex: none; }
+
+.rodape-fontes {
+  display: flex; justify-content: space-between; gap: 16px;
+  margin-top: auto; padding: 0 21px 86px;
+  font-size: 10.5px; line-height: 13px; color: var(--texto-suave);
+}
+.rodape-fontes + .espaco-final { display: none; }
+
+/* =========================================================================
+   Painel do mandato atual
+   ========================================================================= */
+.painel {
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: 12px;
+  padding: 20px;
+}
+.representante { display: flex; align-items: center; gap: 16px; }
+.avatar {
+  flex: none; display: flex; align-items: center; justify-content: center;
+  width: 64px; height: 64px; border-radius: 50%;
+  background: var(--avatar);
+  font-size: 22px; font-weight: 700; line-height: 1.55; color: var(--texto-suave);
+}
+.identificacao { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; }
+.identificacao__linha { font-size: 14.17px; line-height: 26.35px; color: var(--texto-suave); }
+.identificacao__nome { font-size: 20px; font-weight: 700; line-height: 1.55; }
+
+.abas { display: flex; gap: 4px; padding-top: 20px; border-bottom: 1px solid var(--borda); }
+.aba {
+  padding: 10px 14px;
+  border-bottom: 3px solid transparent;
+  font-size: 17px; line-height: 1.55; color: var(--texto-suave);
+  white-space: nowrap;
+}
+.aba[aria-selected="true"] { font-weight: 700; color: var(--texto); border-bottom-color: var(--primaria); }
+
+.lista-informacoes { display: flex; flex-direction: column; gap: 8px; padding-top: 8px; }
+.lista-informacoes[hidden] { display: none; }
+
+.aviso-neutro {
+  padding: 16px 14px;
+  background: var(--cartao-fundo); border: 1px solid var(--cartao-borda); border-radius: 10px;
+  font-family: var(--fonte-cartoes); font-size: 13px; line-height: 1.4; color: var(--cartao-texto);
+}
+.carregando { padding: 16px 2px; font-size: 14px; color: var(--texto-suave); }
+
+/* ---------- Faixa lateral (comum aos cartões) ---------- */
+.faixa { position: absolute; left: -1px; top: -1px; bottom: -1px; width: 3px; }
+
+/* ---------- Cartão de proposta ---------- */
+.cartao-proposta {
+  position: relative; overflow: hidden;
+  display: flex; flex-direction: column;
+  min-height: 82px;
+  padding: 7px 9px 6px 13px;
+  background: var(--cartao-fundo); border: 1px solid var(--cartao-borda); border-radius: 10px;
+  font-family: var(--fonte-cartoes);
+}
+.cartao-proposta .faixa { background: var(--apresentada-faixa); }
+.cartao-proposta--andamento .faixa { background: var(--andamento-faixa); }
+.cartao-proposta--concluida .faixa { background: var(--concluida-faixa); }
+.cartao-proposta--apresentada .faixa { background: var(--apresentada-faixa); }
+
+.cartao-proposta__topo { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; min-height: 18px; }
+.selo-status {
+  flex: none; display: inline-flex; align-items: center; gap: 5px;
+  width: 118px; height: 18px; padding-left: 8px; margin-top: 0.25px;
+  border-radius: 9px;
+  font-size: 9.5px; font-weight: 600; line-height: normal; white-space: nowrap;
+}
+.selo-status img { flex: none; }
+.selo-status--andamento { background: var(--andamento-fundo); color: var(--andamento-texto); }
+.selo-status--concluida { width: 74px; background: var(--concluida-fundo); color: var(--concluida-texto); }
+.selo-status--apresentada { background: var(--apresentada-fundo); color: var(--apresentada-texto); }
+
+.cartao-proposta__fontes { display: flex; align-items: flex-start; justify-content: flex-end; gap: 29px; margin-left: auto; }
+.pilula {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0;
+  min-height: 18px; padding: 0 8px;
+  background: var(--pilula-fundo); border-radius: 9px;
+  font-size: 9px; font-weight: 500; line-height: normal; color: var(--cartao-texto);
+  text-align: center; white-space: nowrap;
+}
+.pilula--link { position: relative; padding: 0 10px 0 21px; }
+.pilula--link svg { position: absolute; left: 8px; top: 50%; transform: translateY(-50%); }
+a.pilula:hover { text-decoration: underline; }
+
+.cartao-proposta__titulo { margin-top: 8px; font-size: 14px; font-weight: 600; line-height: normal; color: var(--cartao-titulo); }
+.cartao-proposta__descricao { margin-top: 4px; font-size: 12px; font-weight: 400; line-height: normal; color: var(--cartao-texto); }
+.cartao-proposta__texto-unico { display: none; }
+
+/* Página Brasil (desktop): faixa sempre azul, como no protótipo */
+@media (min-width: 768px) {
+  .pagina-brasil .cartao-proposta .faixa { background: var(--apresentada-faixa); }
+}
+
+/* ---------- Linha do tempo (O que já foi feito) ---------- */
+.linha-tempo { position: relative; display: flex; flex-direction: column; gap: 8px; }
+.linha-tempo::before {
+  content: ""; position: absolute; left: 4px; top: 18px; bottom: 18px; width: 2px;
+  background: var(--trilha);
+}
+.registro { position: relative; padding-left: 12px; }
+.registro__marco { position: absolute; left: 0; top: 13px; width: 10px; height: 10px; border-radius: 50%; }
+.registro__cartao {
+  position: relative; overflow: hidden;
+  min-height: 78px; margin-right: 12px;
+  padding: 6px 12px 6px 10px;
+  background: var(--cartao-fundo); border: 1px solid var(--cartao-borda); border-radius: 10px;
+  font-family: var(--fonte-cartoes);
+}
+.registro__topo { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.registro__data {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 82px; height: 18px; border-radius: 9px;
+  background: var(--data-fundo);
+  font-size: 9px; font-weight: 600; line-height: normal; color: var(--data-texto);
+}
+.registro__fonte {
+  position: relative; display: inline-flex; align-items: center;
+  min-height: 18px; margin-top: -0.25px; padding: 1px 4px 1px 19px;
+  border-radius: 9px;
+  font-size: 8.8px; font-weight: 500; line-height: normal; text-align: left;
+}
+.registro__fonte svg { position: absolute; left: 8px; top: 50%; transform: translateY(-50%); }
+a.registro__fonte:hover { text-decoration: underline; }
+.registro__descricao { margin-top: 8px; font-size: 12px; font-weight: 400; line-height: normal; color: var(--cartao-titulo); }
+
+.registro--azul .registro__marco, .registro--azul .faixa { background: var(--azul-faixa); }
+.registro--azul .registro__fonte { background: var(--azul-fundo); color: var(--azul-texto); }
+.registro--verde .registro__marco, .registro--verde .faixa { background: var(--verde-faixa); }
+.registro--verde .registro__fonte { background: var(--verde-fundo); color: var(--verde-texto); }
+.registro--roxo .registro__marco, .registro--roxo .faixa { background: var(--roxo-faixa); }
+.registro--roxo .registro__fonte { background: var(--roxo-fundo); color: var(--roxo-texto); }
+
+/* Página Brasil (desktop): cartões de histórico sem marcos, como no protótipo */
+@media (min-width: 768px) {
+  .pagina-brasil .linha-tempo::before, .pagina-brasil .registro__marco { display: none; }
+  .pagina-brasil .registro { padding-left: 0; }
+  .pagina-brasil .registro__cartao {
+    min-height: 82px; margin-right: 0; padding: 6px 10px 6px 10px;
+    background: #f7f9fc; border-color: var(--borda);
+    font-family: var(--fonte-titulos);
+  }
+  :root[data-tema="escuro"] .pagina-brasil .registro__cartao { background: var(--cartao-fundo); }
+  .pagina-brasil .registro__cartao .faixa { width: 4px; border-radius: 2px; }
+  .pagina-brasil .registro--azul .faixa { background: #1d6a8a; }
+  .pagina-brasil .registro--verde .faixa { background: #14854f; }
+  .pagina-brasil .registro--roxo .faixa { background: #6e4fc4; }
+  .pagina-brasil .registro__data {
+    width: 115px; height: 16px; border-radius: 8px; background: #e8f0f7;
+    font-size: 10px; font-weight: 700; line-height: 12px; color: #14213d;
+  }
+  .pagina-brasil .registro__fonte {
+    min-height: 16px; margin-top: 0; padding: 0 36px; border-radius: 8px;
+    font-size: 10px; font-weight: 700; line-height: 12px; text-align: center;
+  }
+  .pagina-brasil .registro__fonte svg { display: none; }
+  .pagina-brasil .registro--azul .registro__fonte { background: #dff0f6; color: #146b8a; }
+  .pagina-brasil .registro--verde .registro__fonte { background: #e0f2e5; color: #14854f; }
+  .pagina-brasil .registro--roxo .registro__fonte { background: #f0e8fc; color: #6e4fc4; }
+  :root[data-tema="escuro"] .pagina-brasil .registro__data { background: var(--data-fundo); color: var(--data-texto); }
+  :root[data-tema="escuro"] .pagina-brasil .registro--azul .registro__fonte { background: var(--azul-fundo); color: var(--azul-texto); }
+  :root[data-tema="escuro"] .pagina-brasil .registro--verde .registro__fonte { background: var(--verde-fundo); color: var(--verde-texto); }
+  :root[data-tema="escuro"] .pagina-brasil .registro--roxo .registro__fonte { background: var(--roxo-fundo); color: var(--roxo-texto); }
+  .pagina-brasil .registro__descricao { margin-top: 8px; font-size: 14px; line-height: 17px; color: var(--texto); }
+}
+
+/* =========================================================================
+   Demais representantes
+   ========================================================================= */
+.demais { display: flex; flex-direction: column; gap: 8px; padding-top: 24px; }
+.demais__titulo { font-size: 22px; font-weight: 700; line-height: 1.55; }
+.lista-representantes { display: flex; flex-direction: column; gap: 8px; }
+.cartao-rep {
+  position: relative; overflow: hidden;
+  display: grid; grid-template-columns: 44px 1fr auto; align-items: center; column-gap: 16px;
+  min-height: 82px; padding: 0 19px 0 17px;
+  background: var(--superficie); border: 1px solid var(--rep-borda); border-radius: 10px;
+  font-family: var(--fonte-cartoes);
+}
+.cartao-rep .faixa { width: 4px; border-radius: 2px; background: var(--rep-faixa); }
+.cartao-rep__avatar {
+  display: flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--rep-avatar);
+  font-size: 14px; font-weight: 700; color: var(--rep-iniciais);
+}
+.cartao-rep__textos { display: flex; flex-direction: column; gap: 6px; min-width: 0; padding: 14px 0; }
+.cartao-rep__nome { font-size: 16px; font-weight: 600; line-height: normal; color: var(--cartao-titulo); }
+.cartao-rep__detalhe { font-size: 12px; line-height: normal; color: var(--rep-texto); }
+.cartao-rep__selo {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 144px; height: 26px; border-radius: 13px;
+  background: var(--rep-selo-fundo);
+  font-size: 10px; font-weight: 600; color: var(--rep-faixa);
+}
+.cartao-rep--dados { min-height: 76px; }
+.cartao-rep--dados .faixa { background: var(--rep-faixa-dados); }
+.cartao-rep--dados .cartao-rep__avatar { font-size: 16px; }
+.cartao-rep--dados .cartao-rep__textos { gap: 0; padding: 9px 0 7px; }
+.cartao-rep__rotulo { font-size: 11px; line-height: normal; color: var(--rep-texto); }
+.cartao-rep__quantidade { font-size: 15px; font-weight: 600; line-height: normal; color: var(--cartao-titulo); padding: 2px 0 3px; }
+.cartao-rep__lista { font-size: 10px; line-height: normal; color: var(--rep-texto); }
+
+/* =========================================================================
+   Celular (< 768px) — frames de 390px do protótipo
+   ========================================================================= */
+@media (max-width: 767px) {
+  .conteudo { width: auto; max-width: none; margin: 0; padding: 0 20px; }
+
+  .cabecalho__conteudo {
+    position: static; flex-direction: column; align-items: flex-start; gap: 12px;
+    padding: 14px 20px;
+  }
+  .cabecalho { position: relative; }
+  .atalho-configuracoes { top: 8px; right: 16px; }
+  .menu-estados {
+    position: fixed; top: 50%; left: 50%; right: auto; transform: translate(-50%, -50%);
+    width: min(350px, calc(100vw - 24px));
+  }
+  .menu-estados__uf { width: 69.09px; }
+
+  .introducao__titulo { font-size: 28px; }
+  .introducao__resumo { max-width: none; }
+  .botao-voltar { height: 35px; }
+
+  .painel { padding: 20px; }
+
+  .rodape-fontes { display: none; }
+  .rodape-fontes + .espaco-final { display: block; }
+  .espaco-final { height: 124px; }
+
+  /* Proposta (celular) */
+  .cartao-proposta { min-height: 160px; padding: 6px 9px 10px 9px; }
+  .selo-status { width: 105px; height: 17px; padding-left: 7px; font-size: 10.5px; gap: 4px; }
+  .selo-status--concluida { width: 105px; }
+  .cartao-proposta__topo { gap: 4px; }
+  .cartao-proposta__fontes { flex-direction: column; align-items: flex-end; gap: 4px; }
+  .pilula { min-height: 17px; font-size: 9.5px; padding: 0 5px; }
+  .pilula--link { padding: 0 5px 0 18px; }
+  .cartao-proposta__titulo { margin-top: 8px; font-size: 13.5px; }
+  .cartao-proposta__descricao { margin-top: 8px; font-size: 12.5px; }
+
+  /* Brasil (celular): texto único e fontes empilhadas */
+  .pagina-brasil .cartao-proposta { min-height: 130px; }
+  .pagina-brasil .selo-status { width: 100px; height: 18px; }
+  .pagina-brasil .cartao-proposta__fontes { flex-direction: column; align-items: flex-end; gap: 4px; }
+  .pagina-brasil .pilula { min-height: 17px; max-width: 158px; padding: 0 5px; white-space: normal; }
+  .pagina-brasil .pilula:nth-child(2) { min-height: 28px; }
+  .pagina-brasil .pilula--link svg { display: none; }
+  .pagina-brasil .pilula--link { padding: 0 5px; }
+  .pagina-brasil .cartao-proposta--com-texto-unico .cartao-proposta__titulo,
+  .pagina-brasil .cartao-proposta--com-texto-unico .cartao-proposta__descricao { display: none; }
+  .pagina-brasil .cartao-proposta__texto-unico {
+    display: block; margin-top: 8px;
+    font-size: 13px; font-weight: 600; line-height: normal; color: var(--cartao-titulo);
+  }
+
+  /* Linha do tempo (celular) */
+  .registro__cartao { min-height: 100px; padding: 6px 11px 8px 9px; }
+  .registro__data { width: 64px; height: 17px; font-size: 10px; }
+  .registro__fonte { max-width: 120px; font-size: 9.5px; padding: 3px 5px 3px 18px; }
+  .registro__descricao { margin-top: 6px; }
+
+  /* Representantes (celular) */
+  .cartao-rep {
+    grid-template-columns: 44px 1fr; column-gap: 10px;
+    min-height: 94px; padding: 0 14px 0 13px; align-items: start;
+  }
+  .cartao-rep .faixa { bottom: auto; height: 86px; }
+  .cartao-rep__avatar { margin-top: 19px; font-size: 13px; }
+  .cartao-rep__textos { padding: 9px 0 0; gap: 8px; }
+  .cartao-rep__nome { font-size: 15px; }
+  .cartao-rep__selo {
+    grid-column: 2; justify-self: end;
+    width: 98px; height: 18px; margin: 4px 0 15px; border-radius: 9px;
+  }
+  .cartao-rep--dados { min-height: 90px; }
+  .cartao-rep--dados .faixa { height: 82px; }
+  .cartao-rep--dados .cartao-rep__avatar { margin-top: 18px; font-size: 15px; }
+  .cartao-rep--dados .cartao-rep__textos { padding: 7px 0 10px; }
+  .cartao-rep__quantidade { font-size: 14.5px; }
+  .cartao-rep__lista { font-size: 11px; }
+}
+
+/* =========================================================================
+   Configurações (protótipo em Inter)
+   ========================================================================= */
+.pagina-config { font-family: var(--fonte-config); }
+.pagina-config .cabecalho { border-bottom-color: #e1e4ea; }
+:root[data-tema="escuro"] .pagina-config .cabecalho { border-bottom-color: var(--borda); }
+.pagina-config .cabecalho__conteudo { height: 63px; padding: 0; }
+.pagina-config .marca { gap: 8px; font-size: 18px; line-height: normal; }
+.pagina-config .marca__destaque { display: inline-flex; align-items: center; justify-content: center; width: 70px; height: 30px; border-radius: 4px; padding: 0; }
+.pagina-config .atalho-configuracoes { position: static; }
+
+.config { padding-top: 26px; }
+.config__voltar {
+  display: inline-block; position: relative;
+  font-size: 14px; font-weight: 700; line-height: normal; color: var(--primaria);
+}
+.config__voltar::after {
+  content: ""; position: absolute; left: 18px; bottom: -3px; width: 40px; height: 1.5px;
+  border-radius: 1px; background: var(--primaria);
+}
+.config__titulo { margin-top: 11px; font-size: 36px; font-weight: 700; line-height: normal; }
+.config__resumo { margin-top: 6px; font-size: 16px; line-height: normal; color: var(--texto-suave); }
+
+.config__secao-titulo { margin-top: 31px; font-size: 20px; font-weight: 700; line-height: normal; }
+.config__secao-titulo--primeira { margin-top: 33px; }
+.config__secao:not(:first-of-type) .config__secao-titulo { margin-top: 18px; }
+.config__cartao {
+  margin-top: 12px;
+  background: var(--superficie); border: 1px solid var(--borda); border-radius: 12px;
+}
+.config__linha {
+  position: relative;
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  width: 100%; min-height: 86px; padding: 0 23px;
+  text-align: left;
+}
+.config__linha--curta { min-height: 64px; }
+.config__linha + .config__linha::before {
+  content: ""; position: absolute; top: -0.5px; left: 23px; right: 23px; height: 1px;
+  background: var(--cfg-linha);
+}
+.config__textos { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.config__rotulo { font-size: 16px; font-weight: 700; line-height: normal; color: var(--texto); }
+.config__descricao { font-size: 14px; line-height: normal; color: var(--texto-suave); }
+.config__valor { display: inline-flex; align-items: center; gap: 13px; font-size: 15px; color: var(--texto-suave); white-space: nowrap; }
+.config__chevron { flex: none; width: 8px; height: 12px; }
+.config__chevron path { stroke: var(--texto-suave); }
+.config__linha--perigo .config__rotulo { color: var(--cfg-perigo); }
+.config__linha--perigo .config__chevron path { stroke: var(--cfg-perigo); }
+button.config__linha:hover, a.config__linha:hover { background: var(--fundo); }
+.config__cartao > .config__linha:first-child { border-radius: 12px 12px 0 0; }
+.config__cartao > .config__linha:last-child { border-radius: 0 0 12px 12px; }
+.config__cartao > .config__linha:only-child { border-radius: 12px; }
+
+.config__select {
+  position: relative; flex: none; width: 220px; height: 40px;
+}
+.config__select select {
+  appearance: none; -webkit-appearance: none;
+  width: 100%; height: 100%; padding: 0 36px 0 13px;
+  background: var(--seletor-fundo); border: 1px solid var(--borda); border-radius: 8px;
+  font: 400 15px/normal var(--fonte-config); color: var(--texto);
+  cursor: pointer;
+}
+.config__select svg { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); pointer-events: none; }
+.config__select svg path { stroke: var(--texto-suave); }
+
+.segmentos {
+  flex: none; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0;
+  width: 320px; height: 40px; padding: 4px;
+  background: var(--cfg-segmento); border-radius: 10px;
+}
+.segmentos__opcao {
+  border: 1px solid transparent; border-radius: 7px;
+  font-size: 14px; line-height: normal; color: var(--texto-suave);
+}
+.segmentos__opcao[aria-checked="true"] {
+  background: var(--superficie); border-color: var(--borda);
+  font-weight: 700; color: var(--texto);
+}
+
+.interruptor {
+  position: relative; flex: none; width: 44px; height: 26px; border-radius: 13px;
+  background: var(--cfg-toggle-off); transition: background 0.15s;
+}
+.interruptor::after {
+  content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%;
+  background: #fff; transition: transform 0.15s;
+}
+.interruptor[aria-checked="true"] { background: var(--primaria); }
+.interruptor[aria-checked="true"]::after { transform: translateX(18px); }
+:root[data-tema="escuro"] .interruptor[aria-checked="true"] { background: #1d6a8a; }
+
+.config__rodape { padding: 13px 0 40px; font-size: 13px; line-height: normal; text-align: center; color: var(--texto-suave); }
+.config__aviso {
+  position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 30;
+  padding: 10px 16px; border-radius: 8px;
+  background: #14213d; color: #fff; font-size: 14px;
+}
+.config__aviso[hidden] { display: none; }
+
+@media (max-width: 767px) {
+  .pagina-config .cabecalho__conteudo { flex-direction: row; align-items: center; height: 55px; padding: 0 16px; }
+  .pagina-config .marca { font-size: 16px; gap: 6px; }
+  .pagina-config .marca__destaque { width: 62px; height: 26px; }
+  .pagina-config .atalho-configuracoes { position: static; }
+  .config { padding: 26px 16px 0; }
+  .config__titulo { font-size: 28px; margin-top: 12px; }
+  .config__resumo { max-width: 290px; font-size: 15px; line-height: 18px; }
+  .config__secao-titulo { font-size: 18px; }
+  .config__linha { flex-wrap: wrap; gap: 0; padding: 16px 15px; min-height: 0; }
+  .config__linha + .config__linha::before { left: 15px; right: 15px; }
+  .config__linha--curta { padding: 20px 15px; }
+  .config__rotulo { font-size: 15px; }
+  .config__descricao { max-width: 240px; font-size: 13px; line-height: 16px; }
+  .config__linha--empilhada { flex-direction: column; align-items: stretch; gap: 14px; }
+  .config__linha--empilhada .config__select, .config__linha--empilhada .segmentos { width: 100%; height: 44px; }
+  .config__textos { flex: 1 1 0; }
+  .config__rodape { font-size: 12px; }
+}
+
+/* =========================================================================
+   Candidatos da eleição (extensão fora do escopo validado, RN01)
+   Reaproveita o cartão de representante; faixa e etiqueta ficam neutras,
+   sem cor de destaque para eleito ou não eleito (RN04).
+   ========================================================================= */
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.identificacao__resumo { margin-top: 4px; font-size: 13px; line-height: 1.4; color: var(--texto-suave); }
+
+.candidatos__intro { font-size: 13px; line-height: 1.45; color: var(--texto-suave); max-width: 62ch; padding-bottom: 4px; }
+.candidatos__fonte {
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 16px;
+  padding: 4px 2px 0; font-size: 10.5px; line-height: 13px; color: var(--texto-suave);
+}
+.candidatos__fonte a { color: inherit; }
+.candidatos[hidden] { display: none; }
+.pagina-brasil .candidatos { padding-bottom: 20px; }
+
+.cartao-rep--candidato .faixa { background: var(--rep-faixa-dados); }
+.cartao-rep--candidato { grid-template-columns: 52px 1fr auto; }
+.cartao-rep--candidato .cartao-rep__avatar { width: 52px; height: 52px; font-size: 15px; }
+img.avatar--foto, img.cartao-rep__avatar--foto { object-fit: cover; object-position: center top; background: var(--rep-avatar); }
+.numero-urna {
+  display: inline-block; min-width: 28px; margin-right: 8px; padding: 0 6px;
+  border: 2px solid var(--cartao-titulo); border-radius: 6px; text-align: center;
+  font-size: 12px; font-weight: 800; line-height: 1.35; color: var(--cartao-titulo); font-variant-numeric: tabular-nums;
+}
+.cartao-rep__plano {
+  display: inline-flex; align-items: center; gap: 5px; align-self: flex-start;
+  font-size: 12px; font-weight: 600; color: var(--primaria); text-decoration: none;
+}
+.cartao-rep__plano:hover { text-decoration: underline; }
+.candidatos__credito { flex-basis: 100%; }
+.cartao-rep--candidato .cartao-rep__selo { background: transparent; border: 1px solid var(--rep-borda); color: var(--rep-texto); }
+.cartao-rep--candidato .cartao-rep__nome { overflow-wrap: anywhere; }
+
+@media (max-width: 767px) {
+  .cartao-rep--candidato { grid-template-columns: 52px 1fr; min-height: 94px; }
+  .candidatos__fonte { padding-bottom: 8px; }
+}
+
+/* Leitor do plano de governo dentro do cartão de proposta (PDF do próprio site) */
+.cartao-proposta__leitor { margin-top: 12px; }
+.cartao-proposta__ler {
+  font: inherit; font-size: 13px; font-weight: 600; color: var(--primaria);
+  background: transparent; border: 1px solid var(--borda); border-radius: 8px; padding: 6px 12px; cursor: pointer;
+}
+.cartao-proposta__ler:hover { background: var(--cartao-fundo); }
+.cartao-proposta__pdf {
+  display: block; width: 100%; height: min(70vh, 640px); margin-top: 10px;
+  border: 1px solid var(--borda); border-radius: 8px; background: #fff;
+}
+

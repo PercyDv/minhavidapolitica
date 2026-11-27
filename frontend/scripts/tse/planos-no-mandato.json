@@ -1,0 +1,22 @@
+{
+  "fonte": "TSE: candidatos 2026",
+  "titulo": "Plano de governo registrado no TSE para a eleição de 2026",
+  "descricao": "Documento entregue à Justiça Eleitoral pela candidatura de 2026. É o plano para o próximo mandato, e não o do mandato atual.",
+  "itens": [
+    {
+      "rotulo": "Luiz Inácio Lula da Silva (Brasil)",
+      "busca": "Lula",
+      "arquivo": "assets/planos/2026/280002542548.pdf"
+    },
+    {
+      "rotulo": "Jerônimo Rodrigues (BA)",
+      "busca": "Jer",
+      "arquivo": "assets/planos/2026/50002536314.pdf"
+    },
+    {
+      "rotulo": "Celina Leão (DF)",
+      "busca": "Celina",
+      "arquivo": "assets/planos/2026/70002553055.pdf"
+    }
+  ]
+}
