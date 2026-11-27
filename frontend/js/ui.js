@@ -97,27 +97,38 @@
   }
 
   /* ---------- Candidatos da eleição ---------- */
-  var SITUACAO_CLASSE = { ELEITO: "eleito", SEGUNDO_TURNO: "segundo-turno" };
   function cartaoCandidato(c) {
-    var mod = SITUACAO_CLASSE[c.situacao];
-    return '<article class="cartao-rep cartao-candidato' + (mod ? " cartao-candidato--" + mod : "") + '">' +
+    return '<article class="cartao-rep cartao-rep--candidato">' +
       '<span class="faixa" aria-hidden="true"></span>' +
-      '<span class="cartao-rep__avatar" aria-hidden="true">' + esc(c.iniciais) + "</span>" +
-      '<div class="cartao-rep__textos"><h3 class="cartao-rep__nome">' + esc(c.nome) + '</h3><p class="cartao-rep__detalhe">' + esc(c.detalhe) + "</p></div>" +
-      '<span class="cartao-rep__selo">' + esc(c.selo) + "</span>" +
+      '<span class="cartao-rep__avatar"><span class="sr-only">Número na urna: </span>' + esc(c.numero) + "</span>" +
+      '<div class="cartao-rep__textos"><h3 class="cartao-rep__nome">' + esc(c.nome) + "</h3>" +
+      (c.completo ? '<p class="cartao-rep__detalhe">' + esc(c.completo) + "</p>" : "") +
+      '<p class="cartao-rep__detalhe">' + esc(c.partido) + "</p></div>" +
+      '<span class="cartao-rep__selo">' + esc(c.situacao) + "</span>" +
       "</article>";
   }
-  function preencherCandidatos(el, resultado) {
-    if (!resultado.itens || !resultado.itens.length) { el.innerHTML = avisoNeutro(resultado.mensagem); return; }
-    var fontes = (resultado.fontes || []).map(function (f) {
-      var link = linkSeguro(f.link);
-      var nome = link
-        ? '<a href="' + esc(link) + '" target="_blank" rel="noopener noreferrer">' + esc(f.nome) + "</a>"
-        : esc(f.nome);
-      return nome + (f.atualizacao ? " · Atualização: " + esc(f.atualizacao) : "");
-    }).join("; ");
-    el.innerHTML = resultado.itens.map(cartaoCandidato).join("") +
-      (fontes ? '<p class="candidatos__fonte">Fonte: ' + fontes + "</p>" : "");
+
+  /* Preenche a seção #candidatos. Sem dado de candidatos (modo protótipo), a seção continua oculta. */
+  function preencherCandidatos(secao, resultado, titulo) {
+    if (!secao || !resultado || resultado.oculto) return;
+    var ano = resultado.ano || (window.MVPApi && window.MVPApi.anoEleicao) || "";
+    secao.querySelector(".demais__titulo").textContent = titulo;
+    secao.querySelector(".candidatos__intro").textContent = "Quem concorreu na eleição de " + ano +
+      ", em ordem alfabética. A lista não indica preferência nem ranking, e quem concorreu não é, necessariamente, quem exerce o cargo hoje.";
+    var lista = secao.querySelector(".lista-representantes");
+    var rodape = secao.querySelector(".candidatos__fonte");
+    if (!resultado.itens || !resultado.itens.length) {
+      lista.innerHTML = avisoNeutro(resultado.mensagem);
+      rodape.innerHTML = "<span>Fonte: pendente</span><span>Atualização: —</span>";
+    } else {
+      lista.innerHTML = resultado.itens.map(cartaoCandidato).join("");
+      var link = linkSeguro(resultado.linkFonte);
+      var fonte = link
+        ? '<a href="' + esc(link) + '" target="_blank" rel="noopener noreferrer">' + esc(resultado.fonte) + "</a>"
+        : esc(resultado.fonte || "pendente");
+      rodape.innerHTML = "<span>Fonte: " + fonte + "</span><span>Atualização: " + esc(resultado.atualizacao || "—") + "</span>";
+    }
+    secao.hidden = false;
   }
 
   function avisoNeutro(mensagem) {
@@ -137,6 +148,7 @@
       '<h2 class="identificacao__nome">' + esc(pessoa.nome) + "</h2>" +
       '<p class="identificacao__linha">' + esc(pessoa.mandato) + "</p>" +
       '<p class="identificacao__linha">' + esc(pessoa.partido) + "</p>" +
+      (pessoa.resumo ? '<p class="identificacao__resumo">' + esc(pessoa.resumo) + "</p>" : "") +
       "</div>";
   }
 

@@ -9,12 +9,13 @@
  *   "api"  -> usa só a API (recomendado em produção).
  *   "demo" -> usa só o conteúdo do protótipo do Figma (js/dados-demo.js).
  *
+ * anoEleicao: ano da eleição cujos candidatos aparecem nas páginas (seção "Candidatos").
+ *
  * Também dá para trocar pela URL: ?modo=demo ou ?modo=api
  */
 window.MVP_CONFIG = {
   apiBase: "http://localhost:8080/api",
   modo: "auto",
-  // Ano da eleição cujos candidatos aparecem nas páginas (também dá para trocar pela URL: ?ano=2026)
   anoEleicao: 2026,
   versao: "1.0.0"
 };

@@ -1,5 +1,4 @@
-/* Página estadual: governador em exercício, propostas, o que já foi feito, demais representantes (RF03 a RF06)
-   e candidatos a governador da eleição (extensão: /api/eleicoes). */
+/* Página estadual: governador em exercício, propostas, o que já foi feito, candidatos a governador e demais representantes (RF03 a RF06). */
 (function () {
   "use strict";
 
@@ -12,9 +11,6 @@
   var elPropostas = document.getElementById("lista-propostas");
   var elFeito = document.getElementById("lista-feito");
   var elRepresentantes = document.getElementById("lista-representantes");
-  var elCandidatos = document.getElementById("lista-candidatos");
-  document.getElementById("titulo-candidatos").textContent =
-    "Candidatos a Governador · Eleição " + window.MVPApi.anoEleicao();
 
   ui.iniciarMenuEstados({ atual: sigla, nomeAtual: ufLocal ? ufLocal.nome : "" });
   ui.iniciarAbas(document.querySelector(".painel"));
@@ -26,7 +22,6 @@
     ui.erroGeral(elPropostas, mensagem);
     ui.erroGeral(elFeito, mensagem);
     ui.erroGeral(elRepresentantes, mensagem);
-    ui.erroGeral(elCandidatos, mensagem);
   }
 
   if (!/^[A-Z]{2}$/.test(sigla)) {
@@ -37,6 +32,12 @@
     elTitulo.textContent = ufLocal.nome;
     document.title = "Minha VidaPolitica · " + ufLocal.nome;
   }
+
+  // Candidatos ao governo do estado escolhido: só os desta UF (RN06).
+  window.MVPApi.candidatosEstado(sigla).then(function (resultado) {
+    ui.preencherCandidatos(document.getElementById("candidatos"), resultado,
+      "Candidatos ao governo em " + window.MVPApi.anoEleicao);
+  });
 
   window.MVPApi.estado(sigla).then(function (dados) {
     if (!dados) { semEstado("UF não encontrada: " + sigla); return; }
@@ -59,11 +60,5 @@
     ui.erroGeral(elPropostas, msg);
     ui.erroGeral(elFeito, msg);
     ui.erroGeral(elRepresentantes, msg);
-  });
-
-  window.MVPApi.candidatosGovernador(sigla).then(function (r) {
-    ui.preencherCandidatos(elCandidatos, r);
-  }).catch(function () {
-    ui.erroGeral(elCandidatos, "Não foi possível carregar os candidatos agora. Tente novamente em instantes.");
   });
 })();

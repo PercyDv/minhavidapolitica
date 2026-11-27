@@ -1,4 +1,4 @@
-/* Página Brasil: presidente em exercício, propostas e o que já foi feito (RF01, RF05, RF06). */
+/* Página Brasil: presidente em exercício, propostas, o que já foi feito (RF01, RF05, RF06) e candidatos à Presidência. */
 (function () {
   "use strict";
 
@@ -24,6 +24,12 @@
   var elPropostas = document.getElementById("lista-propostas");
   var elFeito = document.getElementById("lista-feito");
 
+  // Candidatos da eleição: carregam à parte, para não atrasar nem derrubar o cartão do presidente.
+  window.MVPApi.candidatosBrasil().then(function (resultado) {
+    ui.preencherCandidatos(document.getElementById("candidatos"), resultado,
+      "Candidatos à Presidência em " + window.MVPApi.anoEleicao);
+  });
+
   window.MVPApi.brasil().then(function (dados) {
     ui.preencherRepresentante(elRep, dados.presidente, dados.mensagem);
     ui.preencherPropostas(elPropostas, dados.propostas);
@@ -42,15 +48,5 @@
     ui.erroGeral(elPropostas, msg);
     ui.erroGeral(elFeito, msg);
     document.getElementById("rodape-fontes").style.visibility = "hidden";
-  });
-
-  /* Candidatos a presidente da eleição (extensão: /api/eleicoes) */
-  var elCandidatos = document.getElementById("lista-candidatos");
-  document.getElementById("titulo-candidatos").textContent =
-    "Candidatos a Presidente · Eleição " + window.MVPApi.anoEleicao();
-  window.MVPApi.candidatosPresidente().then(function (r) {
-    ui.preencherCandidatos(elCandidatos, r);
-  }).catch(function () {
-    ui.erroGeral(elCandidatos, "Não foi possível carregar os candidatos agora. Tente novamente em instantes.");
   });
 })();
