@@ -536,6 +536,8 @@ public class ConversorTse {
                 sb.append(recuoFim).append(']');
             } else if (o instanceof String t) {
                 sb.append(texto(t, true));
+            } else if (o instanceof Double d && d == Math.rint(d) && !Double.isInfinite(d)) {
+                sb.append(d.longValue()); // 2026.0 vira 2026: a API espera inteiros
             } else {
                 sb.append(o);
             }
