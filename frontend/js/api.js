@@ -275,18 +275,25 @@
         atualizacao: fonte ? dataCompleta(fonte.atualizadoEm) : ""
       };
     }).catch(function (erro) {
-      // API fora do ar no modo "auto": a página já mostra o protótipo, então a seção não aparece.
-      if (modo === "auto" && erro instanceof SemConexao) return { oculto: true };
+      if (window.console && console.warn) console.warn("[MinhaVidaPolitica] Não foi possível carregar os candidatos (" + caminho + ").", erro);
+      // Só esconde a seção quando a página inteira está no protótipo (API fora do ar no modo "auto").
+      // Se o resto da página veio da API, o problema é destes candidatos e precisa aparecer.
+      if (modo === "auto" && erro instanceof SemConexao && origemPrincipal === "demo") return { oculto: true };
       return { itens: null, mensagem: "Não foi possível carregar os candidatos agora.", fonte: "", linkFonte: null, atualizacao: "", ano: ANO_ELEICAO };
     });
   }
 
   /* ---------- Escolha entre API e protótipo ---------- */
+  var origemPrincipal = null; // "api" ou "demo": de onde veio o conteúdo principal da página
   function comModo(daApi, doDemo) {
     var modo = modoAtual();
-    if (modo === "demo") return Promise.resolve(doDemo());
-    return daApi().catch(function (erro) {
+    if (modo === "demo") { origemPrincipal = "demo"; return Promise.resolve(doDemo()); }
+    return daApi().then(function (dados) {
+      origemPrincipal = "api";
+      return dados;
+    }).catch(function (erro) {
       if (modo === "auto" && erro instanceof SemConexao) {
+        origemPrincipal = "demo";
         if (window.console) console.info("[MinhaVidaPolitica] API fora do ar em " + cfg.apiBase + ": mostrando o conteúdo do protótipo.");
         return doDemo();
       }
@@ -296,6 +303,7 @@
 
   window.MVPApi = {
     modo: modoAtual,
+    origem: function () { return origemPrincipal; },
     brasil: function () { return comModo(brasilApi, brasilDemo); },
     estado: function (sigla) { return comModo(function () { return estadoApi(sigla); }, function () { return estadoDemo(sigla); }); },
     anoEleicao: ANO_ELEICAO,

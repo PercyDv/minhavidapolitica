@@ -37,11 +37,11 @@
     } catch (erro) { /* a seção continua oculta */ }
   }
 
-  // Candidatos da eleição: carregam à parte, para não atrasar nem derrubar o cartão do presidente.
-  carregarCandidatos(function () { return window.MVPApi.candidatosBrasil(); },
-    "Candidatos à Presidência em " + window.MVPApi.anoEleicao);
-
   window.MVPApi.brasil().then(function (dados) {
+    // Candidatos da eleição: depois do conteúdo principal, para saber se a API respondeu.
+    carregarCandidatos(function () { return window.MVPApi.candidatosBrasil(); },
+      "Candidatos à Presidência em " + window.MVPApi.anoEleicao);
+
     ui.preencherRepresentante(elRep, dados.presidente, dados.mensagem);
     ui.preencherPropostas(elPropostas, dados.propostas);
     ui.preencherFeitos(elFeito, dados.feitos);

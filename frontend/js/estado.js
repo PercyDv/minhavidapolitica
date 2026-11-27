@@ -46,12 +46,11 @@
     } catch (erro) { /* a seção continua oculta */ }
   }
 
-  // Candidatos ao governo do estado escolhido: só os desta UF (RN06).
-  carregarCandidatos(function () { return window.MVPApi.candidatosEstado(sigla); },
-    "Candidatos ao governo em " + window.MVPApi.anoEleicao);
-
   window.MVPApi.estado(sigla).then(function (dados) {
     if (!dados) { semEstado("UF não encontrada: " + sigla); return; }
+    // Candidatos ao governo do estado escolhido (só os desta UF, RN06), depois do conteúdo principal.
+    carregarCandidatos(function () { return window.MVPApi.candidatosEstado(sigla); },
+      "Candidatos ao governo em " + window.MVPApi.anoEleicao);
     elTitulo.textContent = dados.nome;
     document.title = "Minha VidaPolitica · " + dados.nome;
     document.getElementById("resumo-pagina").textContent = dados.resumo;
