@@ -45,18 +45,18 @@
   function obter(caminho) {
     var base = (cfg.apiBase || "/api").replace(/\/$/, "");
     var controle = typeof AbortController !== "undefined" ? new AbortController() : null;
-    var timer = controle ? setTimeout(function () { controle.abort(); }, 60000) : null;
+    var timer = controle ? setTimeout(function () { controle.abort(); }, 8000) : null;
     return fetch(base + caminho, { headers: { Accept: "application/json" }, signal: controle ? controle.signal : undefined })
-      .catch(function (erro) { throw new SemConexao(erro); })
-      .then(function (resposta) {
-        if (timer) clearTimeout(timer);
-        if (!resposta.ok) {
-          return resposta.json().catch(function () { return {}; }).then(function (corpo) {
-            throw new ErroApi(resposta.status, corpo && (corpo.mensagem || corpo.message));
-          });
-        }
-        return resposta.json();
-      });
+        .catch(function (erro) { throw new SemConexao(erro); })
+        .then(function (resposta) {
+          if (timer) clearTimeout(timer);
+          if (!resposta.ok) {
+            return resposta.json().catch(function () { return {}; }).then(function (corpo) {
+              throw new ErroApi(resposta.status, corpo && (corpo.mensagem || corpo.message));
+            });
+          }
+          return resposta.json();
+        });
   }
 
   /* ---------- Formatação ---------- */
@@ -254,7 +254,8 @@
       nome: nomeExibido(c),
       completo: c.nomeUrna && c.nomeUrna !== c.nome ? c.nome : "",
       partido: c.partido ? "Partido: " + c.partido : "Partido não informado",
-      situacao: TEXTO_SITUACAO[c.situacao] || ""
+      situacao: TEXTO_SITUACAO[c.situacao] || "",
+      eleito: c.situacao === "ELEITO"
     };
   }
   function candidatos(caminho) {

@@ -688,6 +688,12 @@ img.avatar--foto, img.cartao-rep__avatar--foto { object-fit: cover; object-posit
 .cartao-rep--candidato .cartao-rep__selo { background: transparent; border: 1px solid var(--rep-borda); color: var(--rep-texto); }
 .cartao-rep--candidato .cartao-rep__nome { overflow-wrap: anywhere; }
 
+/* Eleito(a): faixa e selo em verde (reaproveita as variáveis --verde-*, que já têm tema escuro) */
+.cartao-rep--eleito .faixa { background: var(--verde-faixa); }
+.cartao-rep--candidato.cartao-rep--eleito .cartao-rep__selo {
+  background: var(--verde-fundo); border-color: var(--verde-faixa); color: var(--verde-texto); font-weight: 700;
+}
+
 @media (max-width: 767px) {
   .cartao-rep--candidato { grid-template-columns: 52px 1fr; min-height: 94px; }
   .candidatos__fonte { padding-bottom: 8px; }

@@ -7,8 +7,8 @@
 
   function esc(valor) {
     return String(valor == null ? "" : valor)
-      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
   }
 
   function linkSeguro(url) {
@@ -99,70 +99,70 @@
     var st = item.status ? STATUS[String(item.status).toLowerCase()] : null;
     var classes = "cartao-proposta" + (st ? " cartao-proposta--" + st.classe : "") + (item.textoUnico ? " cartao-proposta--com-texto-unico" : "");
     var selo = st
-      ? '<span class="selo-status selo-status--' + st.classe + '"><img src="assets/icons/' + st.icone + '" width="' + st.largura + '" height="' + st.altura + '" alt="">' + esc(item.status) + "</span>"
-      : "";
+        ? '<span class="selo-status selo-status--' + st.classe + '"><img src="assets/icons/' + st.icone + '" width="' + st.largura + '" height="' + st.altura + '" alt="">' + esc(item.status) + "</span>"
+        : "";
     var fontes = (item.fontes || []).map(function (f, i, todas) {
       return pilula(f, i === todas.length - 1, "pilula");
     }).join("");
     var pdf = (item.fontes || []).map(function (f) { return pdfDoSite(f.link); }).filter(Boolean)[0];
     var leitor = pdf
-      ? '<div class="cartao-proposta__leitor"><button type="button" class="cartao-proposta__ler" data-pdf="' + esc(pdf) + '" aria-expanded="false">Ler o plano aqui</button></div>'
-      : "";
+        ? '<div class="cartao-proposta__leitor"><button type="button" class="cartao-proposta__ler" data-pdf="' + esc(pdf) + '" aria-expanded="false">Ler o plano aqui</button></div>'
+        : "";
     return '<article class="' + classes + '">' +
-      '<span class="faixa" aria-hidden="true"></span>' +
-      '<div class="cartao-proposta__topo">' + selo + '<div class="cartao-proposta__fontes">' + fontes + "</div></div>" +
-      '<h3 class="cartao-proposta__titulo">' + esc(item.titulo) + "</h3>" +
-      (item.descricao ? '<p class="cartao-proposta__descricao">' + esc(item.descricao) + "</p>" : "") +
-      (item.textoUnico ? '<p class="cartao-proposta__texto-unico">' + esc(item.textoUnico) + "</p>" : "") +
-      leitor +
-      "</article>";
+        '<span class="faixa" aria-hidden="true"></span>' +
+        '<div class="cartao-proposta__topo">' + selo + '<div class="cartao-proposta__fontes">' + fontes + "</div></div>" +
+        '<h3 class="cartao-proposta__titulo">' + esc(item.titulo) + "</h3>" +
+        (item.descricao ? '<p class="cartao-proposta__descricao">' + esc(item.descricao) + "</p>" : "") +
+        (item.textoUnico ? '<p class="cartao-proposta__texto-unico">' + esc(item.textoUnico) + "</p>" : "") +
+        leitor +
+        "</article>";
   }
 
   /* ---------- Registro (O que já foi feito) ---------- */
   function registro(item) {
     var tema = temaDaFonte(item.fonte && item.fonte.nome);
     return '<li class="registro registro--' + tema + '">' +
-      '<span class="registro__marco" aria-hidden="true"></span>' +
-      '<div class="registro__cartao">' +
-      '<span class="faixa" aria-hidden="true"></span>' +
-      '<div class="registro__topo">' +
-      '<span class="registro__data">' + esc(item.data) + "</span>" +
-      (item.fonte && item.fonte.nome ? pilula(item.fonte, true, "registro__fonte").replace("registro__fonte registro__fonte--link", "registro__fonte") : "") +
-      "</div>" +
-      '<p class="registro__descricao">' + esc(item.descricao) + "</p>" +
-      "</div></li>";
+        '<span class="registro__marco" aria-hidden="true"></span>' +
+        '<div class="registro__cartao">' +
+        '<span class="faixa" aria-hidden="true"></span>' +
+        '<div class="registro__topo">' +
+        '<span class="registro__data">' + esc(item.data) + "</span>" +
+        (item.fonte && item.fonte.nome ? pilula(item.fonte, true, "registro__fonte").replace("registro__fonte registro__fonte--link", "registro__fonte") : "") +
+        "</div>" +
+        '<p class="registro__descricao">' + esc(item.descricao) + "</p>" +
+        "</div></li>";
   }
 
   /* ---------- Representantes ---------- */
   function cartaoRepresentante(rep) {
     return '<article class="cartao-rep">' +
-      '<span class="faixa" aria-hidden="true"></span>' +
-      '<span class="cartao-rep__avatar" aria-hidden="true">' + esc(rep.iniciais) + "</span>" +
-      '<div class="cartao-rep__textos"><h3 class="cartao-rep__nome">' + esc(rep.nome) + '</h3><p class="cartao-rep__detalhe">' + esc(rep.detalhe) + "</p></div>" +
-      '<span class="cartao-rep__selo">' + esc(rep.selo || "Mandato atual") + "</span>" +
-      "</article>";
+        '<span class="faixa" aria-hidden="true"></span>' +
+        '<span class="cartao-rep__avatar" aria-hidden="true">' + esc(rep.iniciais) + "</span>" +
+        '<div class="cartao-rep__textos"><h3 class="cartao-rep__nome">' + esc(rep.nome) + '</h3><p class="cartao-rep__detalhe">' + esc(rep.detalhe) + "</p></div>" +
+        '<span class="cartao-rep__selo">' + esc(rep.selo || "Mandato atual") + "</span>" +
+        "</article>";
   }
   function cartaoResumoRepresentantes(r) {
     return '<article class="cartao-rep cartao-rep--dados">' +
-      '<span class="faixa" aria-hidden="true"></span>' +
-      '<span class="cartao-rep__avatar" aria-hidden="true">—</span>' +
-      '<div class="cartao-rep__textos"><p class="cartao-rep__rotulo">' + esc(r.descricao) + '</p><p class="cartao-rep__quantidade">' + esc(r.quantidade) + '</p><p class="cartao-rep__lista">' + esc(r.lista) + "</p></div>" +
-      "</article>";
+        '<span class="faixa" aria-hidden="true"></span>' +
+        '<span class="cartao-rep__avatar" aria-hidden="true">—</span>' +
+        '<div class="cartao-rep__textos"><p class="cartao-rep__rotulo">' + esc(r.descricao) + '</p><p class="cartao-rep__quantidade">' + esc(r.quantidade) + '</p><p class="cartao-rep__lista">' + esc(r.lista) + "</p></div>" +
+        "</article>";
   }
 
   /* ---------- Candidatos da eleição ---------- */
   function cartaoCandidato(c) {
     var plano = linkSeguro(c.plano);
-    return '<article class="cartao-rep cartao-rep--candidato">' +
-      '<span class="faixa" aria-hidden="true"></span>' +
-      avatarHtml(c.foto, c.iniciais, "cartao-rep__avatar") +
-      '<div class="cartao-rep__textos"><h3 class="cartao-rep__nome">' + esc(c.nome) + "</h3>" +
-      (c.completo ? '<p class="cartao-rep__detalhe">' + esc(c.completo) + "</p>" : "") +
-      '<p class="cartao-rep__detalhe"><span class="numero-urna"><span class="sr-only">Número na urna: </span>' + esc(c.numero) + "</span>" + esc(c.partido) + "</p>" +
-      (plano ? '<a class="cartao-rep__plano" href="' + esc(plano) + '" target="_blank" rel="noopener noreferrer" title="Abrir o plano de governo registrado no TSE">' + SETA + "Plano de governo (PDF)</a>" : "") +
-      "</div>" +
-      '<span class="cartao-rep__selo">' + esc(c.situacao) + "</span>" +
-      "</article>";
+    return '<article class="cartao-rep cartao-rep--candidato' + (c.eleito ? ' cartao-rep--eleito' : '') + '">' +
+        '<span class="faixa" aria-hidden="true"></span>' +
+        avatarHtml(c.foto, c.iniciais, "cartao-rep__avatar") +
+        '<div class="cartao-rep__textos"><h3 class="cartao-rep__nome">' + esc(c.nome) + "</h3>" +
+        (c.completo ? '<p class="cartao-rep__detalhe">' + esc(c.completo) + "</p>" : "") +
+        '<p class="cartao-rep__detalhe"><span class="numero-urna"><span class="sr-only">Número na urna: </span>' + esc(c.numero) + "</span>" + esc(c.partido) + "</p>" +
+        (plano ? '<a class="cartao-rep__plano" href="' + esc(plano) + '" target="_blank" rel="noopener noreferrer" title="Abrir o plano de governo registrado no TSE">' + SETA + "Plano de governo (PDF)</a>" : "") +
+        "</div>" +
+        '<span class="cartao-rep__selo">' + esc(c.situacao) + "</span>" +
+        "</article>";
   }
 
   /* Preenche a seção #candidatos. Sem dado de candidatos (modo protótipo), a seção continua oculta. */
@@ -171,7 +171,7 @@
     var ano = resultado.ano || (window.MVPApi && window.MVPApi.anoEleicao) || "";
     secao.querySelector(".demais__titulo").textContent = titulo;
     secao.querySelector(".candidatos__intro").textContent = "Quem concorreu na eleição de " + ano +
-      ", em ordem alfabética. A lista não indica preferência nem ranking, e quem concorreu não é, necessariamente, quem exerce o cargo hoje.";
+        ", em ordem alfabética. A lista não indica preferência nem ranking, e quem concorreu não é, necessariamente, quem exerce o cargo hoje.";
     var lista = secao.querySelector(".lista-representantes");
     var rodape = secao.querySelector(".candidatos__fonte");
     if (!resultado.itens || !resultado.itens.length) {
@@ -181,10 +181,10 @@
       lista.innerHTML = resultado.itens.map(cartaoCandidato).join("");
       var link = linkSeguro(resultado.linkFonte);
       var fonte = link
-        ? '<a href="' + esc(link) + '" target="_blank" rel="noopener noreferrer">' + esc(resultado.fonte) + "</a>"
-        : esc(resultado.fonte || "pendente");
+          ? '<a href="' + esc(link) + '" target="_blank" rel="noopener noreferrer">' + esc(resultado.fonte) + "</a>"
+          : esc(resultado.fonte || "pendente");
       rodape.innerHTML = "<span>Fonte: " + fonte + "</span><span>Atualização: " + esc(resultado.atualizacao || "—") + "</span>" +
-        (resultado.credito ? '<span class="candidatos__credito">Fotos e planos de governo registrados no TSE (licença Creative Commons Atribuição).</span>' : "");
+          (resultado.credito ? '<span class="candidatos__credito">Fotos e planos de governo registrados no TSE (licença Creative Commons Atribuição).</span>' : "");
       ativarFotos(lista);
     }
     secao.hidden = false;
@@ -201,14 +201,14 @@
       return;
     }
     el.innerHTML =
-      avatarHtml(pessoa.foto, pessoa.iniciais, "avatar") +
-      '<div class="identificacao">' +
-      '<p class="identificacao__linha">' + esc(pessoa.cargo) + "</p>" +
-      '<h2 class="identificacao__nome">' + esc(pessoa.nome) + "</h2>" +
-      '<p class="identificacao__linha">' + esc(pessoa.mandato) + "</p>" +
-      '<p class="identificacao__linha">' + esc(pessoa.partido) + "</p>" +
-      (pessoa.resumo ? '<p class="identificacao__resumo">' + esc(pessoa.resumo) + "</p>" : "") +
-      "</div>";
+        avatarHtml(pessoa.foto, pessoa.iniciais, "avatar") +
+        '<div class="identificacao">' +
+        '<p class="identificacao__linha">' + esc(pessoa.cargo) + "</p>" +
+        '<h2 class="identificacao__nome">' + esc(pessoa.nome) + "</h2>" +
+        '<p class="identificacao__linha">' + esc(pessoa.mandato) + "</p>" +
+        '<p class="identificacao__linha">' + esc(pessoa.partido) + "</p>" +
+        (pessoa.resumo ? '<p class="identificacao__resumo">' + esc(pessoa.resumo) + "</p>" : "") +
+        "</div>";
     ativarFotos(el);
   }
 
@@ -278,8 +278,8 @@
       var cheias = ufs.slice(0, ufs.length - resto);
       var ultimas = ufs.slice(ufs.length - resto);
       menu.querySelector(".menu-estados__opcoes").innerHTML =
-        cheias.map(itemUf).join("") +
-        (ultimas.length ? '<div class="menu-estados__ultima">' + ultimas.map(itemUf).join("") + "</div>" : "");
+          cheias.map(itemUf).join("") +
+          (ultimas.length ? '<div class="menu-estados__ultima">' + ultimas.map(itemUf).join("") + "</div>" : "");
       montado = true;
     }
     if (celular.addEventListener) {
