@@ -33,11 +33,22 @@
     document.title = "Minha VidaPolitica · " + ufLocal.nome;
   }
 
+  // A seção de candidatos é opcional: se faltar código ou a chamada falhar, ela só não aparece.
+  // Nada disso pode travar o resto da página.
+  function carregarCandidatos(buscar, titulo) {
+    try {
+      if (typeof ui.preencherCandidatos !== "function") return;
+      var promessa = buscar();
+      if (!promessa || typeof promessa.then !== "function") return;
+      promessa.then(function (resultado) {
+        ui.preencherCandidatos(document.getElementById("candidatos"), resultado, titulo);
+      }).catch(function () { /* a seção continua oculta */ });
+    } catch (erro) { /* a seção continua oculta */ }
+  }
+
   // Candidatos ao governo do estado escolhido: só os desta UF (RN06).
-  window.MVPApi.candidatosEstado(sigla).then(function (resultado) {
-    ui.preencherCandidatos(document.getElementById("candidatos"), resultado,
-      "Candidatos ao governo em " + window.MVPApi.anoEleicao);
-  });
+  carregarCandidatos(function () { return window.MVPApi.candidatosEstado(sigla); },
+    "Candidatos ao governo em " + window.MVPApi.anoEleicao);
 
   window.MVPApi.estado(sigla).then(function (dados) {
     if (!dados) { semEstado("UF não encontrada: " + sigla); return; }

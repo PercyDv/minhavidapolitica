@@ -24,11 +24,22 @@
   var elPropostas = document.getElementById("lista-propostas");
   var elFeito = document.getElementById("lista-feito");
 
+  // A seção de candidatos é opcional: se faltar código ou a chamada falhar, ela só não aparece.
+  // Nada disso pode travar o resto da página.
+  function carregarCandidatos(buscar, titulo) {
+    try {
+      if (typeof ui.preencherCandidatos !== "function") return;
+      var promessa = buscar();
+      if (!promessa || typeof promessa.then !== "function") return;
+      promessa.then(function (resultado) {
+        ui.preencherCandidatos(document.getElementById("candidatos"), resultado, titulo);
+      }).catch(function () { /* a seção continua oculta */ });
+    } catch (erro) { /* a seção continua oculta */ }
+  }
+
   // Candidatos da eleição: carregam à parte, para não atrasar nem derrubar o cartão do presidente.
-  window.MVPApi.candidatosBrasil().then(function (resultado) {
-    ui.preencherCandidatos(document.getElementById("candidatos"), resultado,
-      "Candidatos à Presidência em " + window.MVPApi.anoEleicao);
-  });
+  carregarCandidatos(function () { return window.MVPApi.candidatosBrasil(); },
+    "Candidatos à Presidência em " + window.MVPApi.anoEleicao);
 
   window.MVPApi.brasil().then(function (dados) {
     ui.preencherRepresentante(elRep, dados.presidente, dados.mensagem);
