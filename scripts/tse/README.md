@@ -195,3 +195,27 @@ Liga a **foto** e o **plano de governo** registrados no TSE a cada candidatura, 
 - **Crédito:** a licença exige citar o TSE. O site já mostra "Fotos e planos de governo registrados no TSE (licença Creative Commons Atribuição)" quando há foto ou plano.
 - **Nada de adivinhação:** a ferramenta nunca escolhe foto por semelhança de nome. Quem não casa pelo identificador fica sem foto.
 
+---
+
+# Plano de governo na aba "Propostas" de quem está no cargo
+
+Quem está no cargo e também foi candidato em 2026 (hoje: Lula, Jerônimo Rodrigues e Celina Leão) ganha, na aba **Propostas**, um cartão com o **plano de governo registrado no TSE** e o botão **Ler o plano aqui**, que abre o PDF dentro da própria página. Não há resumo nem interpretação: é o documento oficial.
+
+**Atenção ao sentido:** esse plano é o da **eleição de 2026**, ou seja, vale para o próximo mandato, e não para o mandato atual. O texto do cartão diz isso de forma explícita. As propostas do mandato atual seriam as de 2022 (base do TSE de 2022, que não foi carregada). Isso também toca a regra RN01 (sem projeções futuras) e depende da decisão do cliente.
+
+## Como cadastrar
+
+1. Tenha os PDFs em `frontend/assets/planos/2026/` (gerados pelo `ExtrairMidias.java`) e a fonte `TSE: candidatos 2026` cadastrada e aprovada.
+2. Com a aplicação no ar, na raiz do repositório:
+
+   ```powershell
+   powershell -ExecutionPolicy Bypass -File scripts\tse\vincular-planos-aos-mandatos.ps1
+   ```
+
+   O script pede a senha do administrador e, para cada pessoa de `scripts/tse/planos-no-mandato.json`, cria a proposta (ou atualiza, se ela já existir: pode rodar mais de uma vez sem duplicar). O resultado são linhas `CRIADO` ou `ATUALIZADO`. Se alguma busca não achar exatamente um político, a linha é `PULADO`.
+3. Recarregue o site (Ctrl+F5).
+
+## Para incluir mais pessoas
+
+Acrescente itens em `planos-no-mandato.json` com `busca` (parte do nome, só letras sem acento, que identifique uma única pessoa) e `arquivo` (`assets/planos/2026/<sqCandidato>.pdf`). O `sqCandidato` aparece no nome do arquivo do plano e no `candidaturas-tse-midia.json`. O script em si só tem caracteres ASCII de propósito, e os textos com acento ficam no arquivo `.json` (UTF-8).
+

@@ -83,6 +83,7 @@ Cartão do FrontEnd (João). O site do cidadão é dele (`frontend/`, feito a pa
 - [x] Seção de candidatos (presidência em `index.html` e governo por estado em `estado.html`), no padrão visual dos cartões de representantes
 - [x] Linha de resumo do político no cartão do mandato atual (ex.: governador interino)
 - [x] Foto e link do plano de governo nos cartões de candidatos, e foto no cartão do mandato atual
+- [x] Plano de governo de 2026 na aba Propostas de quem está no cargo e foi candidato, com leitor de PDF no cartão (`scripts/tse/vincular-planos-aos-mandatos.ps1`; script **não testado no PowerShell**)
 - [ ] Revisão do João e do design da seção de candidatos, que não existe no Figma
 - [ ] **Decisão do cliente (via PO) sobre mostrar candidatos**: é extensão fora do escopo validado (RN01)
 - [ ] Prints das telas para o documento (6.10)

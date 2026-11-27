@@ -60,6 +60,8 @@ Cada cartão traz a foto oficial (ou as iniciais, quando não há foto), o nome,
 
 A foto do cartão do mandato atual vem do campo `fotoUrl` do político, quando existe.
 
+Na aba **Propostas**, quando a fonte de uma proposta aponta para um PDF do próprio site (`assets/planos/...`), o cartão ganha o botão **Ler o plano aqui**, que abre o PDF dentro da página, sem sair dela. O link da fonte continua abrindo o arquivo numa nova aba. O leitor usa o visualizador de PDF do navegador: em alguns celulares ele mostra só a primeira página ou oferece o download, e o link da fonte resolve.
+
 Quando a API envia o `resumo` do político (por exemplo, "Governador interino desde…"), ele aparece abaixo do partido no cartão do mandato atual.
 
 ## Diferenças em relação ao protótipo

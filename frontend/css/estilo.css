@@ -693,3 +693,15 @@ img.avatar--foto, img.cartao-rep__avatar--foto { object-fit: cover; object-posit
   .candidatos__fonte { padding-bottom: 8px; }
 }
 
+/* Leitor do plano de governo dentro do cartão de proposta (PDF do próprio site) */
+.cartao-proposta__leitor { margin-top: 12px; }
+.cartao-proposta__ler {
+  font: inherit; font-size: 13px; font-weight: 600; color: var(--primaria);
+  background: transparent; border: 1px solid var(--borda); border-radius: 8px; padding: 6px 12px; cursor: pointer;
+}
+.cartao-proposta__ler:hover { background: var(--cartao-fundo); }
+.cartao-proposta__pdf {
+  display: block; width: 100%; height: min(70vh, 640px); margin-top: 10px;
+  border: 1px solid var(--borda); border-radius: 8px; background: #fff;
+}
+
