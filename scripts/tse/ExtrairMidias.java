@@ -60,10 +60,12 @@ public class ExtrairMidias {
     }
 
     /** Um arquivo encontrado dentro de um ZIP para um candidato. */
-    record Achado(Path zip, String entrada, long data, long tamanho) {
+    record Achado(Path zip, String entrada, long data, long tamanho, int sequencia) {
     }
 
     private static final Pattern SEQUENCIAL = Pattern.compile("\\d{8,}");
+    /** Número do arquivo no fim do nome, como em 2026BA50002536314_01.pdf. Sem número, vale o maior valor. */
+    private static final Pattern NUMERO_DO_ARQUIVO = Pattern.compile("_(\\d{1,3})\\.[A-Za-z0-9]+$");
 
     public static void main(String[] args) {
         System.setProperty("java.awt.headless", "true");
@@ -131,7 +133,7 @@ public class ExtrairMidias {
                     avisos.add("Foto de " + e.getKey() + " ignorada: o arquivo " + e.getValue().entrada() + " não é uma imagem JPEG ou PNG.");
                     continue;
                 }
-                byte[] reduzida = reduzir(bytes, cfg.ladoFoto);
+                byte[] reduzida = reduzir(bytes, cfg.ladoFoto, tipo.equals("jpg"));
                 byte[] gravar = reduzida != null ? reduzida : bytes;
                 String ext = reduzida != null ? "jpg" : tipo;
                 Files.write(pastaFotos.resolve(e.getKey() + "." + ext), gravar);
@@ -243,6 +245,7 @@ public class ExtrairMidias {
     private static Map<String, Achado> procurar(List<Path> zips, Map<String, Map<String, Object>> porSq,
                                                String[] extensoes, List<String> avisos, String tipo) throws IOException {
         Map<String, Achado> melhores = new LinkedHashMap<>();
+        Map<String, List<String>> todos = new HashMap<>();
         int arquivos = 0;
         int semCandidato = 0;
         List<String> exemplos = new ArrayList<>();
@@ -273,9 +276,12 @@ public class ExtrairMidias {
                     }
                     long data = e.getLastModifiedTime() != null ? e.getLastModifiedTime().toMillis() : 0L;
                     long tamanho = e.getSize() >= 0 ? e.getSize() : 0L;
-                    Achado novo = new Achado(zip, e.getName(), data, tamanho);
+                    Matcher numero = NUMERO_DO_ARQUIVO.matcher(base);
+                    int sequencia = numero.find() ? Integer.parseInt(numero.group(1)) : Integer.MAX_VALUE;
+                    Achado novo = new Achado(zip, e.getName(), data, tamanho, sequencia);
+                    todos.computeIfAbsent(sq, k -> new ArrayList<>()).add(e.getName());
                     Achado atual = melhores.get(sq);
-                    if (atual == null || novo.data() > atual.data() || (novo.data() == atual.data() && novo.tamanho() > atual.tamanho())) {
+                    if (atual == null || melhor(novo, atual)) {
                         melhores.put(sq, novo);
                     }
                 }
@@ -288,9 +294,26 @@ public class ExtrairMidias {
                     + " arquivos não trazem o identificador (sqCandidato). Exemplos: " + String.join(", ", exemplos)
                     + ". Me mande esses nomes para eu ajustar a ferramenta.");
         }
+        for (Map.Entry<String, List<String>> e : todos.entrySet()) {
+            if (e.getValue().size() > 1) {
+                avisos.add("Candidato " + e.getKey() + " tem " + e.getValue().size() + " arquivos de " + tipo + " " + e.getValue()
+                        + ". Usado: " + melhores.get(e.getKey()).entrada() + ". Confira se é o certo.");
+            }
+        }
         System.out.println("ZIPs de " + tipo + ": " + arquivos + " arquivos lidos, " + melhores.size() + " ligados a candidatos, "
                 + semCandidato + " de outros candidatos (ignorados).");
         return melhores;
+    }
+
+    /** Menor número de arquivo vence; depois o mais recente; depois o maior. */
+    private static boolean melhor(Achado novo, Achado atual) {
+        if (novo.sequencia() != atual.sequencia()) {
+            return novo.sequencia() < atual.sequencia();
+        }
+        if (novo.data() != atual.data()) {
+            return novo.data() > atual.data();
+        }
+        return novo.tamanho() > atual.tamanho();
     }
 
     private static byte[] ler(Achado a) throws IOException {
@@ -322,8 +345,8 @@ public class ExtrairMidias {
         return null;
     }
 
-    /** Reduz a imagem para no máximo "lado" pixels e regrava em JPEG. Devolve null se não conseguir ler. */
-    static byte[] reduzir(byte[] bytes, int lado) {
+    /** Reduz a imagem para no máximo "lado" pixels e regrava em JPEG; JPEG que já cabe fica como está. Devolve null se não conseguir ler. */
+    static byte[] reduzir(byte[] bytes, int lado, boolean jpeg) {
         try {
             BufferedImage img = ImageIO.read(new ByteArrayInputStream(bytes));
             if (img == null) {
@@ -332,6 +355,9 @@ public class ExtrairMidias {
             int w = img.getWidth();
             int h = img.getHeight();
             double escala = Math.min(1.0, (double) lado / Math.max(w, h));
+            if (escala >= 1.0 && jpeg) {
+                return bytes; // já cabe: mantém o original, sem recomprimir
+            }
             int nw = Math.max(1, (int) Math.round(w * escala));
             int nh = Math.max(1, (int) Math.round(h * escala));
             BufferedImage rgb = new BufferedImage(nw, nh, BufferedImage.TYPE_INT_RGB);
@@ -747,6 +773,8 @@ public class ExtrairMidias {
                 sb.append(recuoFim).append(']');
             } else if (o instanceof String t) {
                 sb.append(texto(t, true));
+            } else if (o instanceof Double d && d == Math.rint(d) && !Double.isInfinite(d)) {
+                sb.append(d.longValue()); // 2026.0 vira 2026: a API espera inteiros
             } else {
                 sb.append(o);
             }

@@ -137,9 +137,9 @@ Liga a **foto** e o **plano de governo** registrados no TSE a cada candidatura, 
 ## O que a ferramenta faz
 
 - Lê os ZIPs "Fotos de candidatos" e "Proposta de governo" do Portal de Dados Abertos do TSE (licença Creative Commons Atribuição).
-- Acha o arquivo de cada candidato pelo **identificador do TSE (`sqCandidato`) que aparece no nome do arquivo**, seja qual for o formato do nome. Se houver mais de um arquivo do mesmo candidato, fica o mais recente.
+- Acha o arquivo de cada candidato pelo **identificador do TSE (`sqCandidato`) que aparece no nome do arquivo**, seja qual for o formato do nome. Os nomes reais seguem `FBA50002536624_div.jpg` (foto) e `BA/2026BA50002536314_01.pdf` (plano). Se houver mais de um arquivo do mesmo candidato, fica o de **menor número** (`_01`), e a ferramenta avisa. Um candidato do DF, por exemplo, tem um `_02` que é um documento de outro processo, não o plano.
 - Copia **só os candidatos do seu arquivo** (presidente e governador), para `frontend/assets/fotos/<ano>/` e `frontend/assets/planos/<ano>/`.
-- Reduz as fotos para no máximo 400 px (JPEG), o que deixa cada uma com poucos KB. PDFs acima de 25 MB são ignorados, com aviso.
+- Reduz fotos maiores que 400 px (JPEG). As fotos do TSE já são pequenas (cerca de 160×225 px, poucos KB) e ficam **exatamente como o TSE publicou**. PDFs acima de 25 MB são ignorados, com aviso. O `leiame.pdf` que vem nos ZIPs é ignorado.
 - Confere se o conteúdo é mesmo imagem ou PDF, e ignora o que não for.
 - Escreve um JSON novo com `fotoUrl` e `planoUrl` em cada candidatura.
 - Com `--mandatos`, dá a foto a quem está no cargo **somente** se for sem dúvida a mesma pessoa de uma candidatura (mesmo cargo, mesma UF e mesmo nome). Os pares aparecem na tela para você revisar. Quem não foi candidato fica com as iniciais: o TSE não tem a foto dessa pessoa.
@@ -190,8 +190,8 @@ Liga a **foto** e o **plano de governo** registrados no TSE a cada candidatura, 
 
 ## Cuidados
 
-- **Não foi testada com os ZIPs reais do TSE**, só com ZIPs sintéticos que reproduzem os casos difíceis. Se nenhum arquivo casar, a ferramenta avisa e mostra exemplos de nomes. Mande esses nomes para ajustar.
-- **Tamanho:** confira o total que a ferramenta imprime. Os PDFs dos planos podem passar de centenas de MB. Se passarem de 200 MB, ela avisa; avalie se vale colocar no Git (o GitHub recusa arquivos acima de 100 MB, e a ferramenta já ignora PDFs acima de 25 MB).
+- **Testada com os ZIPs reais de Brasil, Bahia e Distrito Federal** (26/11/2026): 30 fotos e 30 planos casados (13 da Presidência, 6 da Bahia e 11 do DF), todos os PDFs abrem, nenhum é protegido. Se o TSE mudar o formato dos nomes e nenhum arquivo casar, a ferramenta avisa e mostra exemplos de nomes.
+- **Tamanho:** Brasil, Bahia e DF somam cerca de 39 MB de planos (as fotos, 0,2 MB). Para os 27 estados, a estimativa é de algumas centenas de MB. Se passarem de 200 MB, ela avisa; avalie se vale colocar no Git (o GitHub recusa arquivos acima de 100 MB, e a ferramenta já ignora PDFs acima de 25 MB).
 - **Crédito:** a licença exige citar o TSE. O site já mostra "Fotos e planos de governo registrados no TSE (licença Creative Commons Atribuição)" quando há foto ou plano.
 - **Nada de adivinhação:** a ferramenta nunca escolhe foto por semelhança de nome. Quem não casa pelo identificador fica sem foto.
 
