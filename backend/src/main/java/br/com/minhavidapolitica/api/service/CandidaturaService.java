@@ -132,6 +132,8 @@ public class CandidaturaService {
         String nomeUrna = opcional(item.nomeUrna(), 150, "nomeUrna");
         String partido = opcional(item.partido(), 30, "partido");
         String link = opcional(item.linkFonte(), 500, "linkFonte");
+        String foto = caminhoOuUrl(item.fotoUrl(), "fotoUrl");
+        String plano = caminhoOuUrl(item.planoUrl(), "planoUrl");
 
         Optional<Candidatura> existente = candidaturaRepository.findFirstByAnoEleicaoAndSqCandidato(ano, sq);
         Candidatura candidatura = existente.orElseGet(Candidatura::new);
@@ -146,6 +148,8 @@ public class CandidaturaService {
         candidatura.setSituacao(situacao);
         candidatura.setFonte(fonte);
         candidatura.setLinkFonte(link);
+        candidatura.setFotoUrl(foto);
+        candidatura.setPlanoUrl(plano);
         candidatura.setAtualizadoEm(agora);
         candidaturaRepository.save(candidatura);
         return existente.isEmpty();
@@ -213,6 +217,24 @@ public class CandidaturaService {
         String texto = valor.trim();
         if (texto.length() > max) {
             throw new RegraNegocioException("campo \"" + campo + "\" excede " + max + " caracteres");
+        }
+        return texto;
+    }
+
+    /**
+     * Foto e plano: aceita URL http(s) ou um caminho em assets/ (arquivos do front). Qualquer outro
+     * esquema (javascript:, data:, file:) é recusado, porque o valor vira link e imagem na página pública.
+     */
+    private static String caminhoOuUrl(String valor, String campo) {
+        String texto = opcional(valor, 500, campo);
+        if (texto == null) {
+            return null;
+        }
+        boolean url = texto.startsWith("http://") || texto.startsWith("https://");
+        boolean relativo = texto.startsWith("assets/") && !texto.contains("..");
+        boolean semEspaco = texto.chars().noneMatch(Character::isWhitespace);
+        if (!(url || relativo) || !semEspaco) {
+            throw new RegraNegocioException("campo \"" + campo + "\" deve ser uma URL http(s) ou um caminho em assets/");
         }
         return texto;
     }

@@ -18,6 +18,7 @@ public record ImportacaoCandidaturasRequest(
 
     public record CandidaturaImportada(
             String sqCandidato, String nome, String nomeUrna, String numero, String partido,
-            String cargo, String uf, String situacao, String linkFonte) {
+            String cargo, String uf, String situacao, String linkFonte,
+            String fotoUrl, String planoUrl) {
     }
 }

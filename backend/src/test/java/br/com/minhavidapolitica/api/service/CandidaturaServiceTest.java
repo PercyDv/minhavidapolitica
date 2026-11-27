@@ -166,12 +166,44 @@ class CandidaturaServiceTest {
         salvarLogDevolvendoOMesmo();
 
         CandidaturaImportada item = new CandidaturaImportada("200", "Candidato Exemplo", null, "22", "PEX",
-                "GOVERNADOR", "BA", "NAO_ELEITO", null);
+                "GOVERNADOR", "BA", "NAO_ELEITO", null, null, null);
         LogResponse log = service.importar(new ImportacaoCandidaturasRequest(1L, 2026, List.of(item)), "admin");
 
         assertThat(log.atualizados()).isEqualTo(1);
         assertThat(log.criados()).isZero();
         assertThat(existente.getSituacao()).isEqualTo(SituacaoCandidatura.NAO_ELEITO);
+    }
+
+    @Test
+    void fotoEPlanoEmAssetsSaoGravados() {
+        when(fonteRepository.findById(1L)).thenReturn(Optional.of(fonte(true, true)));
+        when(cargoRepository.findByCodigoIgnoreCase("PRESIDENTE"))
+                .thenReturn(Optional.of(cargo("PRESIDENTE", Esfera.NACIONAL)));
+        when(candidaturaRepository.findFirstByAnoEleicaoAndSqCandidato(2026, "100")).thenReturn(Optional.empty());
+        when(candidaturaRepository.save(any(Candidatura.class))).thenAnswer(inv -> inv.getArgument(0));
+        salvarLogDevolvendoOMesmo();
+
+        CandidaturaImportada com = new CandidaturaImportada("100", "Candidata Exemplo", "Exemplo", "13", "PEX",
+                "PRESIDENTE", null, "ELEITO", null, "assets/fotos/2026/100.jpg", "assets/planos/2026/100.pdf");
+        LogResponse log = service.importar(new ImportacaoCandidaturasRequest(1L, 2026, List.of(com)), "admin");
+
+        assertThat(log.criados()).isEqualTo(1);
+        assertThat(log.rejeitados()).isZero();
+    }
+
+    @Test
+    void planoComEsquemaPerigosoEhRejeitado() {
+        when(fonteRepository.findById(1L)).thenReturn(Optional.of(fonte(true, true)));
+        when(cargoRepository.findByCodigoIgnoreCase("PRESIDENTE"))
+                .thenReturn(Optional.of(cargo("PRESIDENTE", Esfera.NACIONAL)));
+        salvarLogDevolvendoOMesmo();
+
+        CandidaturaImportada perigosa = new CandidaturaImportada("100", "Candidata Exemplo", "Exemplo", "13", "PEX",
+                "PRESIDENTE", null, "ELEITO", null, null, "javascript:alert(1)");
+        LogResponse log = service.importar(new ImportacaoCandidaturasRequest(1L, 2026, List.of(perigosa)), "admin");
+
+        assertThat(log.rejeitados()).isEqualTo(1);
+        assertThat(log.mensagem()).contains("planoUrl");
     }
 
     private void salvarLogDevolvendoOMesmo() {
@@ -192,6 +224,6 @@ class CandidaturaServiceTest {
     }
 
     private static CandidaturaImportada item(String sq, String cargo, String uf) {
-        return new CandidaturaImportada(sq, "Candidata Exemplo", "Exemplo", "13", "PEX", cargo, uf, "ELEITO", null);
+        return new CandidaturaImportada(sq, "Candidata Exemplo", "Exemplo", "13", "PEX", cargo, uf, "ELEITO", null, null, null);
     }
 }

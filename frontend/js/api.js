@@ -92,6 +92,7 @@
       cargo: p.cargo || "",
       nome: p.nome || "",
       resumo: p.resumo || "",
+      foto: p.fotoUrl || "",
       mandato: mandato,
       partido: "Partido: " + (p.partido || "não informado"),
       fonte: p.fonte || null
@@ -247,6 +248,9 @@
   function candidatoParaTela(c) {
     return {
       numero: String(c.numero || ""),
+      iniciais: iniciais(nomeExibido(c)),
+      foto: c.fotoUrl || "",
+      plano: c.planoUrl || "",
       nome: nomeExibido(c),
       completo: c.nomeUrna && c.nomeUrna !== c.nome ? c.nome : "",
       partido: c.partido ? "Partido: " + c.partido : "Partido não informado",
@@ -266,6 +270,7 @@
       var fonte = lista[0].fonte || null;
       return {
         itens: lista.map(candidatoParaTela), mensagem: null, ano: ANO_ELEICAO,
+        credito: lista.some(function (c) { return c.fotoUrl || c.planoUrl; }),
         fonte: fonte ? fonte.nome || "" : "", linkFonte: fonte ? fonte.link || null : null,
         atualizacao: fonte ? dataCompleta(fonte.atualizadoEm) : ""
       };

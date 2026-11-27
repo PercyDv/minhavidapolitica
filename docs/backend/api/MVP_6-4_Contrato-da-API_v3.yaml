@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: MinhaVidaPolitica API
-  version: 1.1.0-v2
+  version: 1.2.0-v3
   description: 'Contrato da API do back-end (cartão 6.4). Gerado a partir da definição em docs/backend; o Swagger UI do projeto
     (/swagger-ui.html) gera a versão em tempo de execução.
 
@@ -1449,6 +1449,14 @@ components:
           - NAO_ELEITO
           - SEGUNDO_TURNO
           - SEM_RESULTADO
+        fotoUrl:
+          type: string
+          nullable: true
+          description: Caminho (assets/...) ou URL da foto oficial; relativo ao site do cidadão
+        planoUrl:
+          type: string
+          nullable: true
+          description: Caminho (assets/...) ou URL do plano de governo registrado no TSE (PDF)
         fonte:
           $ref: '#/components/schemas/FonteInfo'
       description: Candidatura exibida ao cidadão. Sem votos e sem ranking (RN04).
@@ -1506,6 +1514,16 @@ components:
           type: string
           maxLength: 500
           nullable: true
+        fotoUrl:
+          type: string
+          maxLength: 500
+          description: URL http(s) ou caminho em assets/
+          nullable: true
+        planoUrl:
+          type: string
+          maxLength: 500
+          description: URL http(s) ou caminho em assets/
+          nullable: true
       required:
       - sqCandidato
       - nome
@@ -1552,6 +1570,12 @@ components:
         fonteNome: *id002
         fonteAprovada: *id006
         atualizadoEm: *id007
+        fotoUrl:
+          type: string
+          nullable: true
+        planoUrl:
+          type: string
+          nullable: true
     Catalogo:
       type: object
       properties:

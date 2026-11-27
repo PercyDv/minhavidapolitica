@@ -19,6 +19,26 @@
     } catch (e) { return null; }
   }
 
+  /* Foto oficial ou, sem foto (ou se o arquivo não carregar), as iniciais. */
+  function avatarHtml(foto, iniciaisTexto, classe) {
+    var url = linkSeguro(foto);
+    if (url) {
+      return '<img class="' + classe + " " + classe + '--foto" src="' + esc(url) + '" alt="" loading="lazy" data-iniciais="' + esc(iniciaisTexto) + '">';
+    }
+    return '<span class="' + classe + '" aria-hidden="true">' + esc(iniciaisTexto) + "</span>";
+  }
+  function ativarFotos(raiz) {
+    Array.prototype.forEach.call(raiz.querySelectorAll("img[data-iniciais]"), function (img) {
+      img.addEventListener("error", function () {
+        var span = document.createElement("span");
+        span.className = img.className.replace(/\S+--foto/, "").trim();
+        span.setAttribute("aria-hidden", "true");
+        span.textContent = img.getAttribute("data-iniciais");
+        img.replaceWith(span);
+      }, { once: true });
+    });
+  }
+
   var SETA = '<svg width="8" height="8" viewBox="8.19 5.19 7.62 7.62" fill="none" aria-hidden="true"><path d="M9 12L15 6M15 11V6H10" stroke="currentColor" stroke-width="1.62" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
   var STATUS = {
@@ -98,12 +118,15 @@
 
   /* ---------- Candidatos da eleição ---------- */
   function cartaoCandidato(c) {
+    var plano = linkSeguro(c.plano);
     return '<article class="cartao-rep cartao-rep--candidato">' +
       '<span class="faixa" aria-hidden="true"></span>' +
-      '<span class="cartao-rep__avatar"><span class="sr-only">Número na urna: </span>' + esc(c.numero) + "</span>" +
+      avatarHtml(c.foto, c.iniciais, "cartao-rep__avatar") +
       '<div class="cartao-rep__textos"><h3 class="cartao-rep__nome">' + esc(c.nome) + "</h3>" +
       (c.completo ? '<p class="cartao-rep__detalhe">' + esc(c.completo) + "</p>" : "") +
-      '<p class="cartao-rep__detalhe">' + esc(c.partido) + "</p></div>" +
+      '<p class="cartao-rep__detalhe"><span class="numero-urna"><span class="sr-only">Número na urna: </span>' + esc(c.numero) + "</span>" + esc(c.partido) + "</p>" +
+      (plano ? '<a class="cartao-rep__plano" href="' + esc(plano) + '" target="_blank" rel="noopener noreferrer" title="Abrir o plano de governo registrado no TSE">' + SETA + "Plano de governo (PDF)</a>" : "") +
+      "</div>" +
       '<span class="cartao-rep__selo">' + esc(c.situacao) + "</span>" +
       "</article>";
   }
@@ -126,7 +149,9 @@
       var fonte = link
         ? '<a href="' + esc(link) + '" target="_blank" rel="noopener noreferrer">' + esc(resultado.fonte) + "</a>"
         : esc(resultado.fonte || "pendente");
-      rodape.innerHTML = "<span>Fonte: " + fonte + "</span><span>Atualização: " + esc(resultado.atualizacao || "—") + "</span>";
+      rodape.innerHTML = "<span>Fonte: " + fonte + "</span><span>Atualização: " + esc(resultado.atualizacao || "—") + "</span>" +
+        (resultado.credito ? '<span class="candidatos__credito">Fotos e planos de governo registrados no TSE (licença Creative Commons Atribuição).</span>' : "");
+      ativarFotos(lista);
     }
     secao.hidden = false;
   }
@@ -142,7 +167,7 @@
       return;
     }
     el.innerHTML =
-      '<span class="avatar" aria-hidden="true">' + esc(pessoa.iniciais) + "</span>" +
+      avatarHtml(pessoa.foto, pessoa.iniciais, "avatar") +
       '<div class="identificacao">' +
       '<p class="identificacao__linha">' + esc(pessoa.cargo) + "</p>" +
       '<h2 class="identificacao__nome">' + esc(pessoa.nome) + "</h2>" +
@@ -150,6 +175,7 @@
       '<p class="identificacao__linha">' + esc(pessoa.partido) + "</p>" +
       (pessoa.resumo ? '<p class="identificacao__resumo">' + esc(pessoa.resumo) + "</p>" : "") +
       "</div>";
+    ativarFotos(el);
   }
 
   function preencherPropostas(el, resultado) {

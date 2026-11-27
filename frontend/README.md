@@ -54,9 +54,11 @@ Abaixo do cartão do mandato atual, cada página mostra **quem concorreu** na el
 - `index.html`: candidatos à Presidência.
 - `estado.html?uf=BA`: candidatos ao governo **daquele estado** (RN06).
 
-Cada cartão traz o número da urna, o nome, o partido e o resultado final (Eleito(a), Não eleito(a), Foi ao 2º turno). A lista fica em **ordem alfabética**, sem votos nem ranking, e o resultado usa a mesma etiqueta neutra para todos (RN04). A seção mostra a fonte e a data de atualização (RF08). Sem dado em fonte aprovada, aparece a mensagem neutra (RF12). No modo `demo`, ou com a API fora do ar no modo `auto`, a seção fica oculta.
+Cada cartão traz a foto oficial (ou as iniciais, quando não há foto), o nome, o número da urna, o partido, o resultado final (Eleito(a), Não eleito(a), Foi ao 2º turno) e, quando existir, o link **Plano de governo (PDF)** registrado no TSE. A lista fica em **ordem alfabética**, sem votos nem ranking, e o resultado usa a mesma etiqueta neutra para todos (RN04). A seção mostra a fonte e a data de atualização (RF08). Sem dado em fonte aprovada, aparece a mensagem neutra (RF12). As fotos e os PDFs ficam em `assets/fotos/<ano>/` e `assets/planos/<ano>/`, gerados por `scripts/tse/ExtrairMidias.java`. Se uma foto não carregar, o cartão mostra as iniciais. O crédito do TSE (Creative Commons Atribuição) aparece abaixo da lista. No modo `demo`, ou com a API fora do ar no modo `auto`, a seção fica oculta.
 
 **Atenção:** esta seção não existe no protótipo do Figma e foi pedida depois da validação com o cliente. Ela é uma extensão fora do escopo validado (RN01) e depende da decisão do cliente e da revisão do design.
+
+A foto do cartão do mandato atual vem do campo `fotoUrl` do político, quando existe.
 
 Quando a API envia o `resumo` do político (por exemplo, "Governador interino desde…"), ele aparece abaixo do partido no cartão do mandato atual.
 
